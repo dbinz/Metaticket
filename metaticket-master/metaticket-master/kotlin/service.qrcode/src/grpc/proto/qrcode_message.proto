@@ -1,0 +1,14 @@
+syntax = "proto3";
+
+package metaticket.qrcode.grpc;
+
+message GenerateQRCodeRequest {
+    string showId = 1;
+    string sessionId = 2;
+    string orderId = 3;
+    string orderCode = 4;
+    string eventName = 5;
+    string priceCat = 6;    // price category
+    string sid = 7;
+    int32 no = 8;           // the number of tickets in the order
+}

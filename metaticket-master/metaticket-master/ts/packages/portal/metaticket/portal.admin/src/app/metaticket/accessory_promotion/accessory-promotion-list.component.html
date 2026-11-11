@@ -1,0 +1,62 @@
+<nb-card [nbSpinner]="loading > 0">
+    <nb-card-header fullWidth>
+        <div class="inline-form-card w-100 d-flex align-items-center justify-content-between flex-wrap">
+            <div>
+                <strong>Khuyến mãi</strong>
+                <span class="hint ml-2">Chọn sự kiện bán hàng để xem danh sách khuyến mãi</span>
+            </div>
+            <div class="header-actions">
+                <button nbButton status="basic" size="small" [disabled]="!selectedShowId" (click)="downloadTemplate()">
+                    Tải template
+                </button>
+                <button nbButton status="basic" size="small" [disabled]="!selectedShowId" (click)="exportExcel()">
+                    Export Excel
+                </button>
+                <button nbButton status="basic" size="small" [disabled]="!selectedShowId" (click)="triggerImport()">
+                    Import Excel
+                </button>
+                <button nbButton status="info" size="small" [disabled]="!selectedShowId" (click)="openBatchCreate()">
+                    Tạo hàng loạt
+                </button>
+                <button nbButton status="primary" size="small" [disabled]="!selectedShowId" (click)="createPromotion()">
+                    Tạo mới
+                </button>
+                <input
+                    #importFileInput
+                    type="file"
+                    accept=".xlsx,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+                    hidden
+                    (change)="onImportFileSelected($event)" />
+            </div>
+        </div>
+    </nb-card-header>
+    <nb-card-body>
+        <div class="filter-row mb-3">
+            <label class="filter-label">Sự kiện bán hàng</label>
+            <nb-select
+                fullWidth
+                size="medium"
+                placeholder="Chọn show…"
+                [selected]="selectedShowId"
+                (selectedChange)="onShowChange($event)">
+                <nb-option *ngFor="let show of shows" [value]="show.id">
+                    {{ show.code }} — {{ show.name }} ({{ show.status }})
+                </nb-option>
+            </nb-select>
+            <p class="empty-hint" *ngIf="!loading && shows.length === 0">
+                Chưa có sự kiện bán hàng. Tạo show trước tại
+                <a routerLink="/portal/accessory/shows">Sự kiện bán hàng</a>.
+            </p>
+            <p class="empty-hint" *ngIf="!loading && shows.length > 0 && !selectedShowId">
+                Chọn một show để tải danh sách khuyến mãi.
+            </p>
+        </div>
+
+        <angular2-smart-table
+            *ngIf="selectedShowId"
+            (custom)="onCustomButton($event)"
+            [source]="source"
+            [settings]="settings">
+        </angular2-smart-table>
+    </nb-card-body>
+</nb-card>

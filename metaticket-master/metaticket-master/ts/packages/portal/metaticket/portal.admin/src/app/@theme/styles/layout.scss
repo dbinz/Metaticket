@@ -1,0 +1,6 @@
+@mixin ngx-layout() {
+    // Minimal layout styles for portal admin (missing upstream file restored for local build)
+    nb-layout .layout .layout-container nb-sidebar .main-container {
+        height: calc(100vh - #{nb-theme(header-height)}) !important;
+    }
+}

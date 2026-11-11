@@ -1,0 +1,13 @@
+<div class="container" >
+  <div tabindex="0" class="accordion-heading flex gap-6" [ngClass]="{'!pb-[10px]':active}" (click)="expandCollapse()" (keydown)="expandCollapse()">
+    <p class="font-medium text-18-24">
+      {{question}}
+    </p>
+    <div class="flex-shrink-0" [ngClass]="{'icon':active}">
+      <app-image sx="w-[32px] h-[32px]" [src]="appIcons.icArrowUp"></app-image>
+    </div>
+  </div>
+  <div class="accordion-content" [ngClass]="{'h-0 overflow-hidden': !active} ">
+    <ng-content></ng-content>
+  </div>
+</div>

@@ -1,0 +1,24 @@
+:host {
+  display: block;
+  width: 100%;
+  /* In-flow spacer — height is synced to the fixed bar in the component. */
+  flex-shrink: 0;
+  pointer-events: none;
+}
+
+.navbar-surface {
+  pointer-events: auto;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  /* Above page sections; below modals (z-[1000]+) */
+  z-index: 11000;
+  width: 100%;
+  background-color: #163aea;
+}
+
+.nav-link.active {
+  background-color: #4867fc;
+  color: #ffffff;
+}

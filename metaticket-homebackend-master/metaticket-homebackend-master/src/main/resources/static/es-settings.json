@@ -1,0 +1,32 @@
+{
+  "max_ngram_diff": 19,
+  "analysis": {
+    "analyzer": {
+      "autocomplete": {
+        "filter": ["lowercase", "asciifolding", "remove_combining_marks", "autocomplete_prefix"],
+        "tokenizer": "standard"
+      },
+      "autocomplete_search": {
+        "filter": ["lowercase", "asciifolding", "remove_combining_marks"],
+        "tokenizer": "standard"
+      },
+      "folded_text": {
+        "filter": ["lowercase", "asciifolding", "remove_combining_marks"],
+        "tokenizer": "standard"
+      }
+    },
+    "filter": {
+      "remove_combining_marks": {
+        "type": "pattern_replace",
+        "pattern": "\\p{M}+",
+        "replacement": ""
+      },
+      "autocomplete_prefix": {
+        "type": "edge_ngram",
+        "min_gram": 1,
+        "max_gram": 20,
+        "preserve_original": true
+      }
+    }
+  }
+}

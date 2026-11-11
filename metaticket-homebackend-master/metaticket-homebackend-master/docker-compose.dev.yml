@@ -1,0 +1,19 @@
+version: '3.8'
+services:
+  dev_metaticket_search:
+    image: dev_metaticket_search
+    container_name: dev_metaticket_search
+    build: .
+    environment:
+      - SPRING_PROFILES_ACTIVE=dev
+    ports:
+      - "48080:8080"
+    networks:
+      default:
+    restart: no
+    volumes:
+      - ./logs:/app/logs
+networks:
+  default:
+    external: true
+    name: dev_metaticket

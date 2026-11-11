@@ -1,0 +1,14 @@
+syntax = "proto3";
+
+package metaticket.jobrunr.grpc;
+
+import "google/protobuf/empty.proto";
+import "jobrunr_message.proto";
+
+service JobrunrService {
+  rpc scheduleJob(JobrunrRequest) returns (google.protobuf.Empty);
+}
+
+service JobExecutorService {
+  rpc executeJob(JobExecutionRequest) returns (JobExecutionResponse);
+}

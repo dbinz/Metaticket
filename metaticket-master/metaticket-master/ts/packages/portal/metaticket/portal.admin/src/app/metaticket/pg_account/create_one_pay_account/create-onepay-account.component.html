@@ -1,0 +1,123 @@
+<nb-card
+    [accent]="formGroup.dirty && formGroup.invalid ? 'danger' : formGroup.valid ? 'success' : 'basic'"
+    [status]="enabledControl.value ? 'info' : 'basic'"
+    [nbSpinner]="loading > 0">
+    <nb-card-header> Create Payment Gateway OnePay Account </nb-card-header>
+
+    <nb-card-body>
+        <div class="inline-form-card w-100">
+            <form class="form-inline" [formGroup]="formGroup">
+                <div [class.error]="codeControl.dirty && codeControl.invalid">
+                    <label>Code (*)</label>
+                    <input
+                        required
+                        fullWidth
+                        nbInput
+                        type="text"
+                        [status]="codeControl.dirty && codeControl.invalid ? 'danger' : 'basic'"
+                        [formControl]="codeControl" />
+                </div>
+                <div [class.error]="nameControl.dirty && nameControl.invalid">
+                    <label>Name (*)</label>
+                    <input
+                        required
+                        fullWidth
+                        nbInput
+                        type="text"
+                        [status]="nameControl.dirty && nameControl.invalid ? 'danger' : 'basic'"
+                        [formControl]="nameControl" />
+                </div>
+                <div [class.error]="descriptionControl.dirty && descriptionControl.invalid" class="w-100">
+                    <label>Mô tả (*)</label>
+                    <textarea
+                        required
+                        fullWidth
+                        nbInput
+                        type="text"
+                        [status]="descriptionControl.dirty && descriptionControl.invalid ? 'danger' : 'basic'"
+                        [formControl]="descriptionControl"></textarea>
+                </div>
+                <div [class.error]="enabledControl.dirty && enabledControl.invalid">
+                    <label>Enable (*)</label>
+                    <div>
+                        <nb-checkbox
+                            required
+                            fullWidth
+                            nbInput
+                            [status]="enabledControl.dirty && enabledControl.invalid ? 'danger' : 'basic'"
+                            [formControl]="enabledControl">
+                        </nb-checkbox>
+                    </div>
+                </div>
+                <div [class.error]="baseUrlControl.dirty && baseUrlControl.invalid">
+                    <label>Merchant Base Url (*)</label>
+                    <input
+                        required
+                        fullWidth
+                        nbInput
+                        type="text"
+                        [status]="baseUrlControl.dirty && baseUrlControl.invalid ? 'danger' : 'basic'"
+                        [formControl]="baseUrlControl" />
+                </div>
+                <div [class.error]="merchantIdControl.dirty && merchantIdControl.invalid">
+                    <label>Merchant ID (*)</label>
+                    <input
+                        required
+                        fullWidth
+                        nbInput
+                        type="text"
+                        [status]="merchantIdControl.dirty && merchantIdControl.invalid ? 'danger' : 'basic'"
+                        [formControl]="merchantIdControl" />
+                </div>
+                <div [class.error]="merchantAccessCodeControl.dirty && merchantAccessCodeControl.invalid">
+                    <label>Merchant Access Code (*)</label>
+                    <input
+                        required
+                        fullWidth
+                        nbInput
+                        type="text"
+                        [status]="
+                            merchantAccessCodeControl.dirty && merchantAccessCodeControl.invalid ? 'danger' : 'basic'
+                        "
+                        [formControl]="merchantAccessCodeControl" />
+                </div>
+                <div [class.error]="merchantHashCodeControl.dirty && merchantHashCodeControl.invalid">
+                    <label>Merchant Hash Code (*)</label>
+                    <input
+                        required
+                        fullWidth
+                        nbInput
+                        type="text"
+                        [status]="merchantHashCodeControl.dirty && merchantHashCodeControl.invalid ? 'danger' : 'basic'"
+                        [formControl]="merchantHashCodeControl" />
+                </div>
+
+                <div [class.error]="userControl.dirty && userControl.invalid">
+                    <label>User (default op01) (*)</label>
+                    <input
+                        required
+                        fullWidth
+                        nbInput
+                        type="text"
+                        [status]="userControl.dirty && userControl.invalid ? 'danger' : 'basic'"
+                        [formControl]="userControl" />
+                </div>
+
+                <div [class.error]="passwordControl.dirty && passwordControl.invalid">
+                    <label>Password (default op123456) (*)</label>
+                    <input
+                        required
+                        fullWidth
+                        nbInput
+                        type="text"
+                        [status]="passwordControl.dirty && passwordControl.invalid ? 'danger' : 'basic'"
+                        [formControl]="passwordControl" />
+                </div>
+            </form>
+        </div>
+    </nb-card-body>
+
+    <nb-card-footer>
+        <button nbButton (click)="create()" status="primary" [disabled]="!formGroup.valid">Create</button>
+    </nb-card-footer>
+</nb-card>

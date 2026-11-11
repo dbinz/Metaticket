@@ -1,0 +1,17 @@
+[Unit]
+Description=MetaTicket service.news (staging)
+After=network.target
+
+[Service]
+Type=simple
+User=metaticket
+Group=metaticket
+WorkingDirectory=/staging/metaticket/service/service.news
+EnvironmentFile=-/etc/metaticket/service.news.env
+Environment=SPRING_PROFILES_ACTIVE=staging
+ExecStart=/staging/metaticket/service/service.news/bin/service.news
+Restart=on-failure
+RestartSec=10
+
+[Install]
+WantedBy=multi-user.target

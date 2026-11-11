@@ -1,0 +1,3 @@
+This project provides web wrappers so that components can be used on 3rd party websites. The wrappers provide entry points which re-export classes from internal libraries. 
+
+For example, the `docloader coordinator` is used on 3rd party websites will be loaded by the web wrappers as remote module to ensure the shared modules are loaded once only.

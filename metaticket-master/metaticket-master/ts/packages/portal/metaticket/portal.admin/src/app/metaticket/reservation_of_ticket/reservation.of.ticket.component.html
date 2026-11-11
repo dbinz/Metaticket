@@ -1,0 +1,12 @@
+<nb-card [nbSpinner]="loading > 0">
+    <nb-card-header>
+        Danh sách reservation của vé <span *ngIf="ticket">{{ ticket.sid }} {{ ticket.dname }}</span>
+    </nb-card-header>
+
+    <nb-card-body>
+        <angular2-smart-table (custom)="onCustomButton($event)" [settings]="settings" [source]="source">
+        </angular2-smart-table>
+    </nb-card-body>
+
+    <nb-card-footer> </nb-card-footer>
+</nb-card>

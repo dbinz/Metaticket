@@ -1,0 +1,103 @@
+<div class="batch-dialog">
+    <nb-card class="mb-0">
+        <nb-card-header>Tạo hàng loạt khuyến mãi</nb-card-header>
+        <nb-card-body>
+            <form [formGroup]="form" class="batch-form">
+                <div class="form-row two-col">
+                    <div>
+                        <label>Prefix code *</label>
+                        <input nbInput fullWidth formControlName="prefix" placeholder="VD: SHOW-" />
+                    </div>
+                    <div>
+                        <label>Số lượng (1–200) *</label>
+                        <input nbInput fullWidth type="number" formControlName="count" />
+                    </div>
+                </div>
+                <div class="form-row actions-inline">
+                    <button nbButton type="button" status="info" size="small" (click)="generatePreview()">
+                        Generate code
+                    </button>
+                    <span class="hint" *ngIf="previewCodes.length">{{ previewCodes.length }} mã preview</span>
+                </div>
+                <div class="preview" *ngIf="previewCodes.length">
+                    <code *ngFor="let c of previewCodes">{{ c }}</code>
+                </div>
+
+                <div class="form-row">
+                    <label>Loại *</label>
+                    <nb-select fullWidth formControlName="type" (selectedChange)="onTypeChange()">
+                        <nb-option *ngFor="let t of typeOptions" [value]="t">{{ t }}</nb-option>
+                    </nb-select>
+                </div>
+
+                <ng-container *ngIf="showRewardFields">
+                    <div class="form-row" *ngIf="type === 'EarlyBird'">
+                        <label>Dạng giảm Early Bird</label>
+                        <nb-select fullWidth formControlName="rewardType">
+                            <nb-option value="Percentage">Percentage (%)</nb-option>
+                            <nb-option value="FixedAmount">FixedAmount (VND)</nb-option>
+                        </nb-select>
+                    </div>
+                    <div class="form-row two-col">
+                        <div>
+                            <label>Giá trị</label>
+                            <input nbInput fullWidth type="number" formControlName="value" />
+                        </div>
+                        <div>
+                            <label>Cap tối đa (VND)</label>
+                            <input nbInput fullWidth type="number" formControlName="maxDiscountAmount" />
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <label>Đơn tối thiểu (VND)</label>
+                        <input nbInput fullWidth type="number" formControlName="minOrderAmount" />
+                    </div>
+                </ng-container>
+
+                <div class="form-row" *ngIf="type === 'Tiered'">
+                    <div class="d-flex align-items-center justify-content-between mb-2">
+                        <label class="mb-0">Các mốc</label>
+                        <button nbButton type="button" size="tiny" (click)="addTier()">+ Mốc</button>
+                    </div>
+                    <div class="tier-row" *ngFor="let tier of tiers; let i = index">
+                        <input nbInput type="number" [(ngModel)]="tier.minOrderAmount" [ngModelOptions]="{ standalone: true }" placeholder="Từ" />
+                        <nb-select [selected]="tier.type" (selectedChange)="tier.type = $event">
+                            <nb-option value="FixedAmount">Fixed</nb-option>
+                            <nb-option value="Percentage">%</nb-option>
+                        </nb-select>
+                        <input nbInput type="number" [(ngModel)]="tier.value" [ngModelOptions]="{ standalone: true }" />
+                        <button nbButton type="button" ghost status="danger" (click)="removeTier(i)">×</button>
+                    </div>
+                </div>
+
+                <div class="form-row two-col">
+                    <div>
+                        <label>Bắt đầu</label>
+                        <input nbInput fullWidth type="datetime-local" formControlName="startAtLocal" />
+                    </div>
+                    <div>
+                        <label>Kết thúc</label>
+                        <input nbInput fullWidth type="datetime-local" formControlName="endAtLocal" />
+                    </div>
+                </div>
+
+                <div class="form-row two-col">
+                    <div class="d-flex align-items-center">
+                        <nb-checkbox formControlName="unlimitedUsage">Không giới hạn lượt</nb-checkbox>
+                    </div>
+                    <div *ngIf="!form.value.unlimitedUsage">
+                        <label>Usage limit</label>
+                        <input nbInput fullWidth type="number" formControlName="usageLimit" />
+                    </div>
+                </div>
+                <div class="form-row">
+                    <nb-checkbox formControlName="active">Active</nb-checkbox>
+                </div>
+            </form>
+        </nb-card-body>
+        <nb-card-footer class="d-flex justify-content-end gap-2">
+            <button nbButton status="basic" (click)="cancel()">Hủy</button>
+            <button nbButton status="primary" (click)="submit()">Tạo hàng loạt</button>
+        </nb-card-footer>
+    </nb-card>
+</div>

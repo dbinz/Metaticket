@@ -1,0 +1,82 @@
+{
+	"info": {
+		"_postman_id": "8423fe39-25d0-4677-bbce-10511228a33a",
+		"name": "metaticket_payment",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "start-payment",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"paymentId\": \"64c37a2d4498116ee4ee1162\",\n    \"paymentType\": \"InternationalCard\"\n} //InternationalCard , DomesticCard",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://0.0.0.0:3006/payment/start",
+					"protocol": "http",
+					"host": [
+						"0",
+						"0",
+						"0",
+						"0"
+					],
+					"port": "3006",
+					"path": [
+						"payment",
+						"start"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "fetch-payment-status",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://0.0.0.0:3006/payment/fetch-status?id=64c149dfd20c7c0d3576d237",
+					"protocol": "http",
+					"host": [
+						"0",
+						"0",
+						"0",
+						"0"
+					],
+					"port": "3006",
+					"path": [
+						"payment",
+						"fetch-status"
+					],
+					"query": [
+						{
+							"key": "id",
+							"value": "64c149dfd20c7c0d3576d237"
+						}
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

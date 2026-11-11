@@ -1,0 +1,158 @@
+<nb-card [nbSpinner]="loading > 0">
+    <nb-card-header>
+        <div class="pb-3">THỐNG KÊ</div>
+        <div class="inline-form-card w-100">
+            <form class="form-inline">
+                <div class="pl-2">
+                    <label>Sự kiện</label>
+                    <input
+                        #autoInputShow
+                        (input)="onInputShowChange(autoInputShow.value)"
+                        (click)="onInputShowChange('')"
+                        [nbAutocomplete]="autoCompleteShow"
+                        class="w-100"
+                        nbInput
+                        placeholder="Nhập sự kiện"
+                        type="text" />
+                    <nb-autocomplete #autoCompleteShow (selectedChange)="onSelectionShowChange($event)">
+                        <nb-option *ngFor="let show of filteredShowList$ | async" [value]="show.id">
+                            {{ show.showName }}
+                        </nb-option>
+                    </nb-autocomplete>
+                </div>
+
+                <div class="pl-2">
+                    <label>Session</label>
+                    <input
+                        #autoInputSession
+                        (input)="onInputSessionChange(autoInputSession.value)"
+                        (click)="onInputSessionChange('')"
+                        [nbAutocomplete]="autoCompleteSession"
+                        [readOnly]="!sessionList || sessionList.length < 2"
+                        class="w-100"
+                        nbInput
+                        placeholder="Nhập Session"
+                        type="text" />
+                    <nb-autocomplete #autoCompleteSession (selectedChange)="onSelectionSessionChange($event)">
+                        <nb-option *ngFor="let session of filteredSessionList$ | async" [value]="session.id">
+                            {{ getSessionName(session) }}
+                        </nb-option>
+                    </nb-autocomplete>
+                </div>
+
+                <div class="pl-2">
+                    <label>Ngày Truy Vấn</label>
+                    <input
+                        nbInput
+                        placeholder="Nhập ngày truy vấn"
+                        [nbDatepicker]="rangepicker"
+                        [formControl]="rangepickerFormCtr" />
+                    <nb-rangepicker #rangepicker (rangeChange)="onDateSelected(rangepicker)"></nb-rangepicker>
+                </div>
+
+                <div class="pl-2">
+                    <label>Ngày Tham Quan</label>
+                    <input
+                        nbInput
+                        placeholder="Vé theo lịch (tùy chọn)"
+                        [nbDatepicker]="visitRangepicker"
+                        [formControl]="visitDateRangeFormCtr" />
+                    <nb-rangepicker
+                        #visitRangepicker
+                        (rangeChange)="onVisitDateSelected(visitRangepicker)"></nb-rangepicker>
+                </div>
+
+                <div class="ml-auto">
+                    <button nbButton status="primary" (click)="loadStatistic()">Truy Vấn</button>
+                    <button nbButton status="info" (click)="saveFilter()" class="ml-3">Lưu Filter</button>
+                    <button nbButton (click)="clear()" class="ml-3">Clear</button>
+                </div>
+            </form>
+        </div>
+    </nb-card-header>
+
+    <nb-card-body>
+        <ng-container *ngIf="dataSource" class="pt-3">
+            <div class="d-flex text-center" style="gap: 1%; width: 97%">
+                <nb-card class="col-3">
+                    <nb-card-header>
+                        <div>Số lượng sự kiện đang bán</div>
+                        <div class="font-weight-bold">{{ summary.totalOpenShow }}</div>
+                    </nb-card-header>
+                </nb-card>
+                <nb-card class="col-3">
+                    <nb-card-header>
+                        <div>Số lượng vé đã bán</div>
+                        <div class="font-weight-bold">{{ summary.totalTicket }}</div>
+                        <div class="font-italic small">trong thời gian chọn</div>
+                    </nb-card-header>
+                </nb-card>
+                <nb-card class="col-3">
+                    <nb-card-header>
+                        <div>Doanh số</div>
+                        <div class="font-weight-bold">{{ summary.totalPrice.toLocaleString('vn-VN') }}</div>
+                        <div class="font-italic small">trong thời gian chọn</div>
+                    </nb-card-header>
+                </nb-card>
+                <nb-card class="col-3">
+                    <nb-card-header>
+                        <div>Doanh Thu</div>
+                        <div class="font-weight-bold">{{ summary.totalRevenue.toLocaleString('vn-VN') }}</div>
+                        <div class="font-italic small">trong thời gian chọn</div>
+                    </nb-card-header>
+                </nb-card>
+            </div>
+
+            <table [nbTreeGrid]="dataSource" [nbSort]="dataSource" equalColumnsWidth>
+                <tr
+                    nbTreeGridHeaderRow
+                    *nbTreeGridHeaderRowDef="allColumns"
+                    [style.background-color]="'cadetblue'"></tr>
+                <tr
+                    nbTreeGridRow
+                    *nbTreeGridRowDef="let row; columns: allColumns"
+                    [clickToToggle]="false"
+                    [style.background-color]="
+                        row.data['level'] === 1 ? 'lightgray' : row.data['level'] === 2 ? 'aliceblue' : ''
+                    "></tr>
+
+                <ng-container [nbTreeGridColumnDef]="shortColumn">
+                    <th nbTreeGridHeaderCell *nbTreeGridHeaderCellDef nbSortHeader>
+                        {{ headers[0] }}
+                        <span *nbSortHeaderIcon="let asc = isAscending; let desc = isDescending">
+                            <nb-icon *ngIf="asc" icon="chevron-down-outline" aria-label="sorted ascending"></nb-icon>
+                            <nb-icon *ngIf="desc" icon="chevron-up-outline" aria-label="sorted descending"></nb-icon>
+                        </span>
+                    </th>
+
+                    <td nbTreeGridCell *nbTreeGridCellDef="let row">
+                        <nb-tree-grid-row-toggle
+                            *ngIf="[1, 2].includes(row.data['level'])"
+                            [textContent]="row.data.show"
+                            style="color: blue; cursor: pointer; border-left: none; border-right: none">
+                        </nb-tree-grid-row-toggle>
+                    </td>
+                </ng-container>
+
+                <ng-container *ngFor="let column of defaultColumns; let idx = index" [nbTreeGridColumnDef]="column">
+                    <th nbTreeGridHeaderCell *nbTreeGridHeaderCellDef>{{ headers[idx + 1] }}</th>
+                    <td nbTreeGridCell *nbTreeGridCellDef="let row">
+                        <ng-template [ngIf]="column === 'download' && row.data[column]" [ngIfElse]="elseCol">
+                            <nb-icon
+                                [style.cursor]="'pointer'"
+                                class="text-center"
+                                icon="download-outline"
+                                (click)="loadAndExportReport(row.data)"></nb-icon>
+                        </ng-template>
+                        <ng-template #elseCol>
+                            {{ row.data[column] }}
+                        </ng-template>
+                    </td>
+                </ng-container>
+            </table>
+        </ng-container>
+        <ng-container *ngIf="!dataSource">
+            <div>Không có dữ liệu</div>
+        </ng-container>
+    </nb-card-body>
+</nb-card>

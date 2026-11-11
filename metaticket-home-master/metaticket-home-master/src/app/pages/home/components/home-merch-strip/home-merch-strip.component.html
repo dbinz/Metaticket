@@ -1,0 +1,41 @@
+<section class="hms z-20" *ngIf="visible" aria-label="Merchandise từ các show">
+  <div class="hms-stage">
+    <div class="hms-row" *ngIf="loopWide.length">
+      <div class="hms-track hms-track--left">
+        <a
+          class="hms-card hms-card--wide"
+          *ngFor="let tile of loopWide; trackBy: trackByUid"
+          [routerLink]="tile.path"
+        >
+          <img
+            [src]="tile.imageUrl"
+            [alt]="tile.title"
+            loading="lazy"
+            (error)="onWideImageError(tile)"
+          />
+          <span class="hms-caption"><span class="hms-caption-text">{{ tile.title }}</span></span>
+        </a>
+      </div>
+    </div>
+
+    <p class="hms-ribbon" aria-hidden="true">
+      Official merch · Sản phẩm độc quyền · Từ sân khấu đến tủ đồ · META Ticket store ·
+      Official merch · Sản phẩm độc quyền · Từ sân khấu đến tủ đồ · META Ticket store
+    </p>
+
+    <div class="hms-row" *ngIf="loopSquare.length">
+      <div class="hms-track hms-track--right">
+        <a
+          class="hms-card"
+          [class.hms-card--square]="tile.kind === 'product'"
+          [class.hms-card--wide]="tile.kind !== 'product'"
+          *ngFor="let tile of loopSquare; trackBy: trackByUid"
+          [routerLink]="tile.path"
+        >
+          <img [src]="tile.imageUrl" [alt]="tile.title" loading="lazy" />
+          <span class="hms-caption"><span class="hms-caption-text">{{ tile.title }}</span></span>
+        </a>
+      </div>
+    </div>
+  </div>
+</section>

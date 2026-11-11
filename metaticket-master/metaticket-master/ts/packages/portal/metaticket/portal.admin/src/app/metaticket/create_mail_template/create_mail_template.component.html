@@ -1,0 +1,113 @@
+<nb-card [nbSpinner]="loading > 0">
+    <nb-card-header fullWidth>
+        <div class="inline-form-card w-100">
+            <label>Tạo mail template</label>
+        </div>
+    </nb-card-header>
+    <nb-card-body>
+        <div class="inline-form-card w-100">
+            <form class="form-inline" [formGroup]="editMailTemplateForm" (ngSubmit)="onSubmit()">
+                <div>
+                    <label>Id (*)</label>
+                    <input
+                        status="basic"
+                        id="id"
+                        [formControl]="idFormControl"
+                        required
+                        fullWidth
+                        nbInput
+                        type="text" />
+                </div>
+
+                <nb-card status="info">
+                    <nb-card-header>Mail content</nb-card-header>
+                    <nb-card-body>
+                        <div>
+                            <label>Root (*)</label>
+                            <textarea
+                                rows="10"
+                                status="basic"
+                                id="name"
+                                [formControl]="rootFormControl"
+                                required
+                                fullWidth
+                                nbInput
+                                type="text"></textarea>
+                        </div>
+                        <div>
+                            <label>Custom Field Item</label>
+                            <textarea
+                                status="basic"
+                                rows="5"
+                                id="customFieldItem"
+                                [formControl]="customFieldItemFormControl"
+                                fullWidth
+                                nbInput
+                                type="text"></textarea>
+                        </div>
+                        <div>
+                            <label>Price Item (*)</label>
+                            <textarea
+                                status="basic"
+                                rows="5"
+                                id="priceItem"
+                                [formControl]="priceItemFormControl"
+                                required
+                                fullWidth
+                                nbInput
+                                type="text"></textarea>
+                        </div>
+                        <div>
+                            <label>Promotion Item (*)</label>
+                            <textarea
+                                status="basic"
+                                rows="5"
+                                id="promotionItem"
+                                [formControl]="promotionItemFormControl"
+                                required
+                                fullWidth
+                                nbInput
+                                type="text"></textarea>
+                        </div>
+                    </nb-card-body>
+                </nb-card>
+
+                <nb-card status="info">
+                    <nb-card-header>Ticket PDF Attachments</nb-card-header>
+                    <nb-card-body>
+                        <div>
+                            <label>Template (*)</label>
+                            <textarea
+                                rows="10"
+                                status="basic"
+                                id="ticketPdfTemplate"
+                                [formControl]="ticketPdfTemplateFormControl"
+                                fullWidth
+                                nbInput
+                                type="text"></textarea>
+                        </div>
+                        <div>
+                            <label>File Name (*)</label>
+                            <input
+                                status="basic"
+                                id="ticketPdfFileName"
+                                [formControl]="ticketPdfFileNameFormControl"
+                                fullWidth
+                                nbInput
+                                type="text" />
+                        </div>
+                    </nb-card-body>
+                </nb-card>
+                <!--                <div>-->
+                <!--                    <ngx-editor-menu [editor]="editor"> </ngx-editor-menu>-->
+                <!--                    <ngx-editor [editor]="editor" [ngModel]="html" [disabled]="false" [placeholder]="'Type here...'"></ngx-editor>-->
+                <!--                </div>-->
+                <div>
+                    <button class="button" type="submit" nbButton>
+                        {{ template ? 'Cập nhật' : 'Tạo' }} mail template
+                    </button>
+                </div>
+            </form>
+        </div>
+    </nb-card-body>
+</nb-card>

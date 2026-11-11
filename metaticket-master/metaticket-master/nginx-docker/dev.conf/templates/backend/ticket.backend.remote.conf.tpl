@@ -1,0 +1,4 @@
+server {
+    listen $TICKET_BACKEND_CONNECT_PORT;
+    proxy_pass $METATICKET_REMOTE:$TICKET_BACKEND_LISTEN_PORT;
+}

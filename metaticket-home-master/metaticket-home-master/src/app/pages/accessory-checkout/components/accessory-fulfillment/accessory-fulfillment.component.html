@@ -1,0 +1,181 @@
+<div class="w-full flex flex-col max-w-2xl mx-auto">
+  <p nz-typography class="text-xl font-semibold text-black mb-1">Thông tin nhận hàng</p>
+  <p nz-typography class="text-sm text-gray-A4A4A4 mb-6">
+    Chọn hình thức nhận hàng: tại show, tại điểm Pickup META Ticket, hoặc giao tận nơi.
+  </p>
+
+  <div *ngIf="loadingShow" class="flex items-center justify-center py-10">
+    <app-loading [isSpinning]="true" [size]="'lg'" />
+  </div>
+
+  <ng-container *ngIf="!loadingShow">
+    <!-- Method selector — only modes enabled on the show -->
+    <div class="flex flex-col gap-3 mb-6">
+      <p nz-typography class="text-14-16 font-medium text-black">Hình thức nhận</p>
+      <div class="grid grid-cols-1 gap-3 laptop:grid-cols-3">
+        <button
+          *ngIf="enablePickupAtShow"
+          type="button"
+          class="flex flex-col items-start gap-1 rounded-2xl border px-5 py-4 text-left transition-colors"
+          [ngClass]="
+            isPickupAtShow
+              ? 'border-blue-163AEA bg-blue-50 text-blue-163AEA'
+              : 'border-gray-C9C9C9 text-black hover:bg-gray-50'
+          "
+          (click)="onFulfillmentTypeChange('PickupAtShow')"
+        >
+          <span class="text-14-16 font-semibold">Nhận tại show</span>
+          <span class="text-12-24 opacity-70">Pickup tại buổi diễn đã chọn</span>
+        </button>
+        <button
+          *ngIf="enableMetaTicketPickup"
+          type="button"
+          class="flex flex-col items-start gap-1 rounded-2xl border px-5 py-4 text-left transition-colors"
+          [ngClass]="
+            isMetaTicketPickup
+              ? 'border-blue-163AEA bg-blue-50 text-blue-163AEA'
+              : 'border-gray-C9C9C9 text-black hover:bg-gray-50'
+          "
+          (click)="onFulfillmentTypeChange('MetaTicketPickup')"
+        >
+          <span class="text-14-16 font-semibold">Nhận tại điểm Pickup của META Ticket</span>
+          <span class="text-12-24 opacity-70">Chọn văn phòng / điểm nhận META</span>
+        </button>
+        <button
+          *ngIf="enableDelivery"
+          type="button"
+          class="flex flex-col items-start gap-1 rounded-2xl border px-5 py-4 text-left transition-colors"
+          [ngClass]="
+            isDelivery
+              ? 'border-blue-163AEA bg-blue-50 text-blue-163AEA'
+              : 'border-gray-C9C9C9 text-black hover:bg-gray-50'
+          "
+          (click)="onFulfillmentTypeChange('Delivery')"
+        >
+          <span class="text-14-16 font-semibold">Giao tận nơi</span>
+          <span class="text-12-24 opacity-70">Nhập địa chỉ nhận hàng</span>
+        </button>
+      </div>
+      <p
+        *ngIf="!enablePickupAtShow && !enableMetaTicketPickup && !enableDelivery"
+        nz-typography
+        class="text-14-24 text-grey-757575"
+      >
+        Show chưa cấu hình hình thức nhận hàng.
+      </p>
+    </div>
+
+    <!-- Pickup at show: session picker -->
+    <div *ngIf="isPickupAtShow" class="flex flex-col gap-3 mb-2">
+      <ng-container *ngIf="hasSessions; else noSessions">
+        <p nz-typography class="text-14-16 font-medium text-black">Chọn buổi diễn nhận hàng</p>
+        <div class="flex flex-wrap gap-3">
+          <button
+            *ngFor="let session of sessions"
+            type="button"
+            class="flex flex-col items-start gap-0.5 rounded-2xl border px-5 py-3 text-left transition-colors"
+            [ngClass]="
+              fulfillmentForm.controls.showSessionId.value === session.id
+                ? 'border-blue-163AEA bg-blue-50 text-blue-163AEA'
+                : 'border-gray-C9C9C9 text-black hover:bg-gray-50'
+            "
+            (click)="onSessionChange(session.id)"
+          >
+            <span class="text-14-16 font-medium">{{ sessionLabel(session) }}</span>
+            <span class="text-12-24 opacity-70">{{ session.venue }}</span>
+          </button>
+        </div>
+      </ng-container>
+      <ng-template #noSessions>
+        <div class="rounded-xl border border-gray-C9C9C9 bg-gray-50 px-4 py-3">
+          <p nz-typography class="text-14-24 text-grey-757575">
+            Show này chưa có buổi diễn gắn kèm — đơn sẽ ghi nhận nhận tại show (không chọn session).
+          </p>
+        </div>
+      </ng-template>
+      <p *ngIf="show?.pickupNote" nz-typography class="text-12-24 text-grey-757575">
+        {{ show?.pickupNote }}
+      </p>
+    </div>
+
+    <!-- META Ticket pickup points from show.fulfillment -->
+    <div *ngIf="isMetaTicketPickup" class="flex flex-col gap-3 mb-2">
+      <p nz-typography class="text-14-16 font-medium text-black">Chọn điểm Pickup META Ticket</p>
+      <div *ngIf="pickupPoints.length === 0" class="rounded-xl border border-gray-C9C9C9 bg-gray-50 px-4 py-3">
+        <p nz-typography class="text-14-24 text-grey-757575">
+          Show chưa cấu hình điểm Pickup META Ticket.
+        </p>
+      </div>
+      <div *ngIf="pickupPoints.length > 0" class="flex flex-col gap-3">
+        <button
+          *ngFor="let point of pickupPoints"
+          type="button"
+          class="flex flex-col items-start gap-0.5 rounded-2xl border px-5 py-3 text-left transition-colors"
+          [ngClass]="
+            fulfillmentForm.controls.pickupPointId.value === point.id
+              ? 'border-blue-163AEA bg-blue-50 text-blue-163AEA'
+              : 'border-gray-C9C9C9 text-black hover:bg-gray-50'
+          "
+          (click)="onPickupPointChange(point.id)"
+        >
+          <span class="text-14-16 font-medium">{{ point.name }}</span>
+          <span class="text-12-24 opacity-70">{{ point.address }}</span>
+          <span *ngIf="point.note" class="text-12-24 opacity-70">{{ point.note }}</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Delivery address (post-merger: city + ward + address; no district) -->
+    <div *ngIf="isDelivery" class="flex flex-col gap-4 mb-2">
+      <div class="rounded-xl border border-blue-163AEA bg-blue-50 px-4 py-3">
+        <p nz-typography class="text-14-24 text-black">
+          Nhập thông tin theo địa chỉ sau sáp nhập
+        </p>
+      </div>
+      <div *ngIf="show?.deliveryNote" class="rounded-xl border border-red-400 bg-red-100 px-4 py-3">
+        <p nz-typography class="text-14-24 text-black">
+          📢 {{ show?.deliveryNote }}
+        </p>
+      </div>
+      <app-form-select
+        [label]="'Tỉnh/Thành phố'"
+        [placeholder]="'Chọn tỉnh/thành phố'"
+        [fontSize]="'sm'"
+        [options]="listProvincesData"
+        [formControl]="fulfillmentForm.controls.city"
+        [idSelectInput]="'accessory-delivery-province'"
+      />
+      <app-form-select
+        [label]="'Phường/Xã'"
+        [placeholder]="listWardsData.length ? 'Chọn phường/xã' : 'Chọn tỉnh/thành phố trước'"
+        [fontSize]="'sm'"
+        [options]="listWardsData"
+        [formControl]="fulfillmentForm.controls.ward"
+        [idSelectInput]="'accessory-delivery-ward'"
+      />
+      <app-form-input
+        [label]="'Địa chỉ'"
+        [placeholder]="'Số nhà, đường...'"
+        [fontSize]="'sm'"
+        [formControl]="fulfillmentForm.controls.address"
+      />
+      <app-form-input
+        [label]="'Ghi chú cho người giao'"
+        [placeholder]="'Tuỳ chọn'"
+        [fontSize]="'sm'"
+        [formControl]="fulfillmentForm.controls.note"
+      />
+    </div>
+  </ng-container>
+
+  <nz-divider class="my-6"></nz-divider>
+
+  <div class="w-full flex flex-col-reverse gap-3 laptop:flex-row laptop:justify-between">
+    <div class="w-full laptop:w-48">
+      <app-button [title]="'Quay lại'" [color]="'gray'" [disabled]="submitting" (handlerOnPressed)="onGoBack()" />
+    </div>
+    <div class="w-full laptop:w-64">
+      <app-button [title]="continueTitle" [disabled]="!canContinue" (handlerOnPressed)="onContinue()" />
+    </div>
+  </div>
+</div>

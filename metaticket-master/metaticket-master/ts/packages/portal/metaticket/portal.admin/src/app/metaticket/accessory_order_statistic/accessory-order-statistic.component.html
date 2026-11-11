@@ -1,0 +1,94 @@
+<nb-card [nbSpinner]="loading > 0">
+    <nb-card-header>
+        <div class="pb-2">
+            <strong>THỐNG KÊ BÁN HÀNG</strong>
+            <span class="hint ml-2" *ngIf="loadedFilterName">Filter: {{ loadedFilterName }}</span>
+        </div>
+        <div class="filter-bar">
+            <div class="field">
+                <label>Sự kiện bán hàng</label>
+                <nb-select
+                    fullWidth
+                    size="medium"
+                    placeholder="Chọn show…"
+                    [selected]="selectedShowId"
+                    (selectedChange)="onShowChange($event)"
+                >
+                    <nb-option *ngFor="let show of shows" [value]="show.id">
+                        {{ show.code }} — {{ show.name }} ({{ show.status }})
+                    </nb-option>
+                </nb-select>
+            </div>
+            <div class="field">
+                <label>Ngày truy vấn</label>
+                <input
+                    nbInput
+                    fullWidth
+                    placeholder="Khoảng ngày (tuỳ chọn)"
+                    [nbDatepicker]="rangepicker"
+                    [formControl]="rangepickerFormCtr"
+                />
+                <nb-rangepicker #rangepicker (rangeChange)="onDateSelected(rangepicker)"></nb-rangepicker>
+            </div>
+            <div class="actions">
+                <button nbButton status="primary" (click)="loadStatistic()">Truy vấn</button>
+                <button nbButton status="info" class="ml-2" (click)="saveFilter()">Lưu Filter</button>
+                <button
+                    nbButton
+                    ghost
+                    status="basic"
+                    class="ml-2"
+                    type="button"
+                    title="Tải Excel"
+                    (click)="downloadExcel()"
+                    [disabled]="!statistic"
+                >
+                    <nb-icon icon="download-outline"></nb-icon>
+                    Excel
+                </button>
+                <button nbButton class="ml-2" (click)="clear()">Clear</button>
+            </div>
+        </div>
+    </nb-card-header>
+
+    <nb-card-body>
+        <ng-container *ngIf="statistic as s">
+            <div class="stats-row">
+                <div class="stat-card">
+                    <div class="stat-label">Tổng đơn (khung lọc)</div>
+                    <div class="stat-value">{{ s.summary.totalOrders }}</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Đơn đã thanh toán</div>
+                    <div class="stat-value">{{ s.summary.paidOrders }}</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">SL sản phẩm bán</div>
+                    <div class="stat-value">{{ s.summary.unitsSold }}</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Doanh số</div>
+                    <div class="stat-value">{{ formatVnd(s.summary.grossSales) }}</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Giảm giá</div>
+                    <div class="stat-value">{{ formatVnd(s.summary.discountTotal) }}</div>
+                </div>
+                <div class="stat-card accent">
+                    <div class="stat-label">Doanh thu</div>
+                    <div class="stat-value">{{ formatVnd(s.summary.revenue) }}</div>
+                </div>
+            </div>
+            <p class="hint mb-3">
+                Doanh số / SL / Doanh thu / Giảm giá chỉ tính đơn <strong>Đã thanh toán</strong>.
+            </p>
+
+            <h6>Theo sản phẩm</h6>
+            <angular2-smart-table [source]="source" [settings]="settings"></angular2-smart-table>
+        </ng-container>
+
+        <div *ngIf="!statistic && !loading" class="empty-hint">
+            Chọn sự kiện bán hàng rồi bấm Truy vấn để xem thống kê.
+        </div>
+    </nb-card-body>
+</nb-card>

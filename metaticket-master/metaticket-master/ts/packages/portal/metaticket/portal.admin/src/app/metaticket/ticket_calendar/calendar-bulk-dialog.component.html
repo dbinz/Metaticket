@@ -1,0 +1,143 @@
+<div class="calendar-dialog">
+    <nb-card class="mb-0" [nbSpinner]="loading" [status]="isDelete ? 'danger' : 'basic'">
+        <nb-card-header>{{ isDelete ? 'Xóa ngày' : 'Sửa hàng loạt' }}</nb-card-header>
+        <nb-card-body *ngIf="resultMessage === null">
+            <div class="form-row">
+                <label>Khoảng ngày (*)</label>
+                <input
+                    nbInput
+                    fullWidth
+                    placeholder="Chọn khoảng ngày"
+                    [nbDatepicker]="rangePicker"
+                    [(ngModel)]="range"
+                    (ngModelChange)="confirmingDelete = false" />
+                <nb-rangepicker #rangePicker></nb-rangepicker>
+                <span class="hint"
+                    >Thời gian của suất: {{ displayYmd(sessionFrom) }} – {{ displayYmd(sessionTo) }}</span
+                >
+            </div>
+
+            <div class="form-row">
+                <label>Thứ trong tuần</label>
+                <div class="weekday-list">
+                    <nb-checkbox
+                        *ngFor="let d of weekdays"
+                        [checked]="selectedDays.has(d.value)"
+                        (checkedChange)="toggleDay(d.value, $event)">
+                        {{ d.label }}
+                    </nb-checkbox>
+                </div>
+                <span class="hint">Không chọn thứ nào = mọi ngày trong khoảng.</span>
+            </div>
+
+            <div class="form-row">
+                <label>Loại vé</label>
+                <nb-select
+                    fullWidth
+                    multiple
+                    placeholder="Mọi loại vé"
+                    [(selected)]="selectedCategories"
+                    (selectedChange)="confirmingDelete = false">
+                    <nb-option *ngFor="let c of categories" [value]="c.category">{{ c.displayName }}</nb-option>
+                </nb-select>
+            </div>
+
+            <ng-container *ngIf="!isDelete">
+                <div class="form-row two-col">
+                    <div>
+                        <nb-checkbox [(ngModel)]="changePrice">Đổi giá</nb-checkbox>
+                        <input
+                            nbInput
+                            fullWidth
+                            type="number"
+                            min="0"
+                            placeholder="Giá mới (đ)"
+                            [disabled]="!changePrice"
+                            [(ngModel)]="price" />
+                    </div>
+                    <div>
+                        <nb-checkbox [(ngModel)]="changeQuota">Đổi số lượng</nb-checkbox>
+                        <input
+                            nbInput
+                            fullWidth
+                            type="number"
+                            min="1"
+                            placeholder="Số lượng mới"
+                            [disabled]="!changeQuota"
+                            [(ngModel)]="quota" />
+                    </div>
+                </div>
+                <div class="form-row two-col">
+                    <div>
+                        <label>Trạng thái bán</label>
+                        <nb-select fullWidth [(selected)]="status">
+                            <nb-option value="KEEP">Không đổi</nb-option>
+                            <nb-option value="OPEN">Mở bán</nb-option>
+                            <nb-option value="CLOSED">Ngừng bán</nb-option>
+                        </nb-select>
+                    </div>
+                    <div>
+                        <nb-checkbox [(ngModel)]="changeCapacity">Đổi sức chứa cả ngày</nb-checkbox>
+                        <input
+                            nbInput
+                            fullWidth
+                            type="number"
+                            min="1"
+                            placeholder="Sức chứa mới"
+                            [disabled]="!changeCapacity"
+                            [(ngModel)]="capacity" />
+                    </div>
+                </div>
+                <p class="hint">
+                    Ngày đã có vé bán hoặc đang giữ chỉ được tăng số lượng hoặc ngừng bán: không đổi giá, không giảm số
+                    lượng. Những ô đó và ngày đã qua sẽ được bỏ qua và liệt kê sau khi lưu. Trạng thái và sức chứa áp
+                    cho cả ngày, không theo loại vé.
+                </p>
+            </ng-container>
+
+            <ng-container *ngIf="isDelete">
+                <p class="hint">
+                    Chỉ xóa được vé chưa có ai mua/giữ. Một ngày chỉ bị xóa hẳn khi mọi loại vé của ngày đó đã bị xóa.
+                </p>
+            </ng-container>
+
+            <div class="preview-box">
+                <b>{{ matchedDateCount }}</b> ngày khớp lựa chọn
+                <ng-container *ngIf="fromDate && toDate"
+                    >({{ displayYmd(fromDate) }} – {{ displayYmd(toDate) }})</ng-container
+                >
+            </div>
+            <div class="confirm-box" *ngIf="confirmingDelete">
+                Xác nhận xóa vé của {{ matchedDateCount }} ngày, loại vé:
+                {{ selectedCategories.length ? selectedCategories.length + ' loại đã chọn' : 'tất cả' }}? Không thể hoàn
+                tác.
+            </div>
+        </nb-card-body>
+
+        <nb-card-body *ngIf="resultMessage !== null">
+            <p>
+                {{ resultMessage }}
+                <ng-container *ngIf="skippedTotal">Bỏ qua {{ skippedTotal }} ô:</ng-container>
+            </p>
+            <ul class="skip-list" *ngIf="skippedLines.length">
+                <li *ngFor="let line of skippedLines">{{ line }}</li>
+            </ul>
+            <p class="hint" *ngIf="skippedTotal > skippedLines.length">
+                … và {{ skippedTotal - skippedLines.length }} ô khác.
+            </p>
+        </nb-card-body>
+
+        <nb-card-footer class="dialog-footer">
+            <button nbButton type="button" (click)="cancel()">Đóng</button>
+            <button
+                nbButton
+                type="button"
+                *ngIf="resultMessage === null"
+                [status]="isDelete ? 'danger' : 'primary'"
+                [disabled]="loading"
+                (click)="onSubmit()">
+                {{ isDelete ? (confirmingDelete ? 'Xác nhận xóa' : 'Xóa') : 'Lưu thay đổi' }}
+            </button>
+        </nb-card-footer>
+    </nb-card>
+</div>

@@ -1,0 +1,115 @@
+<!-- Error state: shown when a slug resolution fails with a non-not-found error or times out.
+     The booking content is gated on !error so the booking page is never shown and the URL is preserved (Requirement 10.5). -->
+<app-layout *ngIf="error || !isSeatMapStep" [isDarkMode]="false" [isLoading]="isLoading">
+  <div *ngIf="error" class="flex flex-col">
+    <app-navbar />
+    <div class="flex flex-col items-center justify-center text-center gap-3 py-20 px-5">
+      <p class="text-20-24 font-semibold">Không thể tải trang đặt vé</p>
+      <p class="text-16-24 opacity-80">Đã xảy ra lỗi khi tải thông tin đặt vé. Vui lòng thử lại sau.</p>
+    </div>
+  </div>
+
+  <ng-container *ngIf="!error" [ngTemplateOutlet]="header" />
+  <div *ngIf="!error"
+    class="w-full flex flex-col items-center bg-white px-5 pt-6 pb-8 laptop:px-0 laptop:pt-5 laptop:pb-16">
+    <!-- Hiện ở mọi kích thước màn hình: mobile và in-app WebView là nhóm dễ bị chặn popup nhất. -->
+    <blocker-warning-banner class="w-full laptop:w-3/4" />
+    <div class="w-full min-h-[500px] flex items-center justify-center">
+      <div class="w-full flex flex-row items-start laptop:w-3/4">
+        <div *ngIf="!isLoading" class="w-full flex-1">
+          <ng-container *ngComponentOutlet="steps[currentIndex].component"></ng-container>
+        </div>
+      </div>
+    </div>
+  </div>
+</app-layout>
+
+<!-- Bước chọn ghế: toàn màn hình, nền tối để sơ đồ chỗ ngồi nổi bật. Không navbar/footer/breadcrumb. -->
+<div *ngIf="!error && isSeatMapStep" class="w-full min-h-screen flex flex-col bg-[#030b29]">
+  <ng-container [ngTemplateOutlet]="seatMapTopBar" />
+  <div class="w-full flex-1 flex justify-center px-4 pb-4 laptop:px-6 laptop:pb-6">
+    <div *ngIf="!isLoading" class="w-full max-w-[1440px]">
+      <ng-container *ngComponentOutlet="steps[currentIndex].component"></ng-container>
+    </div>
+  </div>
+</div>
+
+<!--thanh điều hướng gọn của bước chọn ghế-->
+<ng-template #seatMapTopBar>
+  <div
+    class="sticky top-0 z-[1200] w-full flex items-center gap-3 px-4 py-3 bg-[#030b29]/95 backdrop-blur laptop:px-6">
+    <button type="button"
+      class="shrink-0 w-10 h-10 flex items-center justify-center rounded-full bg-white text-black text-xl font-bold hover:bg-[#F97316] hover:text-white focus:outline-none focus:ring-2 focus:ring-yellow-FED80B"
+      aria-label="Quay lại trang chi tiết sự kiện" (click)="goToShowDetail()">
+      <svg class="h-6 w-6" width="24" height="24" viewBox="0 0 24 24" stroke-width="2"
+        stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+        <path stroke="none" d="M0 0h24v24H0z" />
+        <line x1="5" y1="12" x2="19" y2="12" />
+        <line x1="5" y1="12" x2="9" y2="16" />
+        <line x1="5" y1="12" x2="9" y2="8" />
+      </svg>
+    </button>
+
+    <div class="flex-1 min-w-0 flex flex-col">
+      <p nz-typography class="one-line-text text-sm font-semibold text-white laptop:text-base">
+        {{ showDetail?.showName }}
+      </p>
+      <p *ngIf="!hasMultipleSessions()" nz-typography class="one-line-text text-xs text-white/60 laptop:text-sm">
+        {{ currentSession?.venue }} | {{ formatDate(currentSession?.startTime) }}
+      </p>
+    </div>
+
+    <!--chỉ hiện khi show có nhiều hơn một suất đang mở-->
+    <div *ngIf="hasMultipleSessions()" nz-dropdown [nzDropdownMenu]="menu" [nzTrigger]="'click'"
+      class="shrink-0 max-w-[55%] flex items-center gap-x-2 px-3 py-2 rounded-full border border-white/40 cursor-pointer hover:border-white laptop:max-w-none laptop:px-4">
+      <p nz-typography class="one-line-text text-xs text-white font-medium laptop:text-sm">
+        {{ formatDate(currentSession?.startTime) }}
+      </p>
+      <app-image [sx]="'w-4 h-4 max-w-4'" [src]="appIcons.icArrowBottomWhite" />
+    </div>
+  </div>
+</ng-template>
+
+<!--header-->
+<ng-template #header>
+  <div class="w-full flex flex-col bg-blue-163AEA relative">
+    <app-navbar />
+    <div class="w-full flex justify-center px-5 pt-4 pb-8 laptop:px-0">
+      <div class="w-full flex flex-col gap-y-1 laptop:w-3/4">
+        <nz-breadcrumb>
+          <nz-breadcrumb-item class="text-sm text-white opacity-60 leading-6 font-medium tablet:text-base">
+            Trang chủ
+          </nz-breadcrumb-item>
+          <nz-breadcrumb-item class="text-sm text-white opacity-60 leading-6 font-medium tablet:text-base">
+            <a class="text-white cursor-pointer hover:underline" tabindex="0" (click)="goToShowDetail()"
+              (keydown.enter)="goToShowDetail()">Sự kiện</a>
+          </nz-breadcrumb-item>
+          <nz-breadcrumb-item class="text-sm text-white leading-6 font-medium tablet:text-base">
+            {{ showDetail?.showName }}
+          </nz-breadcrumb-item>
+        </nz-breadcrumb>
+        <p nz-typography
+          class="hidden tablet:block text-2xl font-medium text-white leading-120pct mt-1 mb-5 tablet:text-[32px]">
+          {{ showDetail?.showName }}
+        </p>
+        <div *ngIf="showDetail" nz-dropdown [nzDropdownMenu]="menu" [nzTrigger]="'click'"
+          class="z-10 mt-2 tablet:mt-0 w-full px-4 py-3 gap-x-8 flex items-center justify-between border border-white rounded-full laptop:w-2/3">
+          <p nz-typography class="text-base text-white font-medium one-line-text">
+            {{ currentSession?.venue }} | {{ sessionTimeLabel(currentSession, visitDate$ | async) }}
+          </p>
+          <app-image [sx]="'w-5 h-5 max-w-5'" [src]="appIcons.icArrowBottomWhite" />
+        </div>
+      </div>
+    </div>
+    <app-image [sx]="'hidden md:block absolute bottom-0 right-0 z-1'" [src]="appIcons.icGridBooking" />
+  </div>
+</ng-template>
+
+<nz-dropdown-menu #menu="nzDropdownMenu">
+  <ul nz-menu nzSelectable class="p-2 rounded-2xl">
+    <button *ngFor="let session of getOpenSessions()" nz-menu-item
+      class="w-full text-sm leading-6 text-black font-medium p-2" (click)="onChangeSession(session)">
+      {{ sessionOptionLabel(session) }} | {{ session.venue }}
+    </button>
+  </ul>
+</nz-dropdown-menu>

@@ -1,0 +1,49 @@
+<nb-card [nbSpinner]="loading > 0">
+    <nb-card-header fullWidth>
+        <div class="inline-form-card w-100 d-flex align-items-center justify-content-between flex-wrap">
+            <div>
+                <strong>Sản phẩm (phụ kiện)</strong>
+                <span class="hint ml-2">Chọn sự kiện bán hàng để xem danh sách sản phẩm</span>
+            </div>
+            <button
+                nbButton
+                status="primary"
+                [disabled]="!selectedShowId"
+                (click)="createProduct()"
+            >
+                Tạo mới
+            </button>
+        </div>
+    </nb-card-header>
+    <nb-card-body>
+        <div class="filter-row mb-3">
+            <label class="filter-label">Sự kiện bán hàng</label>
+            <nb-select
+                fullWidth
+                size="medium"
+                placeholder="Chọn show…"
+                [selected]="selectedShowId"
+                (selectedChange)="onShowChange($event)"
+            >
+                <nb-option *ngFor="let show of shows" [value]="show.id">
+                    {{ show.code }} — {{ show.name }} ({{ show.status }})
+                </nb-option>
+            </nb-select>
+            <p class="empty-hint" *ngIf="!loading && shows.length === 0">
+                Chưa có sự kiện bán hàng. Tạo show trước tại
+                <a routerLink="/portal/accessory/shows">Sự kiện bán hàng</a>.
+            </p>
+            <p class="empty-hint" *ngIf="!loading && shows.length > 0 && !selectedShowId">
+                Chọn một show để tải danh sách sản phẩm.
+            </p>
+        </div>
+
+        <angular2-smart-table
+            *ngIf="selectedShowId"
+            (custom)="onCustomButton($event)"
+            [source]="source"
+            [settings]="settings"
+        >
+        </angular2-smart-table>
+    </nb-card-body>
+</nb-card>

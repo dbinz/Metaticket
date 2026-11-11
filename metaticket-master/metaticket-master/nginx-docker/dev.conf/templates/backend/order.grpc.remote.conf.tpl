@@ -1,0 +1,4 @@
+server {
+    listen $ORDER_GRPC_CONNECT_PORT;
+    proxy_pass $METATICKET_REMOTE:$ORDER_GRPC_LISTEN_PORT;
+}

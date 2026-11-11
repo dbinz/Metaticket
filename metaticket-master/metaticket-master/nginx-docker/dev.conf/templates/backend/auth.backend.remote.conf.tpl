@@ -1,0 +1,4 @@
+server {
+    listen $AUTH_BACKEND_CONNECT_PORT;
+    proxy_pass $METATICKET_REMOTE:$AUTH_BACKEND_LISTEN_PORT;
+}

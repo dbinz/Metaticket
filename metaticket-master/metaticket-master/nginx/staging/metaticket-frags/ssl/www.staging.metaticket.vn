@@ -1,0 +1,3 @@
+include /etc/nginx/metaticket-frags/ssl-params;
+ssl_certificate     /etc/letsencrypt/live/www.staging.metaticket.vn/fullchain.pem;
+ssl_certificate_key /etc/letsencrypt/live/www.staging.metaticket.vn/privkey.pem;

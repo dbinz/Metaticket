@@ -1,0 +1,144 @@
+<nb-card [nbSpinner]="loading.value" [status]="!formGroup.invalid ? 'info' : 'warning'" class="mt-2 w-100">
+    <nb-card-header class="d-flex">
+        <span class="font-weight-bold mr-auto"
+            >HẠNG VÉ: {{ displayNameFormControl.value || categoryFormControl.value }}</span
+        >
+        <nb-icon
+            *ngIf="!editMode?.value && !['Open'].includes(session.status)"
+            icon="edit-2-outline"
+            (click)="switchEditMode()"
+            class="mr-2 pointer"></nb-icon>
+        <nb-icon
+            *ngIf="!['Open'].includes(session.status)"
+            icon="trash-2-outline"
+            (click)="remove()"
+            class="pointer"></nb-icon>
+    </nb-card-header>
+    <nb-card-body>
+        <div class="form-inline">
+            <div>
+                <label
+                    [ngClass]="{
+                        error:
+                            displayNameFormControl.invalid &&
+                            (displayNameFormControl.dirty || displayNameFormControl.touched),
+                    }"
+                    >Tên hạng vé (*)</label
+                >
+                <input
+                    [status]="
+                        displayNameFormControl.invalid &&
+                        (displayNameFormControl.dirty || displayNameFormControl.touched)
+                            ? 'danger'
+                            : 'basic'
+                    "
+                    [formControl]="displayNameFormControl"
+                    [readOnly]="!editMode?.value"
+                    required
+                    fullWidth
+                    nbInput
+                    type="text" />
+            </div>
+            <div [class.invisible]="!seatplanCategory">
+                <ng-container *ngIf="newly.value">
+                    <label
+                        [ngClass]="{
+                            error:
+                                categoryFormControl.invalid &&
+                                (categoryFormControl.dirty || categoryFormControl.touched),
+                        }"
+                        >Category (*)</label
+                    >
+                    <nb-select
+                        disabled
+                        [status]="
+                            categoryFormControl.invalid && (categoryFormControl.dirty || categoryFormControl.touched)
+                                ? 'danger'
+                                : 'basic'
+                        "
+                        [formControl]="categoryFormControl"
+                        [required]="seatplanCategory && true"
+                        fullWidth>
+                        <nb-option *ngFor="let o of seatplanCategory?.catNames" [value]="o">{{ o }}</nb-option>
+                    </nb-select>
+                </ng-container>
+                <ng-container *ngIf="!newly.value">
+                    <label>Category</label>
+                    <input readonly fullWidth nbInput type="text" [value]="categoryFormControl.value" />
+                </ng-container>
+            </div>
+            <div>
+                <label
+                    [ngClass]="{
+                        error: priceFormControl.invalid && (priceFormControl.dirty || priceFormControl.touched),
+                    }"
+                    >Giá vé (*)</label
+                >
+                <input
+                    [status]="
+                        priceFormControl.invalid && (priceFormControl.dirty || priceFormControl.touched)
+                            ? 'danger'
+                            : 'basic'
+                    "
+                    [formControl]="priceFormControl"
+                    [readOnly]="!editMode?.value"
+                    required
+                    fullWidth
+                    nbInput
+                    type="number" />
+            </div>
+            <div>
+                <label
+                    [ngClass]="{
+                        error: colorFormControl.invalid && (colorFormControl.dirty || colorFormControl.touched),
+                    }"
+                    >Màu vé</label
+                >
+                <input
+                    [status]="
+                        colorFormControl.invalid && (colorFormControl.dirty || colorFormControl.touched)
+                            ? 'danger'
+                            : 'basic'
+                    "
+                    [formControl]="colorFormControl"
+                    [readOnly]="!editMode?.value"
+                    fullWidth
+                    nbInput
+                    type="text" />
+            </div>
+            <div>
+                <label>Thời gian mở bán</label>
+                <div class="d-flex" fullWidth>
+                    <input
+                        [formControl]="openDateFormControl"
+                        [nbDatepicker]="openDatepicker"
+                        [readOnly]="!editMode?.value"
+                        [style.pointer-events]="!editMode?.value ? 'none' : 'all'"
+                        fullWidth
+                        nbInput />
+                    <nb-date-timepicker [hidden]="true" #openDatepicker></nb-date-timepicker>
+                </div>
+            </div>
+            <div>
+                <label>Thời gian dừng bán</label>
+                <div class="d-flex" fullWidth>
+                    <input
+                        [formControl]="closeDateFormControl"
+                        [nbDatepicker]="closeDatepicker"
+                        [readOnly]="!editMode?.value"
+                        [style.pointer-events]="!editMode?.value ? 'none' : 'all'"
+                        fullWidth
+                        nbInput />
+                    <nb-date-timepicker #closeDatepicker></nb-date-timepicker>
+                </div>
+            </div>
+        </div>
+    </nb-card-body>
+
+    <nb-card-footer *ngIf="editMode?.value && !['Open'].includes(session.status)" class="w-100">
+        <button *ngIf="newly.value" nbButton (click)="createEvent.emit()" status="primary">TẠO HẠNG VÉ</button>
+        <button *ngIf="!newly.value" nbButton (click)="updateEvent.emit()" status="info" appearance="outline">
+            CẬP NHẬT
+        </button>
+    </nb-card-footer>
+</nb-card>

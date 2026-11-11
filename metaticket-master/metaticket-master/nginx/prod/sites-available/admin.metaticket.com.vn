@@ -1,0 +1,52 @@
+# Define upstreams for backend services
+# Upstreams are defined in metaticket-upstream-server which is included in metaticket.com.vn
+# Since they are in the same http context, we don't need to include them again here.
+
+#server {
+#   listen 80;
+#   server_name admin.metaticket.com.vn;
+
+#   location / {
+#       return 301 https://$host$request_uri;
+#   }
+#}
+
+server {
+    listen 443 ssl;
+    listen [::]:443 ssl;
+
+    #root /opt/metaticket/static/portal/portal.admin;
+    #index index.html;
+
+    server_name admin.metaticket.com.vn;
+
+    include /etc/nginx/metaticket-frags/ssl/admin.metaticket.com.vn;
+
+    # Gzip Configuration - Enhanced
+    gzip on;
+    gzip_types      text/plain application/xml application/javascript text/css application/json image/svg+xml; # Added more types
+    gzip_proxied    no-cache no-store private expired auth;
+    gzip_min_length 1000;
+
+    # Internal location dùng để auth_request
+    location = /internal/authenticate {
+        internal;
+        proxy_pass http://authentication_service/internal/authentication/check-login; # Using upstream
+        proxy_pass_request_body off;
+        proxy_set_header Content-Length "";
+        proxy_set_header X-Original-URI $request_uri;
+        proxy_set_header Authorization $http_authorization;
+    }
+
+    include /etc/nginx/metaticket-frags/metaticket-public-api;
+    include /etc/nginx/metaticket-frags/metaticket-private-api;
+    include /etc/nginx/metaticket-frags/metaticket-portal;
+    include /etc/nginx/metaticket-frags/metaticket-modules;
+
+    location / {
+        root /opt/metaticket/static/portal/portal.admin;
+        index index.html;
+        add_header Access-Control-Allow-Origin *;
+        try_files $uri $uri/ /index.html;
+    }
+}

@@ -1,0 +1,74 @@
+<ng-container *ngIf="(selectedOrder | async) === undefined; else slotManagerView">
+  <app-layout [isDarkMode]="false">
+    <div class="w-full flex flex-col">
+      <div class="bg-blue-163AEA">
+        <app-navbar></app-navbar>
+      </div>
+      <div class="flex flex-col md:flex-row bg-gray-100 min-h-screen">
+        <!-- Sidebar -->
+        <aside class="md:w-1/4 p-4">
+          <div class="text-sm text-gray-600 mb-4">
+            <span>Trang chủ</span> / <span class="font-semibold text-black">Quản lý vé</span>
+          </div>
+
+          <!-- Tabs -->
+          <div class="flex md:flex-col border-b md:border-none">
+            <button class="py-2 px-4 text-gray-400 hover:text-black md:text-left md:rounded-full md:bg-transparent text-black font-semibold border-b-2 border-blue-500 md:bg-white">
+              Quản lý vé
+            </button>
+            <button
+              class="py-2 px-4 text-gray-400 hover:text-black md:text-left md:rounded-full md:bg-transparent"
+              [routerLink]="['/' + routeName.orderManager]">
+              Quản lý đơn hàng
+            </button>
+            <button class="py-2 px-4 text-gray-400 hover:text-black md:text-left md:rounded-full md:bg-transparent"
+                    [routerLink]="['/thong-tin-tai-khoan']">
+              Thông tin tài khoản
+            </button>
+          </div>
+        </aside>
+
+        <!-- Order Content -->
+        <main class="flex-1 p-4">
+          <div class="bg-white rounded-2xl p-4 md:p-6 shadow-sm">
+            <h2 class="text-sm font-semibold mb-4 uppercase">Danh sách đơn hàng</h2>
+            <ng-container *ngIf="ticketSlotsByOrders | async as orders; else loadingOrder">
+              <div *ngIf="orders.length > 0; else noOrders">
+                <div *ngFor="let ticketSlots of orders"
+                     role="button"
+                     tabindex="0"
+                     (click)="selectOrder(ticketSlots)"
+                     (keydown.enter)="selectOrder(ticketSlots)"
+                     class="flex flex-col md:flex-row gap-4 mb-6 cursor-pointer">
+                  <img [src]="ticketSlots.bannerUrl" alt="ticket image" class="w-full md:w-[260px] rounded-lg object-cover" />
+                  <div>
+                    <h3 class="font-semibold mb-1">{{ ticketSlots.evenName }}</h3>
+                    <p class="text-sm text-gray-600">{{ ticketSlots.venus }}</p>
+                    <p class="text-sm text-gray-600 mb-1">{{ ticketSlots.visitDate ? visitDateLabel(ticketSlots.visitDate, ticketSlots.calendar) : formatDate(ticketSlots.eventTime) }}</p> <!-- Consider if this line is redundant or has a specific purpose -->
+                    <p class="text-sm text-gray-400">Order code: {{ ticketSlots.orderCode }}</p>
+                  </div>
+                </div>
+              </div>
+              <ng-template #noOrders>
+                <p class="text-center text-gray-500 py-8">Bạn chưa có đơn hàng nào.</p>
+              </ng-template>
+            </ng-container>
+            <ng-template #loadingOrder>
+              <div class="w-full flex items-center justify-center h-[300px]">
+                <app-loading />
+              </div>
+            </ng-template>
+          </div>
+        </main>
+      </div>
+    </div>
+  </app-layout>
+</ng-container>
+
+<ng-template #slotManagerView>
+  <app-ticket-slots
+    [ticketSlotsByOrderData]="selectedOrder | async"
+    (backToList)="goBackToOrderList()"
+    (ticketTransferred)="reloadTicketSlots()">
+  </app-ticket-slots>
+</ng-template>

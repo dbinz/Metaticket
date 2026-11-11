@@ -1,0 +1,32 @@
+<section
+  role="alertdialog"
+  aria-modal="true"
+  aria-labelledby="maintenance-title"
+  aria-describedby="maintenance-description"
+  class="fixed inset-0 z-[2147483647] flex min-h-[100dvh] items-center justify-center overflow-y-auto bg-[#f5f7fc] p-6 font-sans text-[#172239]"
+>
+  <div class="my-auto w-full max-w-[520px] rounded-3xl border border-[#e4e9f2] bg-white px-7 py-10 text-center">
+    <!-- /assets stays reachable while the gate is closed (exempt in nginx/maintenance/http.conf). -->
+    <img [src]="appIcons.icLogoLightMode" alt="MetaTicket" class="mx-auto mb-6 block h-[33px] w-[184px]" />
+    <h1 id="maintenance-title" class="mb-3 mt-5 text-2xl font-bold leading-tight sm:text-[32px]">Hệ thống đang bảo trì</h1>
+    <p id="maintenance-description" class="leading-relaxed text-[#526079]">
+      Chúng tôi đang cập nhật hệ thống để phục vụ bạn tốt hơn. Vui lòng thử lại sau.
+    </p>
+    <button
+      type="button"
+      class="mt-7 rounded-xl bg-[#175cd3] px-7 py-3 font-semibold text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 disabled:opacity-60"
+      [disabled]="isChecking"
+      (click)="retry()"
+    >
+      {{ isChecking ? 'Đang kiểm tra…' : 'Thử lại' }}
+    </button>
+    <p aria-live="polite" class="mt-4 text-sm text-[#526079]">
+      @if (maintenance.hasCheckFailed$ | async) {
+        Chưa thể kiểm tra trạng thái hệ thống. Vui lòng thử lại sau.
+      }
+    </p>
+    <p class="mt-6 text-sm leading-relaxed text-[#526079]">
+      Nếu bạn vừa thanh toán, vui lòng kiểm tra đơn hàng khi hệ thống hoạt động trở lại trước khi thanh toán thêm.
+    </p>
+  </div>
+</section>

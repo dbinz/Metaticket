@@ -1,0 +1,96 @@
+{
+	"info": {
+		"_postman_id": "ee39403b-0e34-4156-82ac-e78d219d741e",
+		"name": "metaticket_show",
+		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json",
+		"_exporter_id": "1394169",
+		"_collection_link": "https://metaticket.postman.co/workspace/metaticket~466a8b95-4177-4d10-8fb9-ccf969abdd7e/collection/1394169-ee39403b-0e34-4156-82ac-e78d219d741e?action=share&creator=1394169&source=collection_link"
+	},
+	"item": [
+		{
+			"name": "create show",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"name\": \"aa\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": "{{base_show_url}}/show/create"
+			},
+			"response": []
+		},
+		{
+			"name": "get show",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{base_show_url}}/show/fetch?id=64b4fa9737f9f26f5a06745c",
+					"host": [
+						"{{base_show_url}}"
+					],
+					"path": [
+						"show",
+						"fetch"
+					],
+					"query": [
+						{
+							"key": "id",
+							"value": "64b4fa9737f9f26f5a06745c"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "get show sessions",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{base_show_url}}/show/session/fetch?showId=64b4fa9737f9f26f5a06745c",
+					"host": [
+						"{{base_show_url}}"
+					],
+					"path": [
+						"show",
+						"session",
+						"fetch"
+					],
+					"query": [
+						{
+							"key": "showId",
+							"value": "64b4fa9737f9f26f5a06745c"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "create show session",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"showId\": \"64b4fa9737f9f26f5a06745c\",\n    \"seatPlanId\": \"64af6d185b22d143fea712d6\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": "{{base_show_url}}/show/session/create"
+			},
+			"response": []
+		}
+	]
+}

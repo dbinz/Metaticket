@@ -1,0 +1,201 @@
+<div *ngIf="isLoading" class="w-full flex items-center justify-center h-[500px]">
+  <app-loading />
+</div>
+
+<div *ngIf="!isLoading"
+  class="w-full flex flex-col items-center bg-grey-F4F4F4 rounded-[30px] pt-9 px-6 pb-6 laptop:px-0 laptop:pt-13 laptop:pb-28">
+  <div class="flex flex-col items-center gap-y-4 pb-6">
+    <app-image [src]="appIcons.icSuccess" [sx]="'w-10 h-10 laptop:w-15 laptop:h-15'" />
+    <p nz-typography class="text-2xl leading-120pct font-medium text-black text-stroke-2">
+      Đặt hàng thành công
+    </p>
+  </div>
+  <div class="w-full flex flex-col gap-y-5 laptop:w-10/12 laptop:gap-y-17.5">
+    <ng-container [ngTemplateOutlet]="paymentInfo" />
+    <div class="flex flex-col gap-y-5 laptop:flex-row laptop:gap-x-20 laptop:gap-y-0">
+      <ng-container [ngTemplateOutlet]="orderDetail" />
+      <div class="flex flex-col gap-y-5 laptop:flex-1 laptop:gap-y-10">
+        <ng-container [ngTemplateOutlet]="buyerInfo" />
+        <ng-container *ngIf="orderSummary?.recipientInfo" [ngTemplateOutlet]="recipientInfo" />
+      </div>
+    </div>
+  </div>
+  <app-button class="w-[240px] mt-10" [title]="'Tiếp tục mua'" [isLoading]="isLoading" [disabled]="false"
+    (handlerOnPressed)="onGoBack()" />
+</div>
+
+<ng-template #paymentInfo>
+  <div
+    class="grid grid-cols-2 gap-10 pb-6 border-b border-b-black-10 laptop:flex laptop:flex-row laptop:justify-between laptop:p-0 laptop:border-0 text-stroke-2">
+    <div class="flex flex-col">
+      <p nz-typography class="text-sm leading-normal text-black opacity-60">
+        Thời gian
+      </p>
+      <p nz-typography class="text-base text-black font-medium">
+        {{ orderSummary?.paymentInfo?.payTime }}
+      </p>
+    </div>
+    <div *ngIf="visitDateLabel" class="flex flex-col">
+      <p nz-typography class="text-sm leading-normal text-black opacity-60">
+        Ngày tham quan
+      </p>
+      <p nz-typography class="text-base text-black font-medium">
+        {{ visitDateLabel }}
+      </p>
+    </div>
+    <div class="flex flex-col">
+      <p nz-typography class="text-sm leading-normal text-black opacity-60">
+        Mã đơn hàng
+      </p>
+      <p nz-typography class="text-base text-black font-medium">
+        {{ orderSummary?.orderCode }}
+      </p>
+    </div>
+    <div class="flex flex-col">
+      <p nz-typography class="text-sm leading-normal text-black opacity-60">
+        Phương thức thanh toán
+      </p>
+      <p nz-typography class="text-base text-black font-medium">
+        {{ orderSummary?.paymentInfo?.payMethod }}
+      </p>
+    </div>
+    <div class="flex flex-col">
+      <p nz-typography class="text-sm leading-normal text-black opacity-60">
+        Trạng thái
+      </p>
+      <p nz-typography class="text-base text-black font-medium">
+        {{ orderSummary?.paymentInfo?.payStatus }}
+      </p>
+    </div>
+  </div>
+</ng-template>
+
+<!--order detail-->
+<ng-template #orderDetail>
+  <div
+    class="flex flex-col gap-y-5 pb-8 border-b border-b-black-10 laptop:flex-1 laptop:p-0 laptop:border-0 text-stroke-2">
+    <div class="laptop:pb-5 laptop:border-b laptop:border-b-black-10">
+      <p nz-typography class="text-base text-black font-medium uppercase">
+        chi tiết đơn hàng
+      </p>
+    </div>
+    <div class="flex flex-col gap-y-8">
+      <div class="flex flex-col gap-y-4 laptop:gap-y-5">
+        <ng-container *ngFor="let ticket of orderTickets" [ngTemplateOutlet]="ticketItem"
+          [ngTemplateOutletContext]="{name: ticket.name, price: ticket.price, quantity: ticket.quantity}" />
+        <div class="flex flex-col gap-y-4 laptop:gap-y-5">
+          <div *ngFor="let promotion of orderSummary?.orderDetail?.promotions"
+            class="flex flex-row items-center justify-between">
+            <p nz-typography class="text-sm leading-normal text-black">
+              {{ promotion.name }}
+            </p>
+            <p nz-typography class="text-sm leading-normal text-black font-medium">
+              {{ promotion.price | formatPrice }}
+            </p>
+          </div>
+        </div>
+        <div class="flex flex-row items-center justify-between">
+          <p nz-typography class="text-xl leading-normal text-black font-medium">
+            Tổng
+          </p>
+          <p nz-typography class="text-xl leading-normal text-black font-semibold">
+            {{ orderSummary?.orderDetail?.total ?? 0 | formatPrice }}
+          </p>
+        </div>
+      </div>
+      <p nz-typography class="text-xs leading-normal text-black-60">
+        *Thông tin xác nhận đơn hàng sẽ được gửi đến địa chỉ email trong vòng 24h
+      </p>
+    </div>
+  </div>
+</ng-template>
+
+<!--ticket item-->
+<ng-template #ticketItem let-name='name' let-quantity='quantity' let-price='price'>
+  <div class="flex flex-row items-center justify-between text-stroke-2">
+    <p nz-typography class="text-sm leading-normal text-black">
+      {{ quantity }} x {{ name }}
+    </p>
+    <p nz-typography class="text-sm leading-normal text-black font-medium">
+      {{ price | formatPrice }}
+    </p>
+  </div>
+</ng-template>
+
+<!--purchase detail-->
+<ng-template #buyerInfo>
+  <div class="flex flex-col gap-y-5 pb-6 border-b border-b-black-10 laptop:p-0 laptop:border-0 text-stroke-2">
+    <div class="laptop:pb-5 laptop:border-b laptop:border-b-black-10">
+      <p nz-typography class="text-base text-black font-medium uppercase">
+        thông tin người mua
+      </p>
+    </div>
+    <div class="flex flex-col gap-y-5">
+      <div class="flex flex-wrap flex-col gap-y-5 laptop:flex-row laptop:gap-x-8">
+        <div class="flex flex-col">
+          <p nz-typography class="text-sm text-black leading-normal opacity-60">
+            Họ và tên
+          </p>
+          <p nz-typography class="text-base text-black font-medium">
+            {{ orderSummary?.buyerInfo?.name }}
+          </p>
+        </div>
+        <div class="flex flex-col">
+          <p nz-typography class="text-sm text-black leading-normal opacity-60">
+            Số điện thoại
+          </p>
+          <p nz-typography class="text-base text-black font-medium">
+            {{ orderSummary?.buyerInfo?.phone }}
+          </p>
+        </div>
+        <div class="flex flex-col">
+          <p nz-typography class="text-sm text-black leading-normal opacity-60">
+            Email
+          </p>
+          <p nz-typography class="text-base text-black font-medium">
+            {{ orderSummary?.buyerInfo?.email }}
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</ng-template>
+
+<!--receipt detail-->
+<ng-template #recipientInfo>
+  <div class="flex flex-col gap-y-5 pb-6 border-b border-b-black-10 laptop:p-0 laptop:border-0 text-stroke-2">
+    <div class="laptop:pb-5 laptop:border-b laptop:border-b-black-10">
+      <p nz-typography class="text-base text-black font-medium uppercase">
+        thông tin người nhận
+      </p>
+    </div>
+    <div class="flex flex-col gap-y-5">
+      <div class="flex flex-col gap-y-5 laptop:flex-row laptop:gap-y-0 laptop:gap-x-8">
+        <div class="flex flex-col">
+          <p nz-typography class="text-sm text-black leading-normal opacity-60">
+            Họ và tên
+          </p>
+          <p nz-typography class="text-base text-black font-medium">
+            {{ orderSummary?.recipientInfo?.name }}
+          </p>
+        </div>
+        <div class="flex flex-col">
+          <p nz-typography class="text-sm text-black leading-normal opacity-60">
+            Số điện thoại
+          </p>
+          <p nz-typography class="text-base text-black font-medium">
+            {{ orderSummary?.recipientInfo?.phone }}
+          </p>
+        </div>
+      </div>
+      <div class="flex flex-col">
+        <p nz-typography class="text-sm text-black leading-normal opacity-60">
+          Địa chỉ
+        </p>
+        <p nz-typography class="text-base text-black font-medium">
+          {{ orderSummary?.recipientInfo?.address }}
+        </p>
+      </div>
+    </div>
+  </div>
+</ng-template>

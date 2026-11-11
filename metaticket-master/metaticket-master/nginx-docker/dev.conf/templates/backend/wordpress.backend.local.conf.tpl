@@ -1,0 +1,4 @@
+server {
+    listen $WORDPRESS_CONNECT_PORT;
+    proxy_pass $METATICKET_LOCAL:$WORDPRESS_LISTEN_PORT;
+}

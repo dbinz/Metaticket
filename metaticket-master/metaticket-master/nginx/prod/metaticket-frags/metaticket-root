@@ -1,0 +1,45 @@
+location @frontend {
+    proxy_intercept_errors on;
+    proxy_set_header Host $host;
+    proxy_set_header X-Real-IP $remote_addr;
+    proxy_pass http://frontend_service; # Using upstream
+}
+location @homepage {
+    proxy_intercept_errors on;
+    proxy_set_header Host $host;
+    proxy_set_header X-Real-IP $remote_addr;
+    proxy_pass http://homepage_service; # Using upstream
+}
+location /_next  {
+    error_page 460 = @frontend;
+    return 460;
+}
+# ---- /news/:slug.html → BFF render (direct to news_service, bypass Docker) ----
+location ~ ^/news/(?!category/)([^/]+)\.html/?$ {
+    rewrite ^/news/([^/]+)\.html/?$ /public/news/render/$1 break;
+
+    proxy_pass http://news_service;
+
+    proxy_set_header Host $host;
+    proxy_set_header X-Real-IP $remote_addr;
+    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+    proxy_set_header X-Forwarded-Proto $scheme;
+
+    add_header X-Render-By "service.news" always;
+}
+# /news/:slug (no .html) → 301 → /news/:slug.html
+location ~ ^/news/(?!category/)([^/.]+)/?$ {
+    return 301 $scheme://$host/news/$1.html;
+}
+location /assets/homepage {
+    error_page 460 = @homepage;
+    return 460;
+}
+location / {
+    error_page 460 = @$homepage_or_frontend_location;
+    return 460;
+}
+location /payment-result {
+    error_page 460 = @homepage;
+    return 460;
+}

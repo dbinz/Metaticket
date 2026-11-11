@@ -1,0 +1,30 @@
+syntax = "proto3";
+
+package metaticket.jobrunr.grpc;
+
+message JobrunrRequest {
+  string job_id = 1; // UUID
+  string job_name = 2;
+  string service = 3;
+  string job_desc = 4;
+  int32 retry = 5;
+  int64 delay_in_second = 6;
+  optional int64 interval_in_second = 7;
+}
+
+message JobExecutionRequest {
+  string job_id = 1; // UUID
+  string job_name = 2;
+  string job_desc = 3;
+}
+
+enum JobNextAction {
+    DO_NOTHING = 0;
+    STOP = 1;
+    CONTINUE = 2;
+}
+
+message JobExecutionResponse {
+  string job_id = 1; // UUID
+  JobNextAction next_action = 2;
+}

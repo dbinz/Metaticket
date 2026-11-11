@@ -1,0 +1,278 @@
+<nb-card fullWidth class="w-100" [nbSpinner]="this.loading > 0">
+    <nb-card-header class="w-100 form-inline">
+        <div class="d-flex flex-column">
+            <label [ngClass]="{ error: showFormControl.invalid }">Sự kiện (*)</label>
+            <input
+                #autoInputShow
+                required
+                nbInput
+                placeholder="Nhập sự kiện"
+                type="text"
+                (input)="onInputShowChange(autoInputShow.value)"
+                (click)="onInputShowChange('')"
+                [nbAutocomplete]="autoCompleteShow"
+                class="w-100"
+                [status]="showFormControl.invalid ? 'danger' : 'basic'"
+                [formControl]="showFormControl" />
+
+            <nb-autocomplete #autoCompleteShow (selectedChange)="onSelectionShowChange($event)">
+                <nb-option *ngFor="let show of filteredShowList$ | async" [value]="show.id">
+                    {{ show.showName }}
+                </nb-option>
+            </nb-autocomplete>
+        </div>
+        <div class="d-flex flex-column">
+            <label [ngClass]="{ error: sessionFormControl.invalid }">Session (*)</label>
+            <input
+                #autoInputSession
+                nbInput
+                placeholder="Nhập Session"
+                type="text"
+                (input)="onInputSessionChange(autoInputSession.value)"
+                (click)="onInputSessionChange('')"
+                [nbAutocomplete]="autoCompleteSession"
+                class="w-100"
+                [status]="sessionFormControl.invalid ? 'danger' : 'basic'"
+                [formControl]="sessionFormControl" />
+
+            <nb-autocomplete #autoCompleteSession (selectedChange)="onSelectionSessionChange($event)">
+                <nb-option *ngFor="let session of filteredSessionList$ | async" [value]="session.id">
+                    {{ getSessionName(session) }}
+                </nb-option>
+            </nb-autocomplete>
+        </div>
+        <div>
+            <label [ngClass]="{ error: kindMapFormControl.invalid }">Hình thức vé (*)</label>
+            <input
+                required
+                fullWidth
+                nbInput
+                type="text"
+                readonly
+                [status]="kindMapFormControl.invalid ? 'danger' : 'basic'"
+                [formControl]="kindMapFormControl" />
+        </div>
+        <div [class.invisible]="kindMapFormControl.value === 'PolicyConfig'" class="d-flex flex-column">
+            <label [ngClass]="{ error: mapFormControl.invalid }">Sơ đồ (*)</label>
+            <input
+                required
+                fullWidth
+                nbInput
+                type="text"
+                readonly
+                [status]="mapFormControl.invalid ? 'danger' : 'basic'"
+                [formControl]="mapFormControl" />
+        </div>
+    </nb-card-header>
+    <nb-card-body>
+        <p *ngIf="isCalendarSession" class="calendar-notice">
+            Suất này bán <b>vé theo lịch</b>: loại vé, giá và số lượng theo từng ngày được tạo ở màn
+            <a
+                [routerLink]="['/portal/ticket/calendar']"
+                [queryParams]="{ showId: selectedShow?.id, sessionId: selectedSession?.id }"
+                >Lịch bán vé</a
+            >.
+        </p>
+        <ng-template [ngIf]="seatPlan && !isCalendarSession">
+            <div *ngFor="let form of allForm">
+                <nb-card
+                    [accent]="
+                        form.dirty && form.invalid
+                            ? 'danger'
+                            : form.valid
+                              ? 'success'
+                              : form.controls.ticketCat.invalid
+                                ? 'warning'
+                                : 'info'
+                    "
+                    [nbSpinner]="form.controls.loading.value">
+                    <nb-card-header>
+                        <div>Category: {{ form.controls.cat.value }}</div>
+                    </nb-card-header>
+                    <nb-card-body>
+                        <ng-template [ngIf]="form.controls.ticketCat.valid" [ngIfElse]="invalidTicketCat">
+                            <div>
+                                Hạng vé: <input type="text" nbInput [formControl]="form.controls.ticketCat" readonly />
+                            </div>
+                            <div>
+                                Giá vé:
+                                <input type="number" nbInput [formControl]="form.controls.ticketPrice" readonly />
+                            </div>
+                        </ng-template>
+                        <ng-template #invalidTicketCat>
+                            <div class="alert-warning">Hạng vé chưa được tạo</div>
+                        </ng-template>
+                        <div>Vé:</div>
+                        <nb-tag-list nbInfiniteList [threshold]="100" style="max-height: 300px; overflow-x: clip">
+                            <nb-tag
+                                *ngFor="let seat of getSeatFormGroups(form)"
+                                [text]="seat.controls.dname?.value || seat.controls.sid.value"></nb-tag>
+                        </nb-tag-list>
+                        <div *ngFor="let zone of getZoneFormGroups(form)" [nbSpinner]="zone.controls.loading.value">
+                            <nb-tag [text]="zone.controls.sid.value"></nb-tag>
+                            <ng-template [ngIf]="form.controls.ticketCat.valid">
+                                <input
+                                    type="text"
+                                    nbInput
+                                    class="ml-2"
+                                    placeholder="Tên hiển thị"
+                                    [formControl]="zone.controls.dname" />
+                                <input
+                                    type="number"
+                                    nbInput
+                                    class="ml-2"
+                                    placeholder="Số lượng vé"
+                                    [formControl]="zone.controls.quantity"
+                                    [status]="
+                                        zone.controls.quantity.dirty && zone.controls.quantity.invalid
+                                            ? 'danger'
+                                            : 'basic'
+                                    " />
+                                <button
+                                    nbButton
+                                    *ngIf="
+                                        !['Open'].includes(selectedSession.status) &&
+                                        isTicketExist(form.controls.ticketCat.value)
+                                    "
+                                    (click)="updateTicket(form.controls.ticketCat.value, zone.controls)">
+                                    Cập Nhật
+                                </button>
+                            </ng-template>
+                        </div>
+                    </nb-card-body>
+                    <nb-card-footer *ngIf="form.controls.ticketCat.valid && selectedSession.status !== 'Open'">
+                        <button
+                            *ngIf="getTicketByPriceCat(form.controls.ticketCat.value).value.length === 0"
+                            nbButton
+                            status="primary"
+                            (click)="createTicket(form)">
+                            TẠO VÉ
+                        </button>
+                        <button
+                            *ngIf="getTicketByPriceCat(form.controls.ticketCat.value).value.length > 0"
+                            nbButton
+                            status="primary"
+                            (click)="clearTicket(form)">
+                            CLEAR VÉ
+                        </button>
+                    </nb-card-footer>
+                </nb-card>
+            </div>
+        </ng-template>
+        <ng-template [ngIf]="kindMapFormControl.value === 'PolicyConfig' && !isCalendarSession">
+            <div *ngFor="let form of policyConfFormG">
+                <nb-card
+                    [accent]="
+                        form.dirty && form.invalid
+                            ? 'danger'
+                            : form.valid
+                              ? 'success'
+                              : form.controls.ticketCat.invalid
+                                ? 'warning'
+                                : 'info'
+                    "
+                    [nbSpinner]="form.controls.loading.value">
+                    <nb-card-header>
+                        <div>Category: {{ form.controls.cat.value }}</div>
+                    </nb-card-header>
+                    <nb-card-body class="w-100">
+                        <div class="d-flex w-100 form-inline" fullWidth>
+                            <div>
+                                <label>Hạng vé</label>
+                                <input type="text" nbInput [formControl]="form.controls.ticketCat" readonly fullWidth />
+                            </div>
+                            <div>
+                                <label>Giá vé</label>
+                                <input
+                                    type="number"
+                                    nbInput
+                                    [formControl]="form.controls.ticketPrice"
+                                    readonly
+                                    fullWidth />
+                            </div>
+                        </div>
+                        <div *ngFor="let zone of getZoneFormGroups(form)" [nbSpinner]="zone.controls.loading.value">
+                            <div class="d-flex w-100 form-inline">
+                                <div>
+                                    <label
+                                        [ngClass]="{ error: zone.controls.dname.dirty && zone.controls.dname.invalid }"
+                                        >Tên hiển thị</label
+                                    >
+                                    <input
+                                        type="text"
+                                        nbInput
+                                        class="ml-2"
+                                        placeholder="Tên hiển thị"
+                                        fullWidth
+                                        [formControl]="zone.controls.dname" />
+                                </div>
+                                <div>
+                                    <label
+                                        [ngClass]="{
+                                            error: zone.controls.quantity.dirty && zone.controls.quantity.invalid,
+                                        }"
+                                        >Số lượng (*)</label
+                                    >
+                                    <input
+                                        type="number"
+                                        nbInput
+                                        class="ml-2"
+                                        placeholder="Số lượng vé"
+                                        fullWidth
+                                        [formControl]="zone.controls.quantity"
+                                        [status]="
+                                            zone.controls.quantity.dirty && zone.controls.quantity.invalid
+                                                ? 'danger'
+                                                : 'basic'
+                                        " />
+                                </div>
+                            </div>
+                            <div class="w-100">
+                                <nb-card size="tiny">
+                                    <nb-card-header>
+                                        <label>Chính sách vé</label>
+                                    </nb-card-header>
+                                    <nb-card-body>
+                                        <textarea
+                                            class="w-100 h-100 border-0"
+                                            style="outline: none"
+                                            [formControl]="zone.controls.policy"></textarea>
+                                    </nb-card-body>
+                                </nb-card>
+                            </div>
+                            <div class="d-flex flex-column w-100">
+                                <button
+                                    nbButton
+                                    status="info"
+                                    class="ml-auto"
+                                    *ngIf="
+                                        !['Open'].includes(selectedSession.status) &&
+                                        isTicketExist(form.controls.ticketCat.value)
+                                    "
+                                    (click)="updateTicket(form.controls.ticketCat.value, zone.controls)">
+                                    Cập Nhật
+                                </button>
+                            </div>
+                        </div>
+                    </nb-card-body>
+                    <nb-card-footer *ngIf="form.controls.ticketCat.valid && selectedSession.status !== 'Open'">
+                        <button
+                            *ngIf="getTicketByPriceCat(form.controls.ticketCat.value).value.length === 0"
+                            nbButton
+                            status="primary"
+                            (click)="createTicket(form)">
+                            TẠO VÉ
+                        </button>
+                        <button
+                            *ngIf="getTicketByPriceCat(form.controls.ticketCat.value).value.length > 0"
+                            nbButton
+                            status="primary"
+                            (click)="clearTicket(form)">
+                            CLEAR VÉ
+                        </button>
+                    </nb-card-footer>
+                </nb-card>
+            </div>
+        </ng-template>
+    </nb-card-body>
+</nb-card>

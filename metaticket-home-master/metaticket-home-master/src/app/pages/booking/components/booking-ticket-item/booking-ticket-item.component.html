@@ -1,0 +1,15 @@
+<div class="w-full flex flex-row items-center justify-between">
+  <p nz-typography class="flex-1 text-sm leading-normal text-black text-stroke-2">
+    {{ item.quantity }} x {{ item.displayName }}
+  </p>
+  <div class="flex flex-row items-center gap-x-2">
+    <p nz-typography class="text-sm leading-normal text-black font-medium text-stroke-2">
+      {{ item.basePrice | formatPrice }}
+    </p>
+    <app-image
+      *ngIf="showDelete" [src]="appIcons.icTrash"
+      [sx]="'w-6 h-6 hover:cursor-pointer'"
+      (click)="onDelete()"
+    />
+  </div>
+</div>

@@ -1,0 +1,37 @@
+<div class="container mx-auto">
+  <div class="slider-container">
+    <div
+      class="slider-item"
+      *ngFor="let image of bannerShows; let i = index"
+      [ngClass]="{
+        selected: selectedIndex === i,
+        prev: selectedIndex === 0 ? i === bannerShows.length - 1 : i === selectedIndex - 1,
+        next: selectedIndex === bannerShows.length - 1 ? i === 0 : i === selectedIndex + 1
+      }"
+    >
+      <button
+        class="slider-img"
+        (click)="onViewDetail(image)"
+      >
+        <img
+          (panleft)="showNext(i)"
+          (panright)="showPrev(i)"
+          [src]="image.bannerImageUrl"
+          class="w-full h-full img-border"
+          alt=""
+        />
+      </button>
+    </div>
+  </div>
+  <div class="flex justify-center">
+    <div class="flex gap-4 rounded-xl mx-auto my-10">
+      <button
+        (click)="setSelectedIndex(i)"
+        *ngFor="let item of bannerShows; let i = index"
+        class="w-5 h-1 bg-white rounded-3xl {{ selectedIndex === i ? '' : 'opacity-30' }}"
+      >
+        <span></span>
+      </button>
+    </div>
+  </div>
+</div>

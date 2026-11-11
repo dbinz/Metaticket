@@ -1,0 +1,10 @@
+syntax = "proto3";
+
+package metaticket.order.datacollector.grpc;
+
+import "google/protobuf/wrappers.proto";
+import "order_datacollector_message.proto";
+
+service OrderDataCollectorService {
+  rpc CheckOrderDataCollectorIsValid(CheckOrderDataCollectorIsValidRequest) returns (google.protobuf.StringValue);
+}

@@ -1,0 +1,20 @@
+{
+  "id": "6152a9ff7b5f7f001fd77e13",
+  "sessionId": "6152a9ff7b5f7f001fd77e10",
+  "showId": "6152a9ff7b5f7f001fd77e0f",
+  "details": [
+    {
+      "ticketId": "6152a9ff7b5f7f001fd77e14",
+      "quantity": 2,
+      "priceCat": "Standard"
+    },
+    {
+      "ticketId": "6152a9ff7b5f7f001fd77e15",
+      "quantity": 1,
+      "priceCat": "VIP"
+    }
+  ],
+  "status": "Open",
+  "version": 1,
+  "lastModified": 1674528389
+}

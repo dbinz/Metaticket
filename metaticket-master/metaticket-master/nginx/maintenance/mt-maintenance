@@ -1,0 +1,48 @@
+#!/bin/sh
+# Runs locally on the gateway server; deliberately never restarts nginx or application services.
+set -eu
+
+state_dir=/var/lib/metaticket/maintenance
+flag="$state_dir/enabled"
+
+case "${1:-}" in
+    on|off|status) ;;
+    *) printf 'Usage: mt-maintenance on|off|status\n' >&2; exit 2 ;;
+esac
+[ "$#" -eq 1 ] || { printf 'Expected exactly one action.\n' >&2; exit 2; }
+
+# A state directory another user can write lets them flip the gate or swap the flag for a symlink
+# that root then truncates, so existing directories must be root-owned and not group/other-writable.
+require_root_dir() {
+    if [ -e "$1" ] || [ -L "$1" ]; then
+        [ ! -L "$1" ] && [ -d "$1" ] && [ "$(stat -c %u "$1")" -eq 0 ] &&
+            [ $(( 0$(stat -c %a "$1") & 022 )) -eq 0 ] || {
+            printf 'Refusing %s: must be a root-owned directory not writable by others.\n' "$1" >&2
+            exit 1
+        }
+    elif [ "$2" = on ]; then
+        install -d -o root -g root -m 0755 "$1"
+    fi
+}
+
+if [ "$1" != status ]; then
+    [ "$(id -u)" -eq 0 ] || { printf 'Use sudo for on/off.\n' >&2; exit 1; }
+    require_root_dir /var/lib/metaticket "$1"
+    require_root_dir "$state_dir" "$1"
+    [ ! -L "$flag" ] || { printf 'Refusing a symlink in the maintenance state path.\n' >&2; exit 1; }
+fi
+
+case "$1" in
+    on)
+        umask 022
+        : > "$flag"
+        printf 'maintenance: on\n'
+        ;;
+    off)
+        rm -f -- "$flag"
+        printf 'maintenance: off\n'
+        ;;
+    status)
+        if [ -f "$flag" ]; then printf 'maintenance: on\n'; else printf 'maintenance: off\n'; fi
+        ;;
+esac

@@ -1,0 +1,35 @@
+.container{
+    color: black;
+    font-weight: 500;
+    border: solid 1px #B2B2B2;
+    border-radius: 30px;
+    width: 100%;
+    transition: 4s ease-in-out;
+  }
+.accordion-heading {
+  cursor: pointer;
+  color: black;
+  font-weight: 500;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  cursor: pointer;
+  padding: 16px 24px 16px 24px;
+}
+.accordion-content{
+  transition: 4s ease-in-out;
+  margin:0px 24px;
+  background-color: white;
+  animation-name: slideDown ;
+  animation-duration: 1s;
+  -webkit-animation-duration: 1s;
+  animation-timing-function: ease;
+  -webkit-animation-timing-function: ease;
+}
+.up-icon{
+  transition: 0.2s ease-out;
+}
+.icon{
+  animation-name: icon ;
+  transform: rotate(180deg);
+}

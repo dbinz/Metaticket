@@ -1,0 +1,24 @@
+syntax = "proto3";
+
+package metaticket.ticket.grpc;
+
+import "google/protobuf/empty.proto";
+import "google/protobuf/wrappers.proto";
+import "ticket_message.proto";
+
+service TicketService {
+  rpc StartTicket(StartTicketRequest) returns (google.protobuf.Empty);
+  rpc StopTicket(StopTicketRequest) returns (google.protobuf.Empty);
+  rpc GetTicketByIds(GetTicketByIdsRequest) returns (GetTicketsResponse);
+  rpc GetTicketByShowAndSession(GetTicketByShowAndSessionRequest) returns (GetTicketsResponse);
+  rpc GetTicketBySids(GetTicketBySidsRequest) returns (GetTicketsResponse);
+  rpc GetCalendarMinPrice(GetCalendarMinPriceRequest) returns (GetCalendarMinPriceResponse);
+}
+
+service ReservationService {
+  rpc CreateReservation(CreateReservationRequest) returns (google.protobuf.StringValue);
+  rpc ReserveReservation(ReserveReservationRequest) returns (google.protobuf.StringValue);
+  rpc ReleaseReservation(ReleaseReservationRequest) returns (google.protobuf.Empty);
+  rpc GetReservation(GetReservationRequest) returns (GetReservationResponse);
+  rpc NotifyOrderStatusChanged(NotifyOrderStatusChangedRequest) returns (google.protobuf.Empty);
+}

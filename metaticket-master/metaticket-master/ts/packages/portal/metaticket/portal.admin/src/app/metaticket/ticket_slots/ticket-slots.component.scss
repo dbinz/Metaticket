@@ -1,0 +1,146 @@
+// Custom styles for ticket slots table
+
+// Improve checkbox styling only
+::ng-deep angular2-smart-table {
+    // Style for individual row checkboxes
+    .ng2-smart-row-select {
+        input[type='checkbox'] {
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+            accent-color: #3366ff; // Nebular primary color
+            transform: scale(1.2);
+            margin: 0;
+        }
+    }
+
+    // Style for select all checkbox in header
+    .ng2-smart-actions {
+        .ng2-smart-action-multiple-select {
+            input[type='checkbox'] {
+                width: 20px;
+                height: 20px;
+                cursor: pointer;
+                accent-color: #3366ff; // Nebular primary color
+                transform: scale(1.3);
+                margin: 0;
+            }
+        }
+    }
+
+    // Improve table header styling
+    thead {
+        .ng2-smart-actions {
+            width: 60px;
+            text-align: center;
+            padding: 12px 8px;
+
+            .ng2-smart-action-multiple-select {
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                height: 100%;
+            }
+        }
+    }
+
+    // Improve table row styling
+    tbody {
+        .ng2-smart-row-select {
+            width: 60px;
+            text-align: center;
+            padding: 12px 8px;
+
+            input[type='checkbox'] {
+                display: block;
+                margin: 0 auto;
+            }
+        }
+
+        // Hover effect for rows
+        tr:hover {
+            background-color: rgba(51, 102, 255, 0.05);
+        }
+
+        // Selected row styling
+        tr.selected {
+            background-color: rgba(51, 102, 255, 0.1);
+        }
+    }
+
+    // Improve table cell padding
+    td,
+    th {
+        padding: 12px 8px;
+        vertical-align: middle;
+    }
+
+    // Style for table actions column header
+    .ng2-smart-actions-title {
+        font-weight: 600;
+        color: #8f9bb3;
+        font-size: 12px;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+}
+
+// Custom checkbox styles with better visual feedback
+::ng-deep angular2-smart-table input[type='checkbox'] {
+    position: relative;
+    transition: all 0.2s ease;
+
+    &:focus {
+        outline: 2px solid rgba(51, 102, 255, 0.3);
+        outline-offset: 2px;
+        box-shadow: 0 0 0 3px rgba(51, 102, 255, 0.1);
+    }
+
+    &:hover {
+        filter: brightness(1.1);
+        transform: scale(1.05);
+    }
+
+    &:checked {
+        filter: brightness(1.05);
+        animation: checkboxPulse 0.3s ease;
+    }
+}
+
+// Animation for checkbox selection
+@keyframes checkboxPulse {
+    0% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.1);
+    }
+    100% {
+        transform: scale(1);
+    }
+}
+
+// Loading state styling
+::ng-deep angular2-smart-table.loading {
+    opacity: 0.7;
+    pointer-events: none;
+}
+
+// Empty state styling
+::ng-deep angular2-smart-table .ng2-smart-no-data-message {
+    padding: 40px 20px;
+    text-align: center;
+    color: #8f9bb3;
+    font-style: italic;
+    background-color: #f8f9fa;
+}
+
+// Responsive improvements
+@media (max-width: 768px) {
+    ::ng-deep angular2-smart-table {
+        .ng2-smart-row-select input[type='checkbox'],
+        .ng2-smart-action-multiple-select input[type='checkbox'] {
+            transform: scale(1.4);
+        }
+    }
+}

@@ -1,0 +1,54 @@
+<div class="div-inline">
+    <div class="row">
+        <label class="w-25" [ngClass]="{ error: ticketAmountMinFormControl.invalid }">SL Vé tối thiểu (*)</label>
+        <input
+            class="w-75"
+            status="{{ ticketAmountMinFormControl.invalid ? 'danger' : 'basic' }}"
+            [formControl]="ticketAmountMinFormControl"
+            required
+            fullWidth
+            nbInput
+            type="number" />
+    </div>
+    <div class="row">
+        <label class="w-25" [ngClass]="{ error: ticketAmountMaxFormControl.invalid }">SL Vé tối đa</label>
+        <input class="w-75" status="basic" [formControl]="ticketAmountMaxFormControl" fullWidth nbInput type="number" />
+    </div>
+    <div class="row">
+        <div class="w-25">
+            <label>Phương thức giảm(*)</label>
+            <nb-radio-group [formControl]="discountOptionFormControl" name="radio-{{ index }}">
+                <nb-radio name="radio-{{ index }}" *ngFor="let option of discountOptions" value="{{ option.value }}">
+                    {{ option.label }}
+                </nb-radio>
+            </nb-radio-group>
+        </div>
+        <div class="w-75">
+            <label>Giá giảm (*)</label>
+            <nb-form-field>
+                <input [formControl]="discountValueFormControl" required fullWidth nbInput type="number" />
+                <label nbSuffix>{{ discountOptionFormControl.value === 'DiscountPercent' ? '%' : 'đ' }}</label>
+            </nb-form-field>
+        </div>
+    </div>
+    <div class="row">
+        <nb-checkbox [formControl]="needCheckQuantityFormControl">Có giới hạn số lượng</nb-checkbox>
+    </div>
+    <div *ngIf="needCheckQuantityFormControl.value">
+        <label [ngClass]="{ error: originalQuantityFormControl.invalid }">Số lượng promotion (*)</label>
+        <input
+            status="{{ originalQuantityFormControl.invalid ? 'danger' : 'basic' }}"
+            [formControl]="originalQuantityFormControl"
+            required
+            fullWidth
+            nbInput
+            type="number" />
+    </div>
+    <div *ngIf="needCheckQuantityFormControl.value">
+        <nb-radio-group [formControl]="quantityOptionFormControl">
+            <nb-radio *ngFor="let option of quantityOptions" value="{{ option.value }}">
+                {{ option.label }}
+            </nb-radio>
+        </nb-radio-group>
+    </div>
+</div>

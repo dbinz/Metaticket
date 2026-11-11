@@ -1,0 +1,110 @@
+<nb-card [nbSpinner]="loading > 0">
+    <nb-card-header>
+        <button
+            nbButton
+            [status]="paymentType === 'paymentOffline' ? 'primary' : 'basic'"
+            (click)="updatePaymentType('paymentOffline')">
+            Thanh toán Offline
+        </button>
+        <button
+            nbButton
+            [status]="paymentType === 'paymentGateway' ? 'primary' : 'basic'"
+            (click)="updatePaymentType('paymentGateway')">
+            Cổng thanh toán
+        </button>
+    </nb-card-header>
+    <nb-card-body>
+        <form class="form-inline w-100" [formGroup]="updatePaymentForm">
+            <div *ngIf="paymentType === 'paymentOffline'">
+                <label [class.error]="paymentNoteControl.invalid">Ghi chú thanh toán (*)</label>
+                <input
+                    [status]="paymentNoteControl.invalid ? 'danger' : 'basic'"
+                    [formControl]="paymentNoteControl"
+                    required
+                    fullWidth
+                    nbInput
+                    type="text" />
+            </div>
+            <div *ngIf="paymentType === 'paymentGateway'">
+                <div>
+                    <nb-checkbox [formControl]="usePGAccountDefaultControl">Sử dụng tài khoản mặc định</nb-checkbox>
+                </div>
+                <div *ngIf="!usePGAccountDefaultControl.value" class="d-flex pt-3 w-100">
+                    <div class="d-flex flex-column w-100">
+                        <label [ngClass]="{ error: paymentGatewayControl.invalid }">Cổng thanh toán</label>
+                        <input
+                            #autoPaymentGateway
+                            nbInput
+                            placeholder="Nhập cổng thanh toán"
+                            type="text"
+                            (input)="onInputPaymentGatewayChange(autoPaymentGateway.value)"
+                            (click)="onInputPaymentGatewayChange('')"
+                            [nbAutocomplete]="autoCompletePaymentGateway"
+                            class="w-100"
+                            [status]="paymentGatewayControl.invalid ? 'danger' : 'basic'"
+                            [formControl]="paymentGatewayControl" />
+
+                        <nb-autocomplete #autoCompletePaymentGateway (selectedChange)="onSelectionPGChange($event)">
+                            <nb-option *ngFor="let gateway of filteredPGList$ | async" [value]="gateway">
+                                {{ gateway }}
+                            </nb-option>
+                        </nb-autocomplete>
+                    </div>
+                    <div class="d-flex flex-column w-100">
+                        <label [ngClass]="{ error: pgAccountCodeControl.invalid }">Tài khoản thanh toán</label>
+                        <input
+                            #autoPGAccountCode
+                            nbInput
+                            placeholder="Nhập tài khoản thanh toán"
+                            type="text"
+                            (input)="onInputPaymentAccountChange(autoPGAccountCode.value)"
+                            (click)="onInputPaymentAccountChange('')"
+                            [nbAutocomplete]="autoCompletePGAccountCode"
+                            class="w-100"
+                            [status]="pgAccountCodeControl.invalid ? 'danger' : 'basic'"
+                            [formControl]="pgAccountCodeControl" />
+
+                        <nb-autocomplete
+                            #autoCompletePGAccountCode
+                            (selectedChange)="onSelectionPGAccountChange($event)">
+                            <nb-option
+                                *ngFor="let pgAccount of filteredPGAccountList$ | async"
+                                [value]="pgAccount.code">
+                                {{ pgAccount.name }}
+                            </nb-option>
+                        </nb-autocomplete>
+                    </div>
+                </div>
+                <div class="d-flex flex-column w-100 pt-3">
+                    <h6 [ngClass]="{ error: paymentMethodsControl.value?.length < 1 }">Phương thức thanh toán</h6>
+                    <nb-button-group multiple class="gap-1" outline (valueChange)="updatePaymentMethodsValue($event)">
+                        <button
+                            *ngFor="let paymentMethod of paymentMethodList | keyvalue"
+                            nbButtonToggle
+                            class="text-transform-none"
+                            [pressed]="showSession?.paymentMethods?.includes(paymentMethod.key)"
+                            [value]="paymentMethod.key">
+                            {{ paymentMethod.value }}
+                        </button>
+                    </nb-button-group>
+                </div>
+            </div>
+        </form>
+    </nb-card-body>
+    <nb-card-footer>
+        <div>
+            <button nbButton type="button" (click)="onSubmit()" status="info">
+                {{ !showSession ? 'Lưu nháp' : 'Cập nhật' }}
+            </button>
+            <button
+                *ngIf="showSessionDraft"
+                status="success"
+                (click)="gotoNextStep.emit()"
+                nbButton
+                type="button"
+                class="ml-2">
+                Bước tiếp theo
+            </button>
+        </div>
+    </nb-card-footer>
+</nb-card>

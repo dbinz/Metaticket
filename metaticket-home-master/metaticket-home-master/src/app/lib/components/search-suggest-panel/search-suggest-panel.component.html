@@ -1,0 +1,77 @@
+<div class="flex flex-col gap-4 laptop:gap-6">
+  <p *ngIf="isAnyLoading && !hasAnyResult" class="px-2 py-6 text-center text-sm text-[#858585]">
+    Đang tìm kiếm...
+  </p>
+
+  <p *ngIf="!isAnyLoading && isAllFailed" class="px-2 py-6 text-center text-sm text-[#858585]">
+    Không tải được kết quả. Vui lòng thử lại.
+  </p>
+
+  <div *ngIf="hasAnyResult" class="grid grid-cols-1 laptop:grid-cols-3 gap-4 laptop:gap-6">
+    <!-- Sự kiện -->
+    <div *ngIf="groups.events.items.length || groups.events.failed" class="flex flex-col gap-1 min-w-0">
+      <p class="text-12-14 font-medium text-[#858585] uppercase px-2">Sự kiện</p>
+      <ng-container *ngIf="groups.events.items.length; else eventGroupStatus">
+        <button
+          *ngFor="let item of groups.events.items; let i = index; trackBy: trackById"
+          class="flex gap-2 items-center hover:bg-[#EDEDED] p-2 rounded-2xl text-left"
+          [ngClass]="{ 'bg-[#EDEDED]': isEventActive(i) }"
+          (click)="pickEvent.emit(item)"
+        >
+          <app-image [src]="item.thumbnailUrl" [sx]="'w-16 h-10 rounded-lg shrink-0 object-cover'" />
+          <p class="flex-1 min-w-0 one-line-text text-sm font-medium">{{ item.showName }}</p>
+        </button>
+      </ng-container>
+      <ng-template #eventGroupStatus>
+        <p class="px-2 py-2 text-sm text-[#858585]">Không tải được</p>
+      </ng-template>
+    </div>
+
+    <!-- Sản phẩm -->
+    <div *ngIf="groups.products.items.length || groups.products.failed" class="flex flex-col gap-1 min-w-0">
+      <p class="text-12-14 font-medium text-[#858585] uppercase px-2">Sản phẩm</p>
+      <ng-container *ngIf="groups.products.items.length; else productGroupStatus">
+        <button
+          *ngFor="let item of groups.products.items; let i = index; trackBy: trackById"
+          class="flex gap-2 items-center hover:bg-[#EDEDED] p-2 rounded-2xl text-left"
+          [ngClass]="{ 'bg-[#EDEDED]': isProductActive(i) }"
+          (click)="pickProduct.emit(item)"
+        >
+          <app-image [src]="productImage(item)" [sx]="'w-16 h-10 rounded-lg shrink-0 object-cover'" />
+          <p class="flex-1 min-w-0 one-line-text text-sm font-medium">{{ item.name }}</p>
+        </button>
+      </ng-container>
+      <ng-template #productGroupStatus>
+        <p class="px-2 py-2 text-sm text-[#858585]">Không tải được</p>
+      </ng-template>
+    </div>
+
+    <!-- Tin tức -->
+    <div *ngIf="groups.news.items.length || groups.news.failed" class="flex flex-col gap-1 min-w-0">
+      <p class="text-12-14 font-medium text-[#858585] uppercase px-2">Tin tức</p>
+      <ng-container *ngIf="groups.news.items.length; else newsGroupStatus">
+        <a
+          *ngFor="let item of groups.news.items; let i = index; trackBy: trackById"
+          [href]="newsArticleHref(item.slug)"
+          class="flex gap-2 items-center hover:bg-[#EDEDED] p-2 rounded-2xl"
+          [ngClass]="{ 'bg-[#EDEDED]': isNewsActive(i) }"
+        >
+          <app-image [src]="item.thumbnail" [sx]="'w-16 h-10 rounded-lg shrink-0 object-cover'" />
+          <p class="flex-1 min-w-0 one-line-text text-sm font-medium">{{ item.title }}</p>
+        </a>
+      </ng-container>
+      <ng-template #newsGroupStatus>
+        <p class="px-2 py-2 text-sm text-[#858585]">Không tải được</p>
+      </ng-template>
+    </div>
+  </div>
+
+  <button
+    *ngIf="keyword"
+    type="button"
+    (click)="viewAll.emit()"
+    class="border-t border-[#EDEDED] pt-3 mt-1 w-full text-center text-sm font-medium text-blue-163AEA bg-white"
+  >
+    Xem tất cả kết quả cho &quot;{{ keyword }}&quot;
+  </button>
+</div>

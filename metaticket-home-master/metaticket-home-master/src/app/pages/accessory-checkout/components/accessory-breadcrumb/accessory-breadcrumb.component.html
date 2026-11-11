@@ -1,0 +1,46 @@
+<div class="w-full flex flex-row items-center space-x-2">
+  <ng-container *ngFor="let step of steps; index as idx">
+    <ng-container
+      [ngTemplateOutlet]="stepItem"
+      [ngTemplateOutletContext]="{ index: idx, title: step.title }"
+    />
+  </ng-container>
+</div>
+
+<!--step item-->
+<ng-template #stepItem let-index="index" let-title="title">
+  <div class="flex flex-row items-center space-x-2">
+    <div
+      *ngIf="currentIndex === index"
+      class="px-4 py-3 rounded-full border border-blue-163AEA laptop:px-9 laptop:border-blue-4867FC"
+    >
+      <p
+        nz-typography
+        class="text-sm leading-normal font-semibold text-blue-163AEA laptop:text-base laptop:text-blue-4867FC"
+      >
+        {{ index + 1 }}. {{ title }}
+      </p>
+    </div>
+    <div
+      *ngIf="currentIndex !== index"
+      tabindex="0"
+      (click)="onSelectStep(index)"
+      (keydown)="onSelectStep(index)"
+      class="w-6 h-6 flex bg-gray-A4A4A4 rounded-full items-center justify-center laptop:hidden"
+      [class.cursor-pointer]="isClickable(index)"
+    >
+      <p nz-typography class="text-white text-base leading-normal font-semibold">{{ index + 1 }}</p>
+    </div>
+    <div
+      *ngIf="currentIndex !== index"
+      tabindex="0"
+      (click)="onSelectStep(index)"
+      (keydown)="onSelectStep(index)"
+      class="hidden px-6 py-3 laptop:block"
+      [class.cursor-pointer]="isClickable(index)"
+    >
+      <p nz-typography class="text-base leading-normal text-black text-stroke">{{ index + 1 }}. {{ title }}</p>
+    </div>
+    <app-image *ngIf="index + 1 !== steps.length" [src]="appIcons.icArrowBlack" [sx]="'w-6 h-6'" />
+  </div>
+</ng-template>

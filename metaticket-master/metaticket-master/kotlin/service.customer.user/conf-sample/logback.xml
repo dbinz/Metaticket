@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration scan="true" scanPeriod="30 seconds">
+
+    <appender name="APPLICATION" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>logs/application.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+            <fileNamePattern>logs/application.%d{yyyy-MM-dd}.%i.log.zip</fileNamePattern>
+            <maxFileSize>100MB</maxFileSize>
+            <maxHistory>15</maxHistory>
+            <totalSizeCap>10GB</totalSizeCap>
+        </rollingPolicy>
+        <encoder>
+            <pattern>%date [%thread] %logger{15} %-5level %msg%ex%n</pattern>
+        </encoder>
+    </appender>
+
+    <appender name="MONGODB" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>logs/mongodb.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+            <fileNamePattern>logs/mongodb.%d{yyyy-MM-dd}.%i.log.zip</fileNamePattern>
+            <maxFileSize>100MB</maxFileSize>
+            <maxHistory>15</maxHistory>
+            <totalSizeCap>10GB</totalSizeCap>
+        </rollingPolicy>
+        <encoder>
+            <pattern>%date [%thread] %logger{15} %-5level %msg%ex%n</pattern>
+        </encoder>
+    </appender>
+
+    <appender name="REDIS" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>logs/redis.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+            <fileNamePattern>logs/redis.%d{yyyy-MM-dd}.%i.log.zip</fileNamePattern>
+            <maxFileSize>100MB</maxFileSize>
+            <maxHistory>15</maxHistory>
+            <totalSizeCap>10GB</totalSizeCap>
+        </rollingPolicy>
+        <encoder>
+            <pattern>%date [%thread] %logger{15} %-5level %msg%ex%n</pattern>
+        </encoder>
+    </appender>
+
+    <appender name="CUSTOMER_USER" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>logs/customer-user.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+            <fileNamePattern>logs/customer-user.%d{yyyy-MM-dd}.%i.log.zip</fileNamePattern>
+            <maxFileSize>100MB</maxFileSize>
+            <maxHistory>15</maxHistory>
+            <totalSizeCap>10GB</totalSizeCap>
+        </rollingPolicy>
+        <encoder>
+            <pattern>%date [%thread] %logger{15} %-5level %msg%ex%n</pattern>
+        </encoder>
+    </appender>
+
+    <logger name="org.mongodb" level="INFO" additivity="false">
+        <appender-ref ref="MONGODB" />
+    </logger>
+    <logger name="io.lettuce" level="INFO" additivity="false">
+        <appender-ref ref="REDIS" />
+    </logger>
+    <logger name="metaticket.customer.user" level="DEBUG" additivity="false" >
+        <appender-ref ref="CUSTOMER_USER" />
+    </logger>
+    <logger name="APPLICATION" level="DEBUG" additivity="false" >
+        <appender-ref ref="APPLICATION" />
+    </logger>
+
+    <root level="DEBUG">
+        <appender-ref ref="APPLICATION" />
+    </root>
+</configuration>

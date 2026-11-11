@@ -1,0 +1,9 @@
+{
+    "se": {
+        "orderS": {
+            "sid": "showS01",
+            "host": "localhost",
+            "port": 4005
+        }
+    }
+}

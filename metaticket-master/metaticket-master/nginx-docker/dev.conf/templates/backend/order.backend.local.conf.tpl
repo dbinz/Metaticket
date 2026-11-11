@@ -1,0 +1,4 @@
+server {
+    listen $ORDER_BACKEND_CONNECT_PORT;
+    proxy_pass $METATICKET_LOCAL:$ORDER_BACKEND_LISTEN_PORT;
+}

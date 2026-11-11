@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration scan="true" scanPeriod="30 seconds">
+    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+        <file>logs/application.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+            <fileNamePattern>logs/application.%d{yyyy-MM-dd}.%i.log.zip</fileNamePattern>
+            <maxFileSize>100MB</maxFileSize>
+            <maxHistory>15</maxHistory>
+            <totalSizeCap>10GB</totalSizeCap>
+        </rollingPolicy>
+        <encoder>
+            <pattern>%date [%thread] %logger{15} %-5level %msg%ex%n</pattern>
+        </encoder>
+    </appender>
+
+    <appender name="APPLICATION" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>logs/application.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+            <fileNamePattern>logs/application.%d{yyyy-MM-dd}.%i.log.zip</fileNamePattern>
+            <maxFileSize>100MB</maxFileSize>
+            <maxHistory>15</maxHistory>
+            <totalSizeCap>10GB</totalSizeCap>
+        </rollingPolicy>
+        <encoder>
+            <pattern>%date [%thread] %logger{15} %-5level %msg%ex%n</pattern>
+        </encoder>
+    </appender>
+
+    <appender name="MONGODB" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>logs/mongodb.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+            <fileNamePattern>logs/mongodb.%d{yyyy-MM-dd}.%i.log.zip</fileNamePattern>
+            <maxFileSize>100MB</maxFileSize>
+            <maxHistory>15</maxHistory>
+            <totalSizeCap>10GB</totalSizeCap>
+        </rollingPolicy>
+        <encoder>
+            <pattern>%date [%thread] %logger{15} %-5level %msg%ex%n</pattern>
+        </encoder>
+    </appender>
+
+    <appender name="PAYMENT" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>logs/payment.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+            <fileNamePattern>logs/payment.%d{yyyy-MM-dd}.%i.log.zip</fileNamePattern>
+            <maxFileSize>100MB</maxFileSize>
+            <maxHistory>15</maxHistory>
+            <totalSizeCap>10GB</totalSizeCap>
+        </rollingPolicy>
+        <encoder>
+            <pattern>%date [%thread] %logger{15} %-5level %msg%ex%n</pattern>
+        </encoder>
+    </appender>
+
+    <appender name="JOBRUNR" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>logs/jobrunr.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+            <fileNamePattern>logs/jobrunr.%d{yyyy-MM-dd}.%i.log.zip</fileNamePattern>
+            <maxFileSize>100MB</maxFileSize>
+            <maxHistory>15</maxHistory>
+            <totalSizeCap>10GB</totalSizeCap>
+        </rollingPolicy>
+        <encoder>
+            <pattern>%date [%thread] %logger{15} %-5level %msg%ex%n</pattern>
+        </encoder>
+    </appender>
+
+    <logger name="metaticket.payment" level="DEBUG" additivity="false">
+        <appender-ref ref="PAYMENT" />
+    </logger>
+
+    <logger name="org.mongodb" level="INFO" additivity="false">
+        <appender-ref ref="MONGODB" />
+    </logger>
+
+    <logger name="io.grpc.netty.shaded.io.grpc" level="WARN" additivity="false">
+        <appender-ref ref="APPLICATION" />
+    </logger>
+
+    <logger name="APPLICATION" level="DEBUG" additivity="false" >
+        <appender-ref ref="APPLICATION" />
+    </logger>
+
+    <root level="DEBUG">
+        <appender-ref ref="APPLICATION" />
+    </root>
+</configuration>

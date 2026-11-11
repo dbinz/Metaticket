@@ -1,0 +1,70 @@
+<ng-template [ngIf]="fontSize === 'base'">
+  <nz-form-item class="w-full m-0 flex flex-col">
+    <nz-form-label [nzLabelWrap]="true" class="p-0 mb-2 *:min-h-6 *:h-auto *:text-base *:font-medium *:whitespace-normal *:break-words whitespace-normal text-left" [ngClass]="{'text-stroke-2': !formControl.invalid, 'text-red-D94D27': formControl.invalid}">
+      {{ label }}<span *ngIf="isRequired" class="text-red-D94D27 ml-1">*</span>
+    </nz-form-label>
+    <nz-form-control>
+      <div class="relative w-full">
+        <input
+          nz-input
+          class="w-full text-base font-medium placeholder-black-40 rounded-full px-4 py-3 lg:py-6 border border-gray-C9C9C9 focus:border-blue-500 focus:ring-blue-500 focus:ring-1 focus:outline-none"
+          [class.pr-12]="type === 'password'"
+          [type]="inputType"
+          [placeholder]="placeholder"
+          [formControl]="formControl"
+          [readonly]="readOnly"
+        />
+        <span
+          *ngIf="type === 'password'"
+          tabindex="0"
+          (keydown)="togglePasswordVisibility()"
+          (click)="togglePasswordVisibility()"
+          class="absolute right-4 top-1/2 -translate-y-1/2 text-xl text-black-40 cursor-pointer"
+          nz-icon
+          [nzType]="passwordVisible ? 'eye' : 'eye-invisible'"
+          nzTheme="outline"
+        ></span>
+      </div>
+    </nz-form-control>
+    <ng-container *ngIf="errorCode !== null">
+      <p nz-typography class="text-base text-red-D94D27 mt-1">
+        {{ formControl.getError(errorCode) }}
+      </p>
+    </ng-container>
+  </nz-form-item>
+</ng-template>
+
+<ng-template [ngIf]="fontSize === 'sm'">
+  <nz-form-item class="w-full m-0 flex flex-col">
+    <nz-form-label [nzLabelWrap]="true" class="p-0 mb-1 *:min-h-6 *:h-auto *:text-sm *:leading-6 *:font-medium *:whitespace-normal *:break-words whitespace-normal text-left" [ngClass]="{'text-stroke-2': !formControl.invalid, 'text-red-D94D27': formControl.invalid}">
+      {{ label }}<span *ngIf="isRequired" class="text-red-D94D27 ml-1">*</span>
+    </nz-form-label>
+    <nz-form-control>
+      <div class="relative w-full">
+        <input
+          nz-input
+          class="w-full text-sm leading-6 font-medium placeholder-black-40 rounded-full px-4 py-2 lg:py-3 border border-gray-C9C9C9 focus:border-blue-500 focus:ring-blue-500 focus:ring-1 focus:outline-none"
+          [class.pr-12]="type === 'password'"
+          [type]="inputType"
+          [placeholder]="placeholder"
+          [formControl]="formControl"
+        />
+        <span
+          *ngIf="type === 'password'"
+          tabindex="0"
+          (keydown)="togglePasswordVisibility()"
+          (click)="togglePasswordVisibility()"
+          class="absolute right-4 top-1/2 -translate-y-1/2 text-xl text-black-40 cursor-pointer"
+          nz-icon
+          [nzType]="passwordVisible ? 'eye' : 'eye-invisible'"
+          nzTheme="outline"
+        ></span>
+      </div>
+    </nz-form-control>
+    <ng-container *ngIf="errorCode !== null">
+      <p nz-typography class="text-sm leading-6 text-red-D94D27 mt-1">
+        {{ formControl.getError(errorCode) }}
+      </p>
+    </ng-container>
+  </nz-form-item>
+</ng-template>

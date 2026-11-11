@@ -1,0 +1,241 @@
+<div class="w-full h-full min-h-0 flex flex-col">
+  <!-- Header (fixed) -->
+  <div class="flex shrink-0 items-center justify-between bg-blue-4867FC px-5 py-4 laptop:px-6">
+    <p nz-typography class="flex items-center gap-2 text-lg font-semibold text-white">
+      <span aria-hidden="true">🛒</span> Giỏ hàng của bạn
+    </p>
+    <div class="flex items-center gap-3">
+      <span
+        *ngIf="!isEmpty"
+        class="rounded-full bg-white/20 px-3 py-1 text-12-24 font-medium text-white"
+      >
+        {{ totalQuantity }} sản phẩm
+      </span>
+      <button
+        type="button"
+        class="flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-white hover:bg-white/10"
+        (click)="onClose()"
+        aria-label="Đóng"
+      >
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+          <path d="M6 6l12 12M18 6L6 18" stroke-linecap="round" stroke-linejoin="round" />
+        </svg>
+      </button>
+    </div>
+  </div>
+
+  <!-- Body (scrollable) -->
+  <div class="flex flex-1 min-h-0 flex-col gap-4 overflow-y-auto p-5 laptop:p-6">
+    <!-- Fulfillment hint (same as the product-detail popup): Pre-Order · Pickup at show -->
+    <div class="flex">
+      <span class="w-fit rounded-md bg-green-50 px-3 py-1 text-14-24 font-medium text-green-600">
+        {{ pickupLabel }}
+      </span>
+    </div>
+
+    <!-- Empty cart -->
+    <div *ngIf="isEmpty" class="w-full flex flex-col items-center justify-center gap-3 py-12">
+      <p class="text-16-24 opacity-70">Giỏ hàng đang trống.</p>
+    </div>
+
+    <ng-container *ngIf="!isEmpty">
+      <!-- Cart lines -->
+      <div class="flex flex-col">
+        <div
+          *ngFor="let line of displayLines; let last = last"
+          class="flex flex-col gap-3 py-4 tablet:flex-row tablet:items-center"
+          [class.border-b]="!last"
+          [class.border-gray-100]="!last"
+          [class.opacity-40]="isLineInvalid(line)"
+        >
+          <div class="flex items-center gap-3 tablet:flex-1">
+            <div class="flex h-14 w-14 shrink-0 items-center justify-center rounded-xl bg-blue-50">
+              <app-image
+                [src]="line.imageUrl || appImages.imgMetaTicketThumbnail"
+                [sx]="'w-full h-full object-contain p-2 rounded-xl'"
+              />
+            </div>
+
+            <div class="flex min-w-0 flex-1 flex-col">
+              <p nz-typography class="text-14-16 laptop:text-base font-semibold text-black">{{ line.name }}</p>
+              <p nz-typography class="text-12-24 text-gray-A4A4A4">{{ lineSubtitle(line) }}</p>
+              <p
+                *ngIf="isLineInvalid(line)"
+                nz-typography
+                class="text-12-24 font-medium text-red-500"
+              >
+                Sản phẩm không còn khả dụng
+              </p>
+              <p
+                *ngIf="!isLineInvalid(line) && lineExceedsStock(line)"
+                nz-typography
+                class="text-12-24 font-medium text-red-500"
+              >
+                {{ stockHint(line) }}
+              </p>
+            </div>
+          </div>
+
+          <!-- Below tablet: stepper + price/remove sit on their own row. From tablet up: `contents` unwraps this div so both groups rejoin the single row layout. -->
+          <div class="flex items-center justify-between gap-3 tablet:contents">
+            <!-- Quantity stepper -->
+            <div class="flex flex-row items-center gap-2">
+              <button
+                type="button"
+                class="h-8 w-8 rounded-lg border border-gray-C9C9C9 text-black flex items-center justify-center"
+                (click)="onDecrease(line)"
+              >
+                −
+              </button>
+              <span class="min-w-[24px] text-center text-base font-medium">{{ line.quantity }}</span>
+              <button
+                type="button"
+                class="h-8 w-8 rounded-lg border border-gray-C9C9C9 text-black flex items-center justify-center disabled:opacity-40 disabled:cursor-not-allowed"
+                [disabled]="isIncreaseDisabled(line)"
+                (click)="onIncrease(line)"
+              >
+                +
+              </button>
+            </div>
+
+            <div class="flex items-center gap-3">
+              <div class="min-w-[90px] text-right">
+                <p nz-typography class="text-14-16 laptop:text-base font-semibold text-black">
+                  {{ lineTotal(line) | formatPrice }}
+                </p>
+              </div>
+
+              <button
+                type="button"
+                class="shrink-0 text-gray-A4A4A4 hover:text-red-500"
+                (click)="onRemove(line)"
+                aria-label="Xóa"
+              >
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6">
+                  <path
+                    d="M3 6h18M8 6V4a1 1 0 011-1h6a1 1 0 011 1v2m2 0v14a1 1 0 01-1 1H7a1 1 0 01-1-1V6h12z"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  />
+                </svg>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Add more products -->
+      <button
+        type="button"
+        class="w-full rounded-xl border border-gray-C9C9C9 py-3 text-14-24 font-medium text-black hover:border-blue-4867FC hover:text-blue-4867FC"
+        (click)="onAddMore()"
+      >
+        + Chọn thêm sản phẩm
+      </button>
+
+      <!-- Discount code: apply only after customer presses Áp dụng -->
+      <div class="w-full flex flex-col gap-2" #cartCouponAnchor>
+        <p nz-typography class="text-14-16 font-medium text-black">Mã giảm giá</p>
+        <div class="flex flex-row items-center gap-2">
+          <input
+            nz-input
+            [formControl]="discountControl"
+            [readonly]="discountApplied"
+            placeholder="Nhập mã giảm giá"
+            class="flex-1 rounded-lg py-3"
+            (focusin)="cartCouponPanel.open()"
+          />
+          <div class="w-24 sm:w-28">
+            <app-button
+              *ngIf="!discountApplied"
+              [title]="'Áp dụng'"
+              [color]="'transparent-gray'"
+              [isLoading]="discountLoading"
+              (handlerOnPressed)="onApplyDiscount()"
+            />
+            <app-button
+              *ngIf="discountApplied"
+              [title]="'Bỏ mã'"
+              [color]="'gray'"
+              (handlerOnPressed)="onRemoveDiscount()"
+            />
+          </div>
+        </div>
+
+        <app-promotion-offer-panel
+          #cartCouponPanel
+          [source]="promotionOfferSource"
+          [disabled]="isEmpty"
+          [appliedCode]="discountApplied ? discountControl.value : null"
+          [anchor]="cartCouponAnchor"
+          (picked)="onPickPromotion($event)"
+        />
+
+        <!-- Success banner -->
+        <div
+          *ngIf="discountApplied"
+          class="rounded-lg bg-green-50 px-3 py-2 text-14-24 font-medium text-green-600"
+        >
+          ✓ {{ discountBannerText }}
+        </div>
+
+        <!-- Error banner -->
+        <div
+          *ngIf="discountError"
+          class="rounded-lg bg-red-50 px-3 py-2 text-14-24 font-medium text-red-500"
+        >
+          {{ discountError }}
+        </div>
+      </div>
+    </ng-container>
+  </div>
+
+  <!-- Footer (fixed): totals + continue, never scrolls with the lines above -->
+  <div *ngIf="!isEmpty" class="flex shrink-0 flex-col gap-4 border-t border-gray-100 p-5 laptop:p-6">
+    <!-- Totals -->
+    <div class="w-full flex flex-col gap-2">
+      <div class="flex flex-row justify-between">
+        <span class="text-14-24 text-gray-A4A4A4">Tạm tính</span>
+        <span class="text-14-24 text-black">{{ subtotal | formatPrice }}</span>
+      </div>
+      <div *ngIf="discountApplied" class="flex flex-row justify-between">
+        <span class="text-14-24 text-green-600">Giảm giá{{ discountLabelSuffix }}</span>
+        <span class="text-14-24 text-green-600">− {{ discountAmount | formatPrice }}</span>
+      </div>
+      <div class="flex flex-row items-center justify-between pt-1">
+        <span class="text-lg font-semibold text-black">Tổng</span>
+        <span class="text-2xl font-semibold text-blue-4867FC">{{ total | formatPrice }}</span>
+      </div>
+    </div>
+
+    <!-- Invalid-items warning: some cart products are no longer available in the catalog. -->
+    <div
+      *ngIf="hasInvalidLines"
+      class="rounded-lg bg-red-50 px-3 py-2 text-14-24 font-medium text-red-500"
+    >
+      Một số sản phẩm trong giỏ không còn khả dụng. Vui lòng xóa chúng trước khi tiếp tục thanh toán.
+    </div>
+
+    <!-- Over-stock warning: some lines exceed the remaining stock. -->
+    <div
+      *ngIf="!hasInvalidLines && hasStockIssues"
+      class="rounded-lg bg-red-50 px-3 py-2 text-14-24 font-medium text-red-500"
+    >
+      Một số sản phẩm vượt quá số lượng còn lại. Vui lòng giảm số lượng trước khi tiếp tục thanh toán.
+    </div>
+
+    <!-- Continue (disabled while any cart line is invalid or exceeds stock) -->
+    <button
+      type="button"
+      class="w-full rounded-xl py-3 text-base font-semibold text-white"
+      [class.bg-blue-4867FC]="!blockCheckout"
+      [class.hover:bg-blue-163AEA]="!blockCheckout"
+      [class.bg-gray-C9C9C9]="blockCheckout"
+      [class.cursor-not-allowed]="blockCheckout"
+      [disabled]="blockCheckout"
+      (click)="onContinue()"
+    >
+      Tiếp tục →
+    </button>
+  </div>
+</div>

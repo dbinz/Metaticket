@@ -1,0 +1,119 @@
+syntax = "proto3";
+
+package metaticket.ticket.grpc;
+
+message GetReservationRequest {
+  string id = 1;
+}
+
+message ReservationDetailProto {
+  string ticket_id = 1;
+  int32 quantity = 2;
+  optional string price_cat = 3;
+  optional string sid = 4;
+  optional string capacity_id = 5;
+}
+
+message ReservationProto {
+  string id = 1;
+  string show_id = 2;
+  string session_id = 3;
+  repeated ReservationDetailProto details = 4;
+  string status = 5;
+  string customer_user_id = 6;
+  int64 expireInS = 7;
+  int64 createdAt = 8;
+  int64 lastModified = 9;
+}
+
+message GetReservationResponse {
+  ReservationProto reservation = 1;
+}
+
+message CreateReservationRequest {
+  string show_id = 1;
+  string session_id = 2;
+  repeated ReservationDetailProto details = 3;
+  string op_user_id = 4;
+  string customer_user_id = 5;
+}
+
+message ReserveReservationRequest {
+  string reservation_id = 1;
+  string op_user_id = 2;
+  string customer_user_id = 3;
+}
+
+message ReleaseReservationRequest {
+  string reservation_id = 1;
+  string op_user_id = 2;
+  string customer_user_id = 3;
+}
+
+message GetTicketByShowAndSessionRequest {
+  string show_id = 1;
+  string session_id = 2;
+}
+
+message GetTicketBySidsRequest {
+  string show_id = 1;
+  string session_id = 2;
+  repeated string sids = 3;
+}
+
+message GetTicketByIdsRequest {
+  repeated string ids = 1;
+}
+
+message TicketProto {
+  string id = 1;
+  string sid = 2;                    // id of the seat inside the seat plan
+  string show_id = 3;
+  string session_id = 4;
+  string seat_type = 5;
+  string status = 6;
+  optional int32 res_cap = 7;        // capacity reserved
+  optional int32 tot_cap = 8;        // capacity total
+  optional int32 rem_cap = 9;        // capacity remaining
+  string price_cat = 10;             // price category
+  int64 base_price = 11;
+  optional int32 ticket_slots = 13;
+  optional string dname = 14;
+  optional string capacity_id = 15;
+  optional string policy = 16;        // Ticket policy description
+  int32 version = 17;
+  int64 created_at = 18;
+  int64 last_modified = 19;
+  // Visit date "yyyy-MM-dd" (Asia/Ho_Chi_Minh) of a calendar ticket; absent for a normal session ticket.
+  optional string calendar_date = 20;
+}
+
+message GetTicketsResponse {
+  repeated TicketProto tickets = 1;
+}
+
+// Lowest priced (> 0) calendar ticket of a session from from_date ("yyyy-MM-dd") onwards.
+message GetCalendarMinPriceRequest {
+  string show_id = 1;
+  string session_id = 2;
+  string from_date = 3;
+}
+
+message GetCalendarMinPriceResponse {
+  optional int64 min_price = 1;
+}
+
+message NotifyOrderStatusChangedRequest {
+  string reservation_id = 1;
+  string order_status = 2;
+}
+
+message StartTicketRequest {
+  string show_id = 1;
+  string session_id = 2;
+}
+
+message StopTicketRequest {
+  string show_id = 1;
+  string session_id = 2;
+}

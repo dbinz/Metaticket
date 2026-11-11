@@ -1,0 +1,51 @@
+<!-- Display-only countdown banner (shown on the payment + completed steps) -->
+<div
+  *ngIf="visible"
+  class="mx-auto mb-4 flex w-full max-w-2xl items-center justify-center gap-2 rounded-xl border px-4 py-2.5 text-center"
+  [class.border-blue-4867FC]="!expired"
+  [class.bg-blue-50]="!expired"
+  [class.border-red-400]="expired"
+  [class.bg-red-50]="expired"
+>
+  <span class="text-lg leading-none">⏱️</span>
+  <p *ngIf="!expired" nz-typography class="text-14-24 text-black">
+    Vui lòng hoàn tất thanh toán trong
+    <span class="font-semibold text-blue-4867FC">{{ remainingLabel }}</span>
+  </p>
+  <p *ngIf="expired" nz-typography class="text-14-24 text-black">
+    Đã hết thời gian giữ đơn — đang kiểm tra trạng thái đơn hàng…
+  </p>
+</div>
+
+<!-- Order-expired popup: appears when the deadline passed and the order is no longer payable -->
+<div
+  *ngIf="expiredPopupOpen"
+  class="fixed inset-0 z-[1100] flex items-center justify-center bg-black/50 px-4"
+  role="dialog"
+  aria-modal="true"
+>
+  <div class="w-full max-w-md rounded-2xl bg-white p-6 text-left">
+    <div class="flex items-center gap-3">
+      <div class="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-red-50 text-2xl text-red-500">
+        !
+      </div>
+      <p nz-typography class="text-lg font-semibold text-black">Đơn hàng đã hết hạn</p>
+    </div>
+
+    <div class="mt-4 flex flex-col gap-3">
+      <p nz-typography class="text-14-24 text-black">
+        Thời gian giữ đơn đã kết thúc và đơn hàng không còn hiệu lực. Vui lòng quay lại giỏ hàng để đặt lại.
+      </p>
+    </div>
+
+    <div class="mt-6 flex justify-end">
+      <button
+        type="button"
+        class="rounded-xl bg-yellow-FED80B px-5 py-2.5 text-14-24 font-semibold text-black hover:brightness-95"
+        (click)="onBackToCart()"
+      >
+        Quay lại giỏ hàng
+      </button>
+    </div>
+  </div>
+</div>

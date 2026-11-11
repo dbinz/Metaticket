@@ -1,0 +1,125 @@
+<div #surface class="navbar-surface">
+  <div
+    class="w-full px-5 laptop:px-0 flex justify-center items-center"
+    [class.bg-blue-163AEA]="backgroundColor === 'primary'"
+    [class.bg-transparent]="backgroundColor !== 'primary'"
+    [class.py-4]="!visibleSearch"
+  >
+    <div class="flex flex-row justify-between items-center laptop:w-3/4 w-full laptop:z-50">
+      <div class="flex flex-1 flex-row items-center laptop:space-x-8 z-10">
+        <app-image *ngIf="!visibleSearch" [sx]="'cursor-pointer h-[22px] laptop:h-[32px]'" [src]="appIcons.icLogoDarkMode"
+          (click)="navigateToHome()" />
+      </div>
+      <div class="flex flex-row space-x-4 laptop:hidden z-10">
+        <ng-container [ngTemplateOutlet]="searchWhiteIcon" />
+        <app-image *ngIf="!visibleSearch" [sx]="'w-5 h-5'" [src]="appIcons.icNavBar" (click)="onOpenDrawer()" />
+      </div>
+      <div class="hidden laptop:flex laptop:flex-row laptop:items-center z-10">
+        <div class="flex flex-row items-center space-x-1">
+          <!-- position:relative so the expanded search overlay below never affects this row's flow height -->
+          <div #desktopSearchWrapper class="relative flex items-center">
+            <button type="button"
+              class="flex h-10 w-10 shrink-0 items-center justify-center rounded-full hover:bg-white/10"
+              [class.invisible]="isDesktopSearchExpanded"
+              (click)="onExpandDesktopSearch()" aria-label="Tìm kiếm">
+              <app-image [sx]="'w-5 h-5'" [src]="appIcons.icSearchWhite" />
+            </button>
+
+            <!-- Overlay: position:absolute keeps it out of flow, so it never resizes the navbar regardless of state -->
+            <div
+              class="absolute left-0 top-1/2 z-20 w-[362px] origin-left desktop:left-auto desktop:right-0 desktop:origin-right -translate-y-1/2 transition duration-300 ease-in-out"
+              [ngClass]="isDesktopSearchExpanded ? 'scale-x-100 opacity-100 pointer-events-auto' : 'scale-x-0 opacity-0 pointer-events-none'">
+              <app-input-search [fontSize]="'sm'" [placeholder]="'Bạn đang tìm kiếm gì?'" [suffixIcon]="searchGrayIcon"
+                [highlightResults]="highlightResults" [suggestGroups]="suggestGroups" [value]="searchValue"
+                (handlerOnChanged)="onSearch($event)" />
+            </div>
+          </div>
+          <app-dropdown-menu [title]="'Sự kiện'" [data]="listEventCategory" [isLoading]="getCategoryLoading"
+            (handlerOnSelected)="selectItemEvent($event)"
+                             [iconRight]="choseEvent ? appIcons.icArrowBottomBlackThin : appIcons.icArrowBottomWhiteThin"
+                             [displayTitle]="choseEvent ? choseEvent.title : ''"
+          />
+          <div
+            tabindex="0"
+            class="flex flex-row items-center justify-between px-4 py-2 rounded-full bg-transparent hover:bg-blue-4867FC cursor-pointer gap-1"
+            (click)="navigateToProduct()"
+            (keydown)="navigateToProduct()"
+          >
+            <p nz-typography class="text-base font-medium text-white one-line-text overflow-hidden">Sản phẩm</p>
+          </div>
+          <app-dropdown-menu [title]="'Tin tức'" [data]="listNewsCategory" [isLoading]="getNewsCategoryLoading"
+            (handlerOnSelected)="selectNewsCategory($event)"
+            [iconRight]="choseNewsCategory ? appIcons.icArrowBottomBlackThin : appIcons.icArrowBottomWhiteThin"
+            [displayTitle]="choseNewsCategory ? choseNewsCategory.title : ''"
+          />
+          <app-dropdown-menu *ngIf="userProfile$ | async as userProfile" [title]="'Cá nhân'" [data]="profileMenuItem"
+                             (handlerOnSelected)="selectItemUser($event)"
+                             [iconRight]="choseEvent ? appIcons.icArrowBottomBlackThin : appIcons.icArrowBottomWhiteThin"
+                             [displayTitle]="userProfile?.name ?? ''"
+          />
+          <app-button *ngIf="(loggedIn$ | async) === false" [title]="'Đăng Nhập | Đăng Ký'" (handlerOnPressed)="navigateToLogin()"></app-button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!--drawer-->
+  <nz-drawer [nzClosable]="false" [nzVisible]="visibleDrawer" [nzPlacement]="'right'" (nzOnClose)="onCloseDrawer()"
+    [nzBodyStyle]="{
+      padding: '0px'
+    }">
+    <ng-container *nzDrawerContent class="w-full">
+      <div class="flex flex-col h-full">
+        <div class="flex flex-row p-5 justify-between items-center border-b border-b-grey-E5E5E5">
+          <app-image [sx]="'w-8 h-8'" [src]="appIcons.icArrowRight" (click)="onCloseDrawer()" />
+          <p nz-typography class="text-2xl text-black font-medium leading-120pct">
+            Menu
+          </p>
+          <div class="w-8 h-8"></div>
+        </div>
+        <div class="flex flex-col flex-1 px-8">
+          <ng-container [ngTemplateOutlet]="collapseMenu" />
+        </div>
+      </div>
+    </ng-container>
+  </nz-drawer>
+
+  <!--collapse menu-->
+  <ng-template #collapseMenu>
+    <app-collapse-menu class="mt-3" [title]="'Sự kiện'" [data]="listEventCategory" [isLoading]="getCategoryLoading"
+                       (handlerOnSelected)="selectItemEvent($event)" [displayTitle]="choseEvent ? choseEvent.title : ''"/>
+    <p tabindex="0" class="mt-3 font-medium text-18-22 text-black border-b-[1px] border-[#E5E5E5] pb-5"
+       (click)="navigateToProduct()" (keydown)="navigateToProduct()">
+      Sản phẩm
+    </p>
+    <app-collapse-menu class="mt-3" [title]="'Tin tức'" [data]="listNewsCategory" [isLoading]="getNewsCategoryLoading"
+                       (handlerOnSelected)="selectNewsCategory($event)" [displayTitle]="choseNewsCategory ? choseNewsCategory.title : ''"/>
+    <app-collapse-menu *ngIf="userProfile$ | async as userProfile" class="mt-3" [title]="userProfile.name" [data]="profileMenuItem"
+                       (handlerOnSelected)="selectItemUser($event)" [displayTitle]="userProfile?.name ?? ''"/>
+    <app-button *ngIf="(loggedIn$ | async) === false" [title]="'Đăng Nhập | Đăng Ký'" (handlerOnPressed)="navigateToLogin()"></app-button>
+  </ng-template>
+
+
+  <!--search gray icon-->
+  <ng-template #searchGrayIcon>
+    <app-image [sx]="'w-5 h-5'" [src]="appIcons.icSearchGray" />
+  </ng-template>
+  <ng-template #deleteTextIcon>
+    <button (click)="clearSearchValue()">
+      <app-image [sx]="'w-4 h-4'" [src]="appIcons.icX" />
+    </button>
+  </ng-template>
+
+  <!--search white icon-->
+  <ng-template #searchWhiteIcon>
+    <button *ngIf="!visibleSearch" (click)="onOpenSearch()">
+      <app-image [sx]="'w-5 h-5'" [src]="appIcons.icSearchWhite" />
+    </button>
+  </ng-template>
+  <div class="px-3 block laptop:hidden" [class.py-4]="visibleSearch">
+    <app-input-search-mobile [fontSize]="'sm'" *ngIf="visibleSearch" [placeholder]="'Bạn đang tìm kiếm gì?'"
+      [suffixIcon]="searchGrayIcon" [deleteIcon]="deleteTextIcon" (handlerOnChanged)="onSearch($event)"
+      [highlightResults]="highlightResults" [suggestGroups]="suggestGroups" [value]="searchValue"
+      [openSearch]="visibleSearch" />
+  </div>
+</div>

@@ -1,0 +1,77 @@
+.vi-theme {
+
+    .vi-form {
+
+        .vi-icon-input {
+
+            --icon-prepend-size : 0px;
+            --icon-append-size : 0px;
+
+            i {
+                @apply absolute top-0 bottom-0 my-auto h-[20px] text-[20px];
+
+                &.prepend-icon {
+                    @apply left-[calc(var(--SP3)*4)];
+                }
+    
+                &.append-icon {
+                    @apply right-[calc(var(--SP3)*4)];
+                }
+            }
+
+            .prepend-icon {
+                --icon-prepend-size : 25px
+            }
+
+            .append-icon {
+                --icon-append-size : 20px
+            }
+
+            @apply relative;
+        }
+
+        .vi-input {
+
+            --icon-prepend-size : 0px;
+            --icon-append-size : 0px;
+
+            @apply text-BW1 w-full rounded-[12px] border border-BW4 pl-[calc(var(--SP3)*4+var(--icon-prepend-size))] pr-[calc(var(--SP3)*4+var(--icon-append-size))];
+
+            &:focus {
+                @apply outline-none;
+            }
+
+            &::placeholder {
+                @apply italic text-BW4 font-medium;
+            }
+
+        }
+
+        input.vi-input {
+            &[type="text"],
+            &[type="password"],
+            &:not([type]) {
+                @apply h-[40px] leading-[40px];
+            }
+
+            &[type="radio"] {
+                @apply h-[25px] w-[25px] border-2 border-P1;
+            }
+        }
+
+        textarea.vi-input {
+            @apply leading-[1.2];
+        }
+
+        label.vi-inline-label {
+            @apply flex items-center gap-[var(--SP2)];
+        }
+
+        .vi-text-error {
+            @apply text-red-500 text-[14px]
+        }
+
+    }
+
+
+}

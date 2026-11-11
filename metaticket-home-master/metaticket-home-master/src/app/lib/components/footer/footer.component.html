@@ -1,0 +1,152 @@
+<div
+  class="w-full items-center flex flex-col pt-11 px-5 laptop:px-0 pb-5 space-y-6 {{isDarkMode ? 'bg-blue-163AEA' : 'bg-grey-F4F4F4'}} laptop:py-20">
+  <div class="laptop:w-3/4 w-full flex flex-col z-50">
+    <div class="flex flex-col space-y-6 laptop:flex-row laptop:justify-between laptop:space-x-14 laptop:space-y-0 ">
+      <ng-container [ngTemplateOutlet]="logo" />
+      <ng-container [ngTemplateOutlet]="information" [ngTemplateOutletContext]="{isHidden: true}" />
+      <ng-container [ngTemplateOutlet]="navMenu" />
+      <ng-container [ngTemplateOutlet]="map" />
+    </div>
+    <ng-container [ngTemplateOutlet]="divider" />
+    <div class="flex flex-col space-y-6 laptop:flex-row laptop:justify-between laptop:space-x-14 laptop:space-y-0 ">
+      <ng-container [ngTemplateOutlet]="information" [ngTemplateOutletContext]="{isHidden: false}" />
+      <div class="flex flex-col space-y-6 laptop:flex-row laptop:justify-between laptop:space-x-14 laptop:space-y-0 ">
+      
+        <ng-container [ngTemplateOutlet]="secondinformation" [ngTemplateOutletContext]="{isHidden: false}" />
+        <ng-container [ngTemplateOutlet]="license" [ngTemplateOutletContext]="{isHidden: true}" />
+        <app-image
+        [src]="'assets/homepage/images/ic_tbbct.png'"
+        [sx]="'h-12 w-auto mt-[-10px] cursor-pointer'"
+ 
+      />
+      </div>
+     
+    </div>
+   
+   
+  </div>
+</div>
+
+<!--logo-->
+<ng-template #logo>
+  <div class="flex flex-col space-y-6">
+    <div class="flex flex-col space-y-2">
+      <app-image [sx]="'w-64'" [src]="isDarkMode ? appIcons.icLogoDarkMode: appIcons.icLogoLightMode" [routerLink]="routeName.root" class="cursor-pointer"/>
+      <p nz-typography class="text-xs leading-normal {{isDarkMode ? 'text-grey-F0F0F0':'text-black'}}">
+        TICKET TO ART UNIVERSE
+      </p>
+    </div>
+    <p nz-typography class="text-16-24 font-medium uppercase leading-normal {{isDarkMode ? 'text-white':'text-black'}}">
+      Nền tảng phân phối trực tuyến vé sự kiện <br /> đa dạng thể loại hàng đầu Việt Nam
+    </p>
+  </div>
+</ng-template>
+
+<!--nav menu-->
+<ng-template #navMenu>
+  <div class="flex flex-col laptop:flex-row laptop:space-x-14">
+    <div class="flex flex-col">
+      <p tabindex="0" nz-typography (click)="navigateToAboutUs()" (keydown)="navigateToAboutUs()"
+        class="text-sm uppercase leading-9 cursor-pointer {{isDarkMode ? 'text-grey-F0F0F0':'text-gray-747474'}}">
+        Về chúng tôi
+      </p>
+      <p tabindex="1" nz-typography (click)="navigateToPolicyRegulation()" (keydown)="navigateToPolicyRegulation()"
+        class="text-sm uppercase leading-9 cursor-pointer {{isDarkMode ? 'text-grey-F0F0F0':'text-gray-747474'}}">
+        Chính sách và Quy định chung
+      </p>
+      <p tabindex="2" nz-typography (click)="navigateToPolicyInformationSecurity()"
+        (keydown)="navigateToPolicyInformationSecurity()"
+        class="text-sm uppercase leading-9 cursor-pointer {{isDarkMode ? 'text-grey-F0F0F0':'text-gray-747474'}}">
+        Chính sách bảo mật thông tin
+      </p>
+      <p tabindex="0" nz-typography (click)="navigateToFaq()" (keydown)="navigateToFaq()"
+        class="text-sm uppercase leading-9 cursor-pointer {{isDarkMode ? 'text-grey-F0F0F0':'text-gray-747474'}}">
+        Câu hỏi thường gặp
+      </p>
+      <!-- Trang HTML tĩnh ngoài Angular router (src/app/pages/refund-ticket) → dùng href để tải lại toàn trang -->
+      <a nz-typography href="/refund-ticket"
+        class="block text-sm uppercase leading-9 cursor-pointer {{isDarkMode ? 'text-grey-F0F0F0 hover:text-grey-F0F0F0':'text-gray-747474 hover:text-gray-747474'}}">
+        Phiếu xác nhận hoàn tiền
+      </a>
+    </div>
+    <div class="flex flex-col">
+      <p tabindex="0" nz-typography (click)="navigateToContact()" (keydown)="navigateToContact()"
+        class="text-sm uppercase leading-9 cursor-pointer {{isDarkMode ? 'text-grey-F0F0F0':'text-gray-747474'}}">
+        Liên hệ
+      </p>
+      <p nz-typography
+        class="text-sm uppercase leading-9 cursor-pointer {{isDarkMode ? 'text-grey-F0F0F0':'text-gray-747474'}}">
+        Hotline 1900 3392
+      </p>
+      <p nz-typography
+        class="text-sm uppercase leading-9 cursor-pointer {{isDarkMode ? 'text-grey-F0F0F0':'text-gray-747474'}}">
+        Theo dõi chúng tôi trên
+      </p>
+      <div class="flex flex-row space-x-4 mt-2">
+        <button
+          (click)="navigateToFb()"
+        >
+          <app-image [sx]="'w-7 h-7 cursor-pointer'"
+            [src]="isDarkMode ? appIcons.icFacebookDarkMode: appIcons.icFacebookLightMode" />
+        </button>
+        <app-image [sx]="'w-7 h-7 cursor-pointer'"
+          [src]="isDarkMode ? appIcons.icInstagramDarkMode: appIcons.icInstagramLightMode" />
+      </div>
+    </div>
+  </div>
+</ng-template>
+
+<!--information-->
+<ng-template #information let-isHidden="isHidden">
+  <div
+    class="flex-col space-y-6 laptop:flex-row laptop:items-start laptop:justify-between laptop:space-y-0 laptop:space-x-14 {{isHidden ? 'flex laptop:hidden':'hidden laptop:flex'}}">
+    <p nz-typography
+      class="text-[12px] leading-5 {{isDarkMode ? (isHidden ? 'text-blue-A2B0F7':'text-white'):'text-gray-747474'}}">
+      Công ty Cổ phần META Ticket<br />
+      Địa chỉ: Số 5, Ngõ 7, Đường Liễu Giai, Phường Ngọc Hà, Thành phố Hà Nội, Việt Nam<br />
+      Mã số doanh nghiệp: 0110424555 do Sở kế hoạch & Đầu tư TP Hà Nội cấp lần đầu ngày 21/07/2023<br />
+      <!-- <ng-container [ngTemplateOutlet]="license" [ngTemplateOutletContext]="{isHidden: false}" /> -->
+    </p>
+    <!-- <app-image [sx]="'w-44'" [src]="appIcons.icCertification" /> -->
+  </div>
+</ng-template>
+<ng-template #secondinformation let-isHidden="isHidden">
+  <div
+    class="flex-col space-y-6 laptop:flex-row laptop:items-start laptop:justify-between laptop:space-y-0 laptop:space-x-14  {{isHidden ? 'flex laptop:hidden':'hidden laptop:flex'}}">
+    <p nz-typography
+      class="text-[10px] leading-5 {{isDarkMode ? (isHidden ? 'text-blue-A2B0F7':'text-white'):'text-gray-747474'}}"> 
+      Tổng đài hỗ trợ: 1900 3392<br />
+      Email: contact&commat;metaticket.com.vn<br />
+      <ng-container [ngTemplateOutlet]="license" [ngTemplateOutletContext]="{isHidden: false}" />
+    </p>
+    <!-- <app-image [sx]="'w-44'" [src]="appIcons.icCertification" /> -->
+  </div>
+</ng-template>
+<!--license-->
+<ng-template #license let-isHidden="isHidden">
+  <p nz-typography
+    class="text-[10px] leading-180pct {{isDarkMode ? 'text-white':'text-gray-747474'}} {{isHidden ? 'block pt-4 laptop:hidden':'hidden laptop:block laptop:p-0'}} ">
+    ©2024 – Bản quyền thuộc về Công ty Cổ phần META Ticket
+  </p>
+</ng-template>
+
+<!--map-->
+<ng-template #map>
+  <div
+    class="w-full max-w-[360px] laptop:w-56 desktop:w-64 aspect-square shrink-0 overflow-hidden rounded-xl border {{isDarkMode ? 'border-white/20' : 'border-black/10'}}">
+    <iframe
+      title="Bản đồ văn phòng META Ticket"
+      src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3723.86048889474!2d105.81170967508113!3d21.03826748061345!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3135ab65b8c5f32f%3A0xc4672c5b5704b812!2sMETA%20Ticket!5e0!3m2!1svi!2s!4v1791777910141!5m2!1svi!2s"
+      class="block w-full h-full border-0"
+      allowfullscreen
+      loading="lazy"
+      referrerpolicy="strict-origin-when-cross-origin">
+    </iframe>
+  </div>
+</ng-template>
+
+<!--divider-->
+<ng-template #divider>
+  <div class="w-full h-px {{isDarkMode ? 'bg-grey-F0F0F0 opacity-20':'bg-black opacity-10'}} my-10 hidden laptop:block">
+  </div>
+</ng-template>

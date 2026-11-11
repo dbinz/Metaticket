@@ -1,0 +1,18 @@
+<nb-card>
+    <nb-card-header>
+        {{ title }}
+    </nb-card-header>
+    <nb-card-body>
+        <nb-select placeholder="Chọn một mục" [(ngModel)]="selectedOptionValue" fullWidth>
+            <nb-option *ngFor="let option of options" [value]="option.value">
+                {{ option.title }}
+            </nb-option>
+        </nb-select>
+    </nb-card-body>
+    <nb-card-footer>
+        <button nbButton (click)="onOk()" status="success" class="mr-2" [disabled]="selectedOptionValue === undefined">
+            OK
+        </button>
+        <button nbButton (click)="onClose()" status="basic">Đóng</button>
+    </nb-card-footer>
+</nb-card>

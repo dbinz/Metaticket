@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Event landing page</title>
+    <script src="./script.js"></script>
+    <style>
+      .container {
+        width: 80%;
+        margin: auto;
+        overflow: hidden;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="container">
+      <h1>Wide iframe box</h1>
+      <div id="app_container"></div>
+    </div>
+  </body>
+</html>
+
+<script type="text/javascript">
+  document.addEventListener('DOMContentLoaded', function (event) {
+    MetaTicket.init(document.getElementById('app_container'))
+  })
+</script>

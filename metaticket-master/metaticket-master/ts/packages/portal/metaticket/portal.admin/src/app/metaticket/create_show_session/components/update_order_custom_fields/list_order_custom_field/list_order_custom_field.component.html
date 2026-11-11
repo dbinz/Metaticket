@@ -1,0 +1,66 @@
+<div class="form-inline">
+    <div>
+        <label [ngClass]="{ error: idFormControl.invalid }">Id (*)</label>
+        <input
+            status="{{ idFormControl.invalid ? 'danger' : 'basic' }}"
+            [formControl]="idFormControl"
+            required
+            fullWidth
+            nbInput
+            type="text" />
+    </div>
+    <div>
+        <label [ngClass]="{ error: displayNameFormControl.invalid }">Tên hiển thị (*)</label>
+        <input
+            status="{{ displayNameFormControl.invalid ? 'danger' : 'basic' }}"
+            [formControl]="displayNameFormControl"
+            required
+            fullWidth
+            nbInput
+            type="text" />
+    </div>
+    <div>
+        <label [ngClass]="{ error: noteFormControl.invalid }">Chú thích</label>
+        <input status="basic" [formControl]="noteFormControl" fullWidth nbInput type="text" />
+    </div>
+</div>
+<div [formGroup]="constraintsFormGroup" class="form-inline-child">
+    <div>
+        <nb-checkbox [formControl]="requireConstraintFormControl">Trường bắt buộc nhập</nb-checkbox>
+    </div>
+    <div>
+        <label [ngClass]="{ error: noteFormControl.invalid }">Danh sách item</label>
+        <button (click)="addOptionItem()" class="button ml-1" nbButton>Thêm</button>
+        <ng-container formArrayName="options" class="w-100">
+            <ng-container *ngFor="let itemForm of getConstraintsOptions(); let index = index">
+                <nb-card class="mt-2">
+                    <nb-card-body class="form-inline">
+                        <div>
+                            <label [ngClass]="{ error: itemForm.get('value').invalid }">Item {{ index + 1 }}</label>
+                            <nb-icon class="ml-2" icon="trash-outline" (click)="removeItem(index)" />
+                        </div>
+                        <div></div>
+                        <div>
+                            <label [ngClass]="{ error: itemForm.get('value').invalid }">Key</label>
+                            <input
+                                status="basic"
+                                [formControl]="getConstraintsOptionValueFormControl(itemForm)"
+                                fullWidth
+                                nbInput
+                                type="text" />
+                        </div>
+                        <div>
+                            <label [ngClass]="{ error: itemForm.get('name').invalid }">Value</label>
+                            <input
+                                status="basic"
+                                [formControl]="getConstraintsOptionNameFormControl(itemForm)"
+                                fullWidth
+                                nbInput
+                                type="text" />
+                        </div>
+                    </nb-card-body>
+                </nb-card>
+            </ng-container>
+        </ng-container>
+    </div>
+</div>

@@ -1,0 +1,21 @@
+version: '3.8'
+services:
+  prod_metaticket:
+    image: prod_metaticket
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        TARGET_ENV: "build:production"
+    container_name: prod_metaticket
+    mem_limit: 256m
+    memswap_limit: 256m
+    volumes:
+      - /otp/metaticket/service/homepage/logs:/var/log/nginx
+    ports:
+      - "4200:80"
+    restart: unless-stopped
+networks:
+  default:
+    external: true
+    name: prod_metaticket

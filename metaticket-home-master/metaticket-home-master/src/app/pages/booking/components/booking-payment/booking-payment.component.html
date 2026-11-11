@@ -1,0 +1,391 @@
+<div class="w-full flex flex-1 min-h-[500px]">
+  <div *ngIf="isLoading" class="flex flex-1 items-center justify-center">
+    <app-loading/>
+  </div>
+  <div *ngIf="!isLoading" class="flex flex-1 flex-row laptop:space-x-10">
+    <ng-container [ngTemplateOutlet]="mainContent"/>
+    <ng-container [ngTemplateOutlet]="sideBar"/>
+  </div>
+  <ng-container [ngTemplateOutlet]="orderSummary"/>
+</div>
+
+<ng-template #mainContent>
+  <div class="flex flex-1 flex-col space-y-4 text-stroke-2">
+    <div class="flex flex-col gap-y-6">
+      <span class="text-lg text-black leading-normal font-medium laptop:hidden">
+        Thời gian giữ vé: <span class="text-blue-4867FC">{{ expireInS | secondsToTime }}</span>
+      </span>
+      <p nz-typography class="text-base text-black font-medium uppercase">
+        phương thức thanh toán
+      </p>
+    </div>
+    <div class="w-full flex flex-col space-y-4">
+      <ng-container
+        *ngFor="let paymentMethod of paymentMethods"
+        [ngTemplateOutlet]="paymentMethodItem"
+        [ngTemplateOutletContext]="{name: paymentMethod!!.name, icon: paymentMethod!!.icon, code: paymentMethod!!.code}"
+      />
+    </div>
+  </div>
+</ng-template>
+
+<ng-template #paymentMethodItem let-name='name' let-icon='icon' let-code='code'>
+  <button
+    (click)="onSelectPayment(code)"
+    class="w-full flex flew-row items-center px-6 py-4 border-2 rounded-full space-x-3 bg-grey-F4F4F4 {{paymentMethod === code ? 'border-blue-4867FC': 'border-grey-F4F4F4'}}"
+  >
+    <app-image [src]="icon" [sx]="code === paymentType.InternationalCard ? 'h-3': code === paymentType.VietQr ? 'h-4' : 'h-5'"/>
+    <p nz-typography class="text-sm text-black leading-normal laptop:text-base text-stroke-2">
+      {{ name }}
+    </p>
+  </button>
+</ng-template>
+
+<ng-template #sideBar>
+  <div class="hidden w-1/3 flex-col space-y-4 laptop:flex text-stroke-2">
+    <div class="flex flex-row items-center justify-between">
+      <p nz-typography class="text-base text-black font-medium uppercase">
+        thông tin đơn hàng
+      </p>
+      <p *ngIf="expireInS > 0" nz-typography class="text-lg text-blue-4867FC leading-normal font-medium uppercase">
+        {{ expireInS | secondsToTime }}
+      </p>
+    </div>
+    <div class="w-full flex flex-col justify-between space-y-10 bg-grey-F4F4F4 p-6 rounded-[30px] min-h-[500px]">
+      <div class="w-full flex flex-col">
+        <div *ngIf="listTickets.length > 0" class="flex flex-col space-y-5">
+          <booking-ticket-item *ngFor="let ticket of listTickets" [item]="ticket"/>
+        </div>
+        <div *ngIf="tentativePrice.priceDiscount > 0" class="flex flex-row my-4 items-center justify-between">
+          <p nz-typography class="text-sm leading-normal text-blue-4867FC">
+            Giảm giá
+          </p>
+          <p nz-typography class="text-sm leading-normal text-blue-4867FC font-medium">
+            {{ tentativePrice.priceDiscount * -1 | formatPrice }}
+          </p>
+        </div>
+        <div *ngIf="tentativePrice.shipPrice > 0" class="flex flex-row items-center justify-between">
+          <p nz-typography class="text-sm leading-normal text-black">
+            Phí giao hàng
+          </p>
+          <p nz-typography class="text-sm leading-normal text-black font-medium">
+            {{ tentativePrice.shipPrice | formatPrice }}
+          </p>
+        </div>
+        <nz-divider class="mt-6 mb-4"></nz-divider>
+        <app-loading [isSpinning]="false">
+          <div class="flex flex-row items-center justify-between">
+            <p nz-typography class="text-xl leading-normal text-black">
+              Tổng
+            </p>
+            <p nz-typography class="text-xl leading-normal text-black font-semibold">
+              {{ tentativePrice.priceTotal | formatPrice }}
+            </p>
+          </div>
+        </app-loading>
+      </div>
+      <div class="grid grid-cols-2 gap-x-2">
+        <app-button
+          class="w-full"
+          [title]="'Quay lại'"
+          [color]="'white'"
+          (handlerOnPressed)="onGoBack()"
+        />
+        <app-button
+          class="w-full"
+          [title]="'Tiếp tục'"
+          [disabled]="paymentMethod === null"
+          [isLoading]="createPaymentLoading"
+          (handlerOnPressed)="startPayment()"
+        />
+      </div>
+    </div>
+  </div>
+</ng-template>
+
+<ng-template #orderSummary>
+  <div class="bottom-0 left-0 fixed w-full bg-white z-max p-5 space-y-4 flex flex-col items-center justify-center shadow-[0_-4px_4px_0_rgba(0,0,0,0.03),0_-4px_4px_0_rgba(0,0,0,0.03)] laptop:hidden text-stroke-2">
+    <div class="w-full flex flex-row items-center justify-between">
+      <p nz-typography class="text-lg leading-normal text-gray-7B7B7B">Tổng:</p>
+      <button class="flex flex-row space-x-1 items-center" (click)="onOpenBottomSheet()">
+        <p nz-typography class="text-xl font-medium text-black">
+          {{ tentativePrice.priceTotal | formatPrice }}
+        </p>
+        <app-image [src]="appIcons.icArrowBottomBlack" [sx]="'w-6 h-6 rotate-180'"/>
+      </button>
+    </div>
+    <div class="w-full grid grid-cols-2 gap-x-3">
+      <app-button
+        class="w-full"
+        [title]="'Quay lại'"
+        [color]="'gray'"
+        (handlerOnPressed)="onGoBack()"
+      />
+      <app-button
+        class="w-full"
+        [title]="'Tiếp tục ' + '(' + listTickets.length + ')'"
+        [disabled]="paymentMethod === null"
+        [isLoading]="createPaymentLoading"
+        (handlerOnPressed)="startPayment()"
+      />
+    </div>
+  </div>
+</ng-template>
+
+<nz-drawer
+  [nzClosable]="false"
+  [nzVisible]="bottomSheetVisible"
+  [nzPlacement]="'bottom'"
+  (nzOnClose)="onCloseBottomSheet()"
+  [nzWrapClassName]="'h-auto laptop:hidden'"
+  [nzBodyStyle]="{
+    padding: '0px'
+  }"
+>
+  <ng-container *nzDrawerContent>
+    <div class="flex flex-col px-5 pt-5 pb-4 space-y-6.5 text-stroke-2">
+      <div class="flex flex-col space-y-4">
+        <div class="flex flex-col space-y-5.5">
+          <p nz-typography class="text-base text-black font-semibold uppercase">
+            thông tin đơn hàng
+          </p>
+          <div class="flex flex-col space-y-5">
+            <booking-ticket-item *ngFor="let ticket of listTickets" [item]="ticket"/>
+          </div>
+        </div>
+        <div *ngIf="tentativePrice.priceDiscount > 0" class="flex flex-row items-center justify-between">
+          <p nz-typography class="text-sm leading-normal text-blue-4867FC">
+            Giảm giá
+          </p>
+          <p nz-typography class="text-sm leading-normal text-blue-4867FC font-medium">
+            {{ tentativePrice.priceDiscount * -1 | formatPrice }}
+          </p>
+        </div>
+        <div *ngIf="tentativePrice.shipPrice > 0" class="flex flex-row items-center justify-between">
+          <p nz-typography class="text-sm leading-normal text-black">
+            Phí giao hàng
+          </p>
+          <p nz-typography class="text-sm leading-normal text-black font-medium">
+            {{ tentativePrice.shipPrice | formatPrice }}
+          </p>
+        </div>
+      </div>
+      <div class="flex flex-col space-y-5">
+        <div class="flex flex-row items-center justify-between">
+          <p nz-typography class="text-lg leading-normal text-gray-7B7B7B">
+            Tổng:
+          </p>
+          <button class="flex flex-row space-x-1 items-center" (click)="onCloseBottomSheet()">
+            <p nz-typography class="text-xl font-medium text-black">
+              {{ tentativePrice.priceTotal | formatPrice }}
+            </p>
+            <app-image [src]="appIcons.icArrowBottomBlack" [sx]="'w-6 h-6'"/>
+          </button>
+        </div>
+        <div class="w-full grid grid-cols-2 gap-x-3">
+          <app-button
+            class="w-full"
+            [title]="'Quay lại'"
+            [color]="'gray'"
+            (handlerOnPressed)="onGoBack()"
+          />
+          <app-button
+            class="w-full"
+            [title]="'Tiếp tục ' + '(' + listTickets.length + ')'"
+            [disabled]="paymentMethod === null"
+            [isLoading]="createPaymentLoading"
+            (handlerOnPressed)="startPayment()"
+          />
+        </div>
+      </div>
+    </div>
+  </ng-container>
+</nz-drawer>
+
+<!--modal-->
+<nz-modal
+  [(nzVisible)]="modalVisible"
+  [nzContent]="modalContent"
+  [nzFooter]="null"
+  [nzClosable]="false"
+  [nzStyle]="{
+    'display': 'flex',
+    'justify-content': 'center',
+    'align-items': 'center',
+    'position': 'fixed',
+    'top': '0',
+    'right': '0',
+    'bottom': '0',
+    'left': '0',
+  }"
+>
+  <ng-template #modalContent>
+    <div *ngIf="!cancelConfirmVisible; else cancelConfirm" class="flex flex-col items-center space-y-4 px-4 tablet:px-16">
+      <span nz-icon nzType="loading" nzTheme="outline" class="text-4xl"></span>
+      <p nz-typography class="text-xl text-black font-bold uppercase">Giao dịch đang xử lý</p>
+      <div class="flex flex-col items-center space-y-1">
+        <p nz-typography class="text-sm leading-normal text-black-60 text-center">
+          Vui lòng chờ trong giây lát và không đóng cửa sổ mua vé!
+        </p>
+        <p nz-typography class="text-sm leading-normal text-black-60 text-center">
+          Nếu bạn không thấy trang thanh toán, hãy mở lại bằng nút bên dưới.
+        </p>
+      </div>
+      <app-button
+        [title]="'Mở lại trang thanh toán'"
+        [fontSize]="'lg'"
+        (handlerOnPressed)="reopenPaymentWindow()"
+      />
+      <app-button
+        *ngIf="showCancelAfterDelay"
+        [title]="'Tôi chưa thanh toán — Quay lại chọn vé'"
+        [color]="'gray'"
+        [fontSize]="'sm'"
+        (handlerOnPressed)="requestCancelPendingPayment()"
+      />
+    </div>
+    <!-- Bỏ màn chờ chỉ reset phía client (chưa có API hủy đơn vé), nên phải nói rõ hệ quả trước. -->
+    <ng-template #cancelConfirm>
+      <div class="flex flex-col items-center space-y-4 px-4 tablet:px-16">
+        <p nz-typography class="text-xl text-black font-bold text-center">Bạn chắc chắn chưa thanh toán?</p>
+        <div class="flex flex-col items-center space-y-1">
+          <p nz-typography class="text-sm leading-normal text-black-60 text-center">
+            Nếu bạn đã thanh toán, vé vẫn được phát hành và hiển thị trong mục Quản lý vé của tài khoản, bạn
+            không cần mua lại.
+          </p>
+          <p nz-typography class="text-sm leading-normal text-black-60 text-center">
+            Ghế vừa chọn sẽ còn bị giữ cho tới khi giao dịch này hết hạn, nên có thể chưa chọn lại được ngay.
+          </p>
+        </div>
+        <app-button
+          [title]="'Tiếp tục chờ thanh toán'"
+          [fontSize]="'lg'"
+          (handlerOnPressed)="dismissCancelPendingPayment()"
+        />
+        <app-button
+          [title]="'Quay lại chọn vé'"
+          [color]="'gray'"
+          [fontSize]="'sm'"
+          (handlerOnPressed)="cancelPendingPayment()"
+        />
+      </div>
+    </ng-template>
+  </ng-template>
+</nz-modal>
+
+<!--modal popup bị trình duyệt chặn-->
+<nz-modal
+  [(nzVisible)]="modalPopupBlockedVisible"
+  [nzContent]="modalPopupBlocked"
+  [nzFooter]="null"
+  [nzClosable]="false"
+  [nzStyle]="{
+    'display': 'flex',
+    'justify-content': 'center',
+    'align-items': 'center',
+    'position': 'fixed',
+    'top': '0',
+    'right': '0',
+    'bottom': '0',
+    'left': '0'
+  }"
+>
+  <ng-template #modalPopupBlocked>
+    <div class="flex flex-col items-center space-y-4 px-4">
+      <p nz-typography class="text-xl text-black font-bold text-center">
+        Trình duyệt của bạn đang khóa pop-ups
+      </p>
+      <div class="flex flex-col items-center space-y-1">
+        <p nz-typography class="text-sm leading-normal text-black-60 text-center">
+          Chúng tôi chưa mở được cửa sổ thanh toán. Bạn có thể cho phép pop-up cho trang này, hoặc bấm
+          nút bên dưới để thanh toán ngay trên tab hiện tại.
+        </p>
+      </div>
+      <app-button
+        [title]="'Tiếp tục thanh toán'"
+        [fontSize]="'lg'"
+        [isLoading]="createPaymentLoading"
+        (handlerOnPressed)="continuePaymentSameTab()"
+      />
+      <app-button
+        [title]="'Quay lại'"
+        [color]="'gray'"
+        [fontSize]="'sm'"
+        (handlerOnPressed)="closePopupBlockedModal()"
+      />
+    </div>
+  </ng-template>
+</nz-modal>
+
+<!--modal fail, cancel-->
+<nz-modal
+  [(nzVisible)]="modalFailVisible"
+  [nzContent]="modalFail"
+  [nzFooter]="null"
+  [nzClosable]="false"
+  [nzStyle]="{
+    'display': 'flex',
+    'justify-content': 'center',
+    'align-items': 'center',
+    'position': 'fixed',
+    'top': '0',
+    'right': '0',
+    'bottom': '0',
+    'left': '0'
+  }"
+>
+  <ng-template #modalFail>
+    <div class="flex flex-col items-center space-y-4 px-4">
+      <div class="flex flex-col items-center space-y-1">
+        <p nz-typography class="text-sm leading-normal text-black-60 text-center">
+          Thanh toán thất bại
+        </p>
+      </div>
+      <app-button
+        class=""
+        [title]="'Quay lại'"
+        [fontSize]="'lg'"
+        (handlerOnPressed)="backToBooking()"
+      />
+    </div>
+  </ng-template>
+</nz-modal>
+
+<!--modal error-->
+<nz-modal
+  [(nzVisible)]="modalErrorVisible"
+  [nzContent]="modalError"
+  [nzFooter]="null"
+  [nzClosable]="false"
+  [nzStyle]="{
+    'display': 'flex',
+    'justify-content': 'center',
+    'align-items': 'center',
+    'position': 'fixed',
+    'top': '0',
+    'right': '0',
+    'bottom': '0',
+    'left': '0'
+  }"
+>
+  <ng-template #modalError>
+    <div class="flex flex-col items-center space-y-4 px-4">
+<!--      <app-image [src]="appIcons.icWarning" [sx]="'w-10 h-10'"/>-->
+      <div class="flex flex-col items-center space-y-1">
+        <p nz-typography class="text-sm leading-normal text-black-60 text-center">
+          Có lỗi đã xảy ra!
+        </p>
+        <p nz-typography class="text-sm leading-normal text-black-60 text-center">
+          Chúng tôi chưa chắc chắn về kết quả đặt vé của bạn. Hãy liên hệ với bộ phận chăm sóc khách hàng với mã đơn là:
+        </p>
+        <p nz-typography class="text-base text-black text-center font-bold">{{code}}</p>
+      </div>
+      <app-button
+        class=""
+        [title]="'Quay lại'"
+        [fontSize]="'lg'"
+        (handlerOnPressed)="backToBooking()"
+      />
+    </div>
+  </ng-template>
+</nz-modal>

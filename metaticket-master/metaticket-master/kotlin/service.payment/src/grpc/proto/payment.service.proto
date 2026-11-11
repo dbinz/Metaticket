@@ -1,0 +1,12 @@
+syntax = "proto3";
+
+package metaticket.payment.grpc;
+
+import "google/protobuf/wrappers.proto";
+import "payment_message.proto";
+
+service PaymentService {
+  rpc GetPaymentById(GetPaymentByIdRequest) returns (PaymentResponse);
+  rpc GetPaymentByIds(GetPaymentByIdsRequest) returns (GetPaymentByIdsResponse);
+  rpc CreatePayment(CreatePaymentRequest) returns (google.protobuf.StringValue);
+}

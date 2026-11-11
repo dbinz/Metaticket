@@ -1,0 +1,23 @@
+syntax = "proto3";
+
+package metaticket.customer.user.grpc;
+
+message CustomerUserProto {
+  string id = 1;
+  string phone = 2;
+  string name = 3;
+  string email = 4;
+}
+
+message GetCustomerUserByIdRequest {
+  string id = 1;
+}
+
+message GetCustomerUserByPhoneRequest {
+  string phone = 1;
+}
+
+message VerifyPasswordRequest {
+  string phone = 1;
+  string password = 2;
+}

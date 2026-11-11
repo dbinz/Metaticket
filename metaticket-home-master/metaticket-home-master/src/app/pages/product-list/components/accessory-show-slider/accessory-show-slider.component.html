@@ -1,0 +1,63 @@
+<div class="acc-slider" *ngIf="shows?.length">
+  <div
+    class="acc-slider__stage"
+    (mouseenter)="onClearInterval()"
+    (mouseleave)="onSetInterval()"
+  >
+    <button
+      *ngFor="let show of activeSlides; trackBy: trackActiveSlide"
+      type="button"
+      class="acc-slider__slide"
+      (click)="onSelect(show)"
+      (panleft)="onSwipeNext()"
+      (panright)="onSwipePrev()"
+      [attr.aria-label]="'Xem sản phẩm ' + show.name"
+    >
+      <img
+        class="acc-slider__image"
+        [src]="showImage(show)"
+        [alt]="show.name"
+        loading="eager"
+        decoding="async"
+      />
+      <span class="acc-slider__shade" aria-hidden="true"></span>
+      <span class="acc-slider__caption">
+        <span class="acc-slider__title">{{ show.name }}</span>
+        <span *ngIf="citiesLine(show)" class="acc-slider__meta">{{ citiesLine(show) }}</span>
+        <span *ngIf="venuesLine(show)" class="acc-slider__meta acc-slider__meta--muted">{{ venuesLine(show) }}</span>
+      </span>
+    </button>
+
+    <button
+      *ngIf="shows.length > 1"
+      type="button"
+      class="acc-slider__nav acc-slider__nav--prev"
+      (click)="onNavPrev($event)"
+      aria-label="Slide trước"
+    >
+      <app-image [sx]="'w-5 h-5 laptop:w-12 laptop:h-12'" [src]="appIcons.icPrev" />
+    </button>
+    <button
+      *ngIf="shows.length > 1"
+      type="button"
+      class="acc-slider__nav acc-slider__nav--next"
+      (click)="onNavNext($event)"
+      aria-label="Slide sau"
+    >
+      <app-image [sx]="'w-5 h-5 laptop:w-12 laptop:h-12'" [src]="appIcons.icNext" />
+    </button>
+  </div>
+
+  <div *ngIf="shows.length > 1" class="acc-slider__dots" role="tablist" aria-label="Chọn banner">
+    <button
+      *ngFor="let item of shows; let i = index; trackBy: trackByIndex"
+      type="button"
+      class="acc-slider__dot"
+      [class.acc-slider__dot--active]="selectedIndex === i"
+      (click)="goTo(i)"
+      [attr.aria-label]="'Slide ' + (i + 1)"
+      [attr.aria-selected]="selectedIndex === i"
+      role="tab"
+    ></button>
+  </div>
+</div>

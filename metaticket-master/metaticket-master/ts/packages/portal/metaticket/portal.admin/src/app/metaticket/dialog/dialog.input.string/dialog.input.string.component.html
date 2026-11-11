@@ -1,0 +1,12 @@
+<nb-card>
+    <nb-card-header>
+        {{ title }}
+    </nb-card-header>
+    <nb-card-body>
+        <input [type]="dataType" nbInput [(ngModel)]="inputData" (ngModelChange)="onInputDataChange()" />
+    </nb-card-body>
+    <nb-card-footer>
+        <button nbButton (click)="onOk()" status="success" class="mr-2" [disabled]="!isInputValid">SUBMIT</button>
+        <button nbButton (click)="onClose()" status="basic">CLOSE</button>
+    </nb-card-footer>
+</nb-card>

@@ -1,0 +1,28 @@
+<article class="news-card flex flex-col gap-3">
+  <a [href]="newsArticleHref(newsItem.slug)" class="news-card__thumb relative w-full block">
+    <app-image
+      [src]="newsItem.thumbnail"
+      [sx]="'w-full rounded-xl absolute left-0 right-0 top-0 h-full object-cover'"
+    />
+  </a>
+
+  <div class="news-card__body flex flex-col gap-1.5">
+    <p nz-typography class="text-12-24 md:text-14-24 font-medium text-yellow-FED80B">
+      {{ newsItem.displayDate }}
+    </p>
+
+    <a [href]="newsArticleHref(newsItem.slug)">
+      <p nz-typography class="text-14-16 md:text-18-22 font-bold text-white line-clamp-2">
+        {{ newsItem.title }}
+      </p>
+    </a>
+
+    <p
+      *ngIf="newsItem.subdesc || newsItem.summary"
+      nz-typography
+      class="m-0 text-12-20 md:text-14-24 font-normal text-blue-9CA8D3 line-clamp-2"
+    >
+      {{ newsItem.subdesc || newsItem.summary }}
+    </p>
+  </div>
+</article>

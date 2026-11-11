@@ -1,0 +1,18 @@
+{
+  "id": "order_id_456",
+  "reservationId": "reservation_id_123",
+  "customerName": "John Doe",
+  "customerPhone": "1234567890",
+  "customerEmail": "john.doe@example.com",
+  "deliveryName": "John Doe",
+  "provinceName": "California",
+  "districtName": "Los Angeles",
+  "wardName": "Some Ward",
+  "address": "123 Main Street",
+  "status": "Created",
+  "paymentType": "QrCode",
+  "tickets": [
+    "ticket_id_1",
+    "ticket_id_2"
+  ]
+}

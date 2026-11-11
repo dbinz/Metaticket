@@ -1,0 +1,14 @@
+<nb-card [nbSpinner]="loading > 0">
+    <nb-card-header fullWidth>
+        <div class="inline-form-card w-100 d-flex align-items-center justify-content-between flex-wrap">
+            <div>
+                <strong>Sự kiện bán hàng (merchandise)</strong>
+            </div>
+            <a routerLink="/portal/accessory/show/create" nbButton status="primary">Tạo mới</a>
+        </div>
+    </nb-card-header>
+    <nb-card-body>
+        <angular2-smart-table (custom)="onCustomButton($event)" [source]="source" [settings]="settings">
+        </angular2-smart-table>
+    </nb-card-body>
+</nb-card>

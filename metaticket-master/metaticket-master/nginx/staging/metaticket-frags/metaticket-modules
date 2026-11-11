@@ -1,0 +1,26 @@
+# Consider consistency in trailing slashes for location and alias if mfe is a directory.
+# e.g., location /modules/metaticket/editor.seatplanner/ { alias .../mfe/; }
+location /modules/metaticket/editor.seatplanner {
+    add_header Access-Control-Allow-Origin *;
+    alias /staging/metaticket/static/modules/metaticket/mfe;
+}
+location /modules/metaticket/editor.policydesc/ {
+    add_header Access-Control-Allow-Origin *;
+    alias /staging/metaticket/static/modules/metaticket/mfe/;
+}
+location /modules/metaticket/themes/editor.seatplanner.ui {
+    add_header Access-Control-Allow-Origin *;
+    alias /staging/metaticket/static/modules/metaticket/themes;
+}
+location /modules/metaticket/editor.seatplanner.ui {
+    add_header Access-Control-Allow-Origin *;
+    alias /staging/metaticket/static/modules/metaticket/mfe;
+}
+location /modules/viclass {
+    add_header Access-Control-Allow-Origin *;
+    alias /staging/metaticket/static/modules/viclass;
+}
+location /modules/metaticket {
+    add_header Access-Control-Allow-Origin *;
+    alias /staging/metaticket/static/modules/metaticket;
+}

@@ -1,0 +1,78 @@
+* 2023-12-06 Release 1.0.16
+  - [service.show 1.0.7] support mail template by order status, add session status
+  - [service.order 1.0.11] support mail template by order status
+  - [portal.admin 1.0.2] support resend mail, list all order
+  - [frontend 1.0.7] not allow order that is not open
+
+* 2023-11-15 Release 1.0.15
+  - [service.ticket 1.0.5] include ticket session id in response
+  - [service.order 1.0.10] fix loading offline payment
+  - [service.show 1.0.6] include session name
+  - [portal.admin 1.0.1] support to hard change reserved ticket
+
+* 2023-11-08 Release 1.0.14
+  - [service.ticket 1.0.4] support hard change reserved ticket
+  - [frontend 1.0.6] 
+
+* 2023-11-14 Release 1.0.13
+  - [service.show 1.0.5] include createAt time in show response
+  - [service.order 1.0.9] support load/confirm/cancel offline payment order
+  - [service.ticket 1.0.4] return expire time 10 hour if the reservation is not have expire time
+  - [portal.admin 1.0.0] release portal.admin, release manage offline payment order page
+  
+
+* 2023-11-06 Release 1.0.12
+  - [plugin.mailtemplate 1.0.0] define inteface for plugin template
+  - [plugin.mailtemplate.basic 1.0.0] implement basic plugin mail template
+  - [plugin.mailtemplate.offline-payment 1.0.0] implement offline payment mail template
+  - [service.notification 1.0.7] support using plugin to build mail template
+  - [service.show 1.0.4] support payment note, mail plugin template, offline payment mode
+  - [service.order 1.0.8] support show payment note, create order offline payment
+  - [frontend 1.0.5] support show payment note
+
+* 2023-11-01 Release 1.0.11
+ - [service.ticket 1.0.3]
+  + support share capacity in a show/session/categogy
+  + support config for eatch reservation (min/max ticket by show/session/categogy)
+
+ - [service.show 1.0.3]
+  + support to show order note
+
+ - [service.order.datacollector 1.0.0]
+  + implement new service that support to store order extra data collected
+
+ - [service.order 1.0.7]
+  + support order custom field for extra info, these info are saved in order collection
+  + support to show order note
+
+ - [service.notification 1.0.6]
+  + include order extra fields in email
+  + somw change mail template
+
+ - [ts project 1.0.1]
+   + [portal.order.datacollector] implement order data collector portal to collect extra info of the order
+
+ - [frontend] support show order note
+
+* 2023-09-19 Release 1.0.10
+ - [order 1.0.6] remove promotion config file
+
+* 2023-09-19 Release 1.0.8
+ - [show] support enable/disable required order delivery
+ - [order] suopport enable/disable required order delivery, support custom fields. Migrate promotion from config file to database
+ - [notification] support enable/disable required order delivery
+ - [frontend] suopport enable/disable required order delivery, support custom fields. Migrate promotion from config file to database
+ 
+* 2023-09-07 Release 1.0.7
+ - [notification] cache executing request, fix duplicate send mail
+
+* 2023-09-01 Release 1.0.5
+ - [ticket] v1.0.2 remove reservation reserving too long time
+ - [frontend] v1.0.3 implement return to step 1 when reservation expired
+
+* 2023-08-26 Release 1.0.4
+ - [order] v1.0.4 change jci promotion condition
+ - [frontent] v1.0.2 change to support new update from order service
+
+* 2023-08-25 Release 1.0.3
+ - [order] support mma promotions

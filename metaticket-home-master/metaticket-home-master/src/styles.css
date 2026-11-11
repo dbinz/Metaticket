@@ -1,0 +1,188 @@
+/* You can add global styles to this file, and also import other style files */
+@import './assets/css/wordpress/style.min.css';
+@import './assets/css/wordpress/theme.min.css';
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+html * {
+  font-family: Bricolage Grotesque, sans, serif !important;
+}
+
+.slick-list {
+  height: auto !important;
+}
+
+.slick-track {
+  height: auto !important;
+}
+
+.slick-slide {
+  height: auto !important;
+}
+
+.one-line-text {
+  display: -webkit-box;
+  -webkit-line-clamp: 1;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  word-wrap: break-word;
+}
+
+.ant-collapse-content {
+  border: 0;
+}
+
+.ant-collapse-content-box {
+  border-width: 0;
+  padding: 0 !important;
+}
+
+.ant-collapse-header {
+  padding: 0 35px 0 0 !important;
+}
+
+.ant-breadcrumb-separator {
+  margin: 0;
+  color: #fff;
+  opacity: 0.6;
+}
+
+@layer base {
+
+  .no-tailwindcss-base h1,
+  .no-tailwindcss-base h2,
+  .no-tailwindcss-base h3,
+  .no-tailwindcss-base h4,
+  .no-tailwindcss-base h5,
+  .no-tailwindcss-base h6 {
+    font-size: revert;
+    font-weight: revert;
+  }
+
+  .no-tailwindcss-base ol,
+  .no-tailwindcss-base ul {
+    list-style: revert;
+    margin: revert;
+    padding: revert;
+  }
+}
+
+.board-viewport {
+  background: linear-gradient(-90deg, rgba(0, 0, 0, .05) 1px, transparent 1px), linear-gradient(rgba(0, 0, 0, .05) 1px, transparent 1px), linear-gradient(-90deg, rgba(0, 0, 0, .08) 1px, transparent 1px), linear-gradient(rgba(0, 0, 0, .08) 1px, transparent 1px), #fff;
+  background-size: 20px 20px, 20px 20px, 100px 100px, 100px 100px
+}
+
+.vi-wrapping-unbounded-svg-layer::-webkit-scrollbar {
+  display: none;
+}
+
+.hidden-scroll-bar {
+  scrollbar-width: none;
+  /* Firefox */
+  -ms-overflow-style: none;
+  /* IE 10+ */
+
+  &::-webkit-scrollbar {
+    background: transparent;
+    /* Chrome/Safari/Webkit */
+    width: 0;
+    height: 0;
+  }
+
+  scroll-behavior: smooth;
+}
+
+.cdk-overlay-container {
+  z-index: 99999 !important;
+}
+
+/*select*/
+.ant-select-single:not(.ant-select-customize-input) .ant-select-selector {
+  padding: 0 !important;
+}
+
+.ant-select-single.ant-select-show-arrow .ant-select-selection-search {
+  left: 0 !important;
+}
+
+.ant-select-single:not(.ant-select-customize-input) .ant-select-selector .ant-select-selection-search-input {
+  height: 24px !important;
+}
+
+.seat-map-modal .ant-modal-content {
+  border-radius: 20px !important;
+  height: 100% !important;
+}
+
+.ant-popover-arrow {
+  display: none;
+}
+
+.ant-popover-inner {
+  border-radius: 16px;
+}
+
+.ant-popover-inner-content {
+  padding: 0;
+}
+
+.ck-rounded-corners .ck.ck-editor__main>.ck-editor__editable,
+.ck.ck-editor__main>.ck-editor__editable.ck-rounded-corners {
+  padding: 0 16px !important;
+  min-height: 332px !important;
+  border-radius: 0 0 20px 20px !important;
+}
+
+.ck-rounded-corners .ck.ck-editor__top .ck-sticky-panel .ck-toolbar,
+.ck.ck-editor__top .ck-sticky-panel .ck-toolbar.ck-rounded-corners {
+  border-radius: 20px 20px 0 0 !important;
+}
+
+.text-stroke {
+  -webkit-text-stroke: 0.1px;
+}
+
+.text-stroke-2 {
+  -webkit-text-stroke: 0.25px;
+}
+
+.ant-form-item-label {
+  white-space: normal !important;
+  overflow: visible !important;
+  text-align: left !important;
+}
+
+.ant-form-item-label>label {
+  height: auto !important;
+  min-height: 24px;
+  white-space: normal !important;
+  word-break: break-word;
+  display: inline-block !important;
+}
+
+.ant-form-item-label>label::after {
+  content: '' !important;
+}
+
+@media (max-width: 1024px) {
+
+  .ck-rounded-corners .ck.ck-editor__main>.ck-editor__editable,
+  .ck.ck-editor__main>.ck-editor__editable.ck-rounded-corners {
+    padding: 0 12px !important;
+    min-height: 138px !important;
+  }
+}
+/* Bước chọn ghế toàn màn hình: ẩn các thành phần nổi toàn cục để không che sơ đồ chỗ ngồi. */
+body.booking-immersive app-contact-widget {
+  display: none;
+}
+
+/* Bottom sheet "thông tin đơn hàng" ở bước chọn ghế: cao theo nội dung nhưng chặn ở 85vh để danh
+   sách vé dài vẫn cuộn được. Cần !important vì nz-drawer đặt height bằng inline style. */
+.ant-drawer-content-wrapper.booking-order-sheet {
+  height: auto !important;
+  max-height: 85vh;
+}

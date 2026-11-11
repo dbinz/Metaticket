@@ -1,0 +1,14 @@
+<nb-card [nbSpinner]="loading > 0">
+    <nb-card-header fullWidth>
+        <div class="inline-form-card w-100">
+            <a routerLink="/portal/show/create" nbButton status="primary">Tạo mới</a>
+            <button class="button ml-2" type="button" nbButton status="info" (click)="sync()">
+                Đồng bộ với trang chủ
+            </button>
+        </div>
+    </nb-card-header>
+    <nb-card-body>
+        <angular2-smart-table (custom)="onCustomButton($event)" [source]="source" [settings]="settings">
+        </angular2-smart-table>
+    </nb-card-body>
+</nb-card>

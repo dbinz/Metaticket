@@ -1,0 +1,55 @@
+<nb-card [nbSpinner]="loading > 0">
+    <nb-card-header fullWidth>
+        <div class="inline-form-card w-100">
+            <form class="form-inline">
+                <div class="pl-2">
+                    <label>Sự kiện</label>
+                    <input
+                        #autoInputShow
+                        (input)="onInputShowChange(autoInputShow.value)"
+                        (click)="onInputShowChange('')"
+                        [nbAutocomplete]="autoCompleteShow"
+                        class="w-100"
+                        nbInput
+                        placeholder="Nhập sự kiện"
+                        type="text" />
+                    <nb-autocomplete #autoCompleteShow (selectedChange)="onSelectionShowChange($event)">
+                        <nb-option *ngFor="let show of filteredShowList$ | async" [value]="show.id">
+                            {{ show.showName }}
+                        </nb-option>
+                    </nb-autocomplete>
+                </div>
+
+                <div class="pl-2">
+                    <label>Session</label>
+                    <input
+                        #autoInputSession
+                        (input)="onInputSessionChange(autoInputSession.value)"
+                        (click)="onInputSessionChange('')"
+                        [nbAutocomplete]="autoCompleteSession"
+                        [readOnly]="!sessionList || sessionList.length < 2"
+                        class="w-100"
+                        nbInput
+                        placeholder="Nhập Session"
+                        type="text" />
+                    <nb-autocomplete #autoCompleteSession (selectedChange)="onSelectionSessionChange($event)">
+                        <nb-option *ngFor="let session of filteredSessionList$ | async" [value]="session.id">
+                            {{ getSessionName(session) }}
+                        </nb-option>
+                    </nb-autocomplete>
+                </div>
+
+                <div class="ml-auto">
+                    <a nbButton status="primary" (click)="loadReportFilter()">Truy Vấn</a>
+                    <a nbButton (click)="clear()" class="ml-3">Clear</a>
+                </div>
+            </form>
+        </div>
+    </nb-card-header>
+    <nb-card-body>
+        <div *ngIf="source">
+            <angular2-smart-table [source]="source" [settings]="settings"> </angular2-smart-table>
+        </div>
+    </nb-card-body>
+    <nb-card-footer> </nb-card-footer>
+</nb-card>

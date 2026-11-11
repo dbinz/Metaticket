@@ -1,0 +1,4 @@
+server {
+    listen $TICKET_GRPC_CONNECT_PORT;
+    proxy_pass $METATICKET_REMOTE:$TICKET_GRPC_LISTEN_PORT;
+}

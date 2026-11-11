@@ -1,0 +1,4 @@
+server {
+    listen $JOBRUNR_GRPC_CONNECT_PORT;
+    proxy_pass $METATICKET_LOCAL:$JOBRUNR_GRPC_LISTEN_PORT;
+}

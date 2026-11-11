@@ -1,0 +1,12 @@
+<div *ngIf="isOpen" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center !z-[1000]">
+  <div class="bg-white p-6 rounded-lg shadow-lg w-96 border-l-4 border-red-500">
+    <div class="flex items-center">
+      <span class="bg-red-500 text-white text-lg w-8 h-8 rounded-full flex items-center justify-center mr-2">!</span>
+      <h2 class="text-xl font-bold text-red-600">{{ title }}</h2>
+    </div>
+    <ng-container *ngIf="message"><p class="mt-2 text-gray-700">{{ message }}</p></ng-container>
+    <div class="mt-4 flex justify-end">
+      <button class="bg-red-500 text-white px-4 py-2 rounded" (click)="close()">Đóng</button>
+    </div>
+  </div>
+</div>

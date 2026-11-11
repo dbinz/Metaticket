@@ -1,0 +1,7 @@
+syntax = "proto3";
+
+package metaticket.order.datacollector.grpc;
+
+message CheckOrderDataCollectorIsValidRequest {
+  string link = 1;
+}

@@ -1,0 +1,23 @@
+# WordPress news CMS. Portal admin stays on admin.metaticket.com.vn.
+#
+# Enable on prod host:
+#   sudo ln -sf /etc/nginx/sites-available/news.metaticket.com.vn \
+#               /etc/nginx/sites-enabled/news.metaticket.com.vn
+#   # DNS + TLS SAN for news.metaticket.com.vn (or wildcard)
+#   sudo nginx -t && sudo systemctl reload nginx
+
+server {
+    listen 443 ssl;
+    listen [::]:443 ssl;
+
+    server_name news.metaticket.com.vn;
+
+    include /etc/nginx/metaticket-frags/metaticket-ssl;
+
+    gzip on;
+    gzip_types      text/plain application/xml application/javascript text/css application/json image/svg+xml;
+    gzip_proxied    no-cache no-store private expired auth;
+    gzip_min_length 1000;
+
+    include /etc/nginx/metaticket-frags/metaticket-wordpress;
+}

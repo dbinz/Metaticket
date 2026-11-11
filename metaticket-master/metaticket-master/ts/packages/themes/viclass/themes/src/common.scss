@@ -1,0 +1,175 @@
+@use "../assets/vcon-general.css";
+@use "./font.scss";
+
+/**
+Common styles for all viclass.
+Since this style might be loaded inside a third party website,
+it make sense to scoped everything so that we can turn on / off vi-theme easily
+*/
+.vi-theme {
+
+    /******** THEME VARIABLE DEFINITION *******************/
+    --P1: 0 174 239;
+    --P2: 141 228 255;
+    --P3: 216 248 255;
+    //  Secondary
+    --SC1: 219 0 255;
+    --SC2: 49 227 124;
+    --SC3: 255 214 0;
+    --SC4: 255 122 0;
+    --SC5: 255 0 46;
+    //  Pastel
+    --PAS1: 255 246 202;
+    --PAS2: 237 255 130;
+    --PAS3: 255 221 182;
+    --PAS4: 189 255 208;
+    --PAS5: 193 223 255;
+
+    //  Grayscale
+    --BW1: 18 20 20;
+    --BW2: 54 58 62;
+    --BW3: 98 103 107;
+    --BW4: 164 173 180;
+    --BW5: 240 246 248;
+    --BW6: 251 251 251;
+    --BW7: 255 255 255;
+    //  gradient
+    --GR1: linear-gradient(270deg, #F3A9FF 2.08%, #BBEDFF 67.71%);
+
+    // transparent
+    --TP1: rgb(0, 66, 75, 0.2);
+    --TP2: rgb(0, 0, 0, 0.2);
+    --TP3: rgb(255, 255, 255, 0.66);
+
+    //  shadow
+    --SH1: 0px 5px 20px var(--TP1);
+
+    // shadow inner
+    --SHI1: inset 1px 1px 3px 0 rgba(0, 0, 0, 0.25);
+    --SHI2: inset 20px 0px 20px -20px rgba(102,213,255,0.4), inset -20px 0px 20px -20px rgba(102,213,255,0.4);
+
+    // shadow outer
+    --SHOL1: 20px 0px 20px -20px rgba(102,213,255,0.4);
+
+    // spacing
+    --SP1 : 5px;
+    --SP2 : 10px;
+    --SP3 : 3px;
+
+    --BR1 : 10px;
+    --BR2 : 15px;
+    --BR3 : 12px;
+
+    /***************************************/
+
+    a {
+        @apply cursor-pointer
+    }
+
+    /******* VICLASS ICON DEFINITION *********************/
+    .vcon, .vcon-general {
+        font-size: 20px;
+        line-height: 20px;
+    }
+
+    .vcon-link {
+        display: block;
+        height: 20px;
+        line-height: 20px;
+        color: rgb(var(--BW1));
+
+        &:hover {
+            text-decoration: none;
+            color: rgb(var(--BW1));
+        }
+
+        i .vcon {
+            line-height: inherit;
+        }
+    }
+
+    /******* BOUNDARY DEFINITION *************************/
+    // viclass editors use boundary to define working areas of documents, hence it is considered something
+    // quite fundamental for viclass, hence its style is defined here
+    .vi-doc-boundary {
+        .vi-b-border {
+            @apply stroke-1 stroke-[rgb(var(--P1))] fill-none pointer-events-none;
+            vector-effect: non-scaling-stroke;
+        }
+
+        .vi-b-handle {
+            @apply cursor-move stroke-[10px] invisible fill-none;
+        }
+
+        .cursor-nw-resize {
+            cursor: nw-resize;
+        }
+
+        .cursor-n-resize {
+            cursor: n-resize;
+        }
+
+        .cursor-ne-resize {
+            cursor: ne-resize;
+        }
+
+        .cursor-ew-resize {
+            cursor: ew-resize;
+        }
+
+        .cursor-sw-resize {
+            cursor: sw-resize;
+        }
+
+        .cursor-s-resize {
+            cursor: s-resize;
+        }
+
+        .cursor-se-resize {
+            cursor: se-resize;
+        }
+
+        .vi-b-resize-handle {
+            @apply stroke-1 stroke-[var(--G0)] fill-[rgb(var(--P1))];
+            vector-effect: non-scaling-stroke;
+            pointer-events: visible;
+
+            &.h-0-0 {
+                @extend .cursor-nw-resize;
+            }
+
+            &.h-1-0 {
+                @extend .cursor-n-resize;
+            }
+
+            &.h-2-0 {
+                @extend .cursor-ne-resize;
+            }
+
+            &.h-0-1,
+            &.h-2-1 {
+                @extend .cursor-ew-resize;
+            }
+
+            &.h-0-2 {
+                @extend .cursor-sw-resize;
+            }
+
+            &.h-1-2 {
+                @extend .cursor-s-resize;
+            }
+
+            &.h-2-2 {
+                @extend .cursor-se-resize;
+            }
+        }
+
+
+    }
+
+    .vi-wrapping-unbounded-svg-layer::-webkit-scrollbar {
+        display: none
+    }
+
+
+}

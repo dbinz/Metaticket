@@ -1,0 +1,66 @@
+location /api {
+    auth_request /internal/customer-authenticate;
+    auth_request_set $phone $upstream_http_x_customer_phone;
+    auth_request_set $userId $upstream_http_x_customer_user_id;
+    proxy_set_header X-Customer-Phone $phone;
+    proxy_set_header X-Customer-User-Id $userId;
+    proxy_set_header Host $host;
+    proxy_set_header X-Real-IP $remote_addr;
+    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+
+    location /api/show {
+        proxy_pass http://show_service/show/;
+        if ($request_method = GET) {
+            add_header Cache-Control "public, max-age=10";
+        }
+    }
+    location /api/ticket {
+        proxy_pass http://ticket_service/ticket/;
+        if ($request_method = GET) {
+            add_header Cache-Control "public, max-age=10";
+        }
+    }
+    location /api/order {
+        proxy_pass http://order_service/order/;
+    }
+    location /api/accessory {
+        proxy_pass http://accessory_service/accessory/;
+    }
+    location /api/payment {
+        # Note: Specific IPN payment routes are defined later and will take precedence.
+        proxy_pass http://payment_service/payment/;
+    }
+    location /api/notification {
+        proxy_pass http://notification_service/notification/;
+    }
+    location /api/ticket-slots {
+        proxy_pass http://ticket_slots_service/ticket-slots/;
+    }
+    location /api/qrcode {
+        proxy_pass http://qrcode_service/qrcode/;
+    }
+    location /api/authentication {
+        proxy_pass http://authentication_service/authentication/;
+    }
+    location /api/authorization {
+        proxy_pass http://authorization_service/authorization/;
+    }
+    location /api/odc {
+        proxy_pass http://odc_service/odc/;
+    }
+    location /api/admin {
+        proxy_pass http://admin_service/admin/;
+    }
+    location /api/customer-user {
+        proxy_pass http://customer_user_service/customer-user/;
+    }
+    location /api/customer-auth {
+        proxy_pass http://customer_auth_service/customer-auth/;
+    }
+    location /api/editor/policydesc {
+        proxy_pass http://editor_policydesc_service/editor/policydesc/;
+    }
+    location /api/editor/seatplanner {
+        proxy_pass http://editor_seatplanner_service/editor/seatplanner/;
+    }
+}

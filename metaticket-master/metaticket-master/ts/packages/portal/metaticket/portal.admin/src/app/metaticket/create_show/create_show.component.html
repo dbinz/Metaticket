@@ -1,0 +1,205 @@
+<nb-card [nbSpinner]="loading > 0">
+    <nb-card-header fullWidth>
+        <div class="inline-form-card w-100">
+            <a [routerLink]="['/portal/shows']" [queryParams]="{ showId: show?.id }" *ngIf="show">
+                <label>Danh sách show</label>
+            </a>
+            >
+            <label class="label-disabled" *ngIf="show === undefined">Tạo session</label>
+            <label>Edit show</label>
+        </div>
+    </nb-card-header>
+    <nb-card-body>
+        <div class="inline-form-card w-100">
+            <form class="form-inline" [formGroup]="createShowForm">
+                <div>
+                    <label>Tên sự kiện (*)</label>
+                    <div class="row align-items-center w-100 ml-1">
+                        <div class="flex-grow-1">
+                            <input
+                                status="basic"
+                                id="name"
+                                formControlName="name"
+                                required
+                                fullWidth
+                                nbInput
+                                type="text" />
+                        </div>
+                        <div class="ml-2">
+                            <nb-checkbox class="mt-2" formControlName="hideSessions">Ẩn suất diễn</nb-checkbox>
+                        </div>
+                    </div>
+                </div>
+                <div>
+                    <label>Mã sự kiện (*)</label>
+                    <input [formControl]="codeFormControl" required fullWidth nbInput type="text" />
+                </div>
+                <div>
+                    <label
+                        [ngClass]="{
+                            error: slugFormControl.invalid && (slugFormControl.dirty || slugFormControl.touched),
+                        }"
+                        >Slug (đường dẫn thân thiện)
+                        <span class="slug-badge" [ngClass]="'slug-badge--' + slugState">{{ slugStateLabel }}</span>
+                    </label>
+                    <input
+                        [formControl]="slugFormControl"
+                        [status]="
+                            (slugFormControl.invalid && (slugFormControl.dirty || slugFormControl.touched)) ||
+                            serverSlugError
+                                ? 'danger'
+                                : 'basic'
+                        "
+                        fullWidth
+                        nbInput
+                        type="text"
+                        placeholder="vi-du-slug" />
+                    <div
+                        class="error"
+                        *ngIf="slugFormControl.invalid && (slugFormControl.dirty || slugFormControl.touched)">
+                        <div *ngIf="slugFormControl.errors?.['slugFormat'] === SlugError.Empty">
+                            Slug phải chứa ít nhất một chữ thường (a-z) hoặc chữ số (0-9).
+                        </div>
+                        <div *ngIf="slugFormControl.errors?.['slugFormat'] === SlugError.TooLong">
+                            Slug không được vượt quá 200 ký tự.
+                        </div>
+                        <div *ngIf="slugFormControl.errors?.['slugFormat'] === SlugError.Format">
+                            Slug chỉ gồm chữ thường, chữ số và dấu gạch ngang; không bắt đầu/kết thúc bằng dấu gạch ngang
+                            và không có hai dấu gạch ngang liền nhau.
+                        </div>
+                        <div *ngIf="slugFormControl.errors?.['slugDuplicate']">
+                            Slug này đã được sử dụng bởi một sự kiện khác. Vui lòng chọn slug khác.
+                        </div>
+                    </div>
+                    <div class="error" *ngIf="serverSlugError">
+                        Slug "{{ serverSlugError }}" bị máy chủ từ chối (không hợp lệ hoặc đã tồn tại). Vui lòng chọn
+                        slug khác.
+                    </div>
+                </div>
+                <div>
+                    <label
+                        [ngClass]="{
+                            error:
+                                eventCategoryFormControl.invalid &&
+                                (eventCategoryFormControl.dirty || eventCategoryFormControl.touched),
+                        }"
+                        >Thể loại (*)</label
+                    >
+                    <nb-select
+                        [status]="
+                            eventCategoryFormControl.invalid &&
+                            (eventCategoryFormControl.dirty || eventCategoryFormControl.touched)
+                                ? 'danger'
+                                : 'basic'
+                        "
+                        [formControl]="eventCategoryFormControl"
+                        required
+                        fullWidth>
+                        <nb-option *ngFor="let o of eventCats" [value]="o.id">{{ o.name }}</nb-option>
+                    </nb-select>
+                </div>
+                <div>
+                    <label>Ảnh Banner Sự kiện <sub>(< 3M)</sub> (*)</label>
+                    <input
+                        required
+                        fullWidth
+                        nbInput
+                        type="file"
+                        value=""
+                        (change)="onBannerImagePicked($event)"
+                        class="input-thumbnail"
+                        [style.background-image]="url(bannerImageUrl)" />
+                </div>
+                <div>
+                    <label>Ảnh Detail Sự kiện <sub>(< 3M)</sub> (*)</label>
+                    <input
+                        required
+                        fullWidth
+                        nbInput
+                        type="file"
+                        value=""
+                        (change)="onDetailImageUrlPicked($event)"
+                        class="input-thumbnail"
+                        [style.background-image]="url(detailImageUrl)" />
+                </div>
+                <div>
+                    <label>Ảnh Thumbnail Sự kiện <sub>(< 2M)</sub> (*)</label>
+                    <input
+                        required
+                        fullWidth
+                        nbInput
+                        type="file"
+                        value=""
+                        (change)="onThumbnailUrlPicked($event)"
+                        class="input-thumbnail"
+                        [style.background-image]="url(thumbnailUrl)" />
+                </div>
+                <div class="mb-3 w-50">
+                    <label>Ảnh Logo Sự kiện <sub>(< 3M)</sub></label>
+                    <input
+                        required
+                        fullWidth
+                        nbInput
+                        type="file"
+                        value=""
+                        (change)="onLogoShowPicked($event)"
+                        class="input-thumbnail"
+                        [style.background-image]="url(logoShowImageUrl)" />
+                </div>
+                <div>
+                    <label>Ảnh Logo Đơn vị Tổ chức <sub>(< 3M)</sub></label>
+                    <input
+                        required
+                        fullWidth
+                        nbInput
+                        type="file"
+                        value=""
+                        (change)="onLogoHostPicked($event)"
+                        class="input-thumbnail"
+                        [style.background-image]="url(logoHostImageUrl)" />
+                </div>
+                <!--                <div class="mb-3 w-50">-->
+                <!--                    <label>Link Sự kiện (*)</label>-->
+                <!--                    <input formControlName="showLink" required fullWidth nbInput type="text">-->
+                <!--                </div>-->
+                <!--                <div class="mb-3 w-50">-->
+                <!--                    <label>Hình thức Hiển thị (*)</label>-->
+                <!--                    <input formControlName="display" required fullWidth nbInput type="text">-->
+                <!--                </div>-->
+                <div>
+                    <label>Thông tin Sự kiện</label>
+                    <textarea rows="8" formControlName="description" fullWidth nbInput type="text"></textarea>
+                </div>
+                <div>
+                    <label>Thông tin vé</label>
+                    <textarea rows="8" formControlName="ticketDescription" fullWidth nbInput type="text"></textarea>
+                </div>
+                <div>
+                    <label>Chính sách Sự kiện</label>
+                    <textarea rows="8" formControlName="policy" fullWidth nbInput type="text"></textarea>
+                </div>
+                <div>
+                    <label>FAQ | Câu hỏi thường gặp</label>
+                    <textarea rows="8" formControlName="faq" fullWidth nbInput type="text"></textarea>
+                </div>
+                <div class="w-100 error" *ngIf="submitButtonPressed">
+                    <div class="w-100" *ngIf="nameFormControl.invalid">
+                        <div *ngIf="nameFormControl.errors?.['required']">Phải nhập tên Show</div>
+                    </div>
+                    <div class="w-100" *ngIf="codeFormControl.invalid">
+                        <div *ngIf="codeFormControl.errors?.['required']">Phải nhập mã Show</div>
+                    </div>
+                    <div class="w-100" *ngIf="!bannerImageUrl">
+                        <div>Phải chọn banner</div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </nb-card-body>
+
+    <nb-card-footer>
+        <button class="button" type="submit" nbButton (click)="onSubmit()">
+            {{ show ? 'Cập nhật' : 'Tạo' }} Sự kiện
+        </button>
+    </nb-card-footer>
+</nb-card>

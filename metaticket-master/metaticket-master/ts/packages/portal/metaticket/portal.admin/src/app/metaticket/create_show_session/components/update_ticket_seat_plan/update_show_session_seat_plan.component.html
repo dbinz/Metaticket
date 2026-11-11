@@ -1,0 +1,80 @@
+<nb-card [nbSpinner]="loading > 0" class="w-100">
+    <nb-card-body>
+        <form class="seat-plan-form mt-3" [formGroup]="updateSeatPlanForm">
+            <div class="row">
+                <div class="col-12 col-md-6">
+                    <label>Hình thức vé (*)</label>
+                    <nb-select
+                        required
+                        fullWidth
+                        [formControl]="edTypeFormControl"
+                        (selectedChange)="onSelectEdType($event)">
+                        <nb-option value="SeatPlanner">Seat Plan</nb-option>
+                        <nb-option value="PolicyDesc">Policy Description</nb-option>
+                        <nb-option value="PolicyConfig">Policy Configuration</nb-option>
+                    </nb-select>
+                </div>
+                <div class="col-12 col-md-6" *ngIf="isCalendar">
+                    <p class="calendar-hint">
+                        Vé theo lịch chỉ dùng Policy Configuration, không có sơ đồ ghế. Loại vé, giá và số lượng theo
+                        từng ngày được cấu hình ở màn
+                        <a
+                            *ngIf="showSession; else calendarScreenName"
+                            [routerLink]="['/portal/ticket/calendar']"
+                            [queryParams]="{ showId: showId, sessionId: showSession.id }"
+                            >Lịch bán vé</a
+                        ><ng-template #calendarScreenName><b>Lịch bán vé</b> (sau khi tạo suất)</ng-template>.
+                    </p>
+                </div>
+                <div
+                    class="col-12 col-md-6"
+                    *ngIf="edTypeFormControl.value && edTypeFormControl.value !== 'PolicyConfig'">
+                    <label [ngClass]="{ error: seatPlanIdFormControl.invalid }">Sơ đồ (*)</label>
+                    <input
+                        #autoInputMap
+                        nbInput
+                        placeholder="Nhập map"
+                        type="text"
+                        fullWidth
+                        [nbAutocomplete]="autoCompleteMap"
+                        (input)="onInputSeatPlanChange(autoInputMap.value)"
+                        [status]="seatPlanIdFormControl.invalid ? 'danger' : 'basic'"
+                        [formControl]="seatPlanIdFormControl" />
+
+                    <nb-autocomplete #autoCompleteMap (selectedChange)="onSelectionSeatPlanChange($event)">
+                        <nb-option *ngFor="let map of filteredMapList$ | async" [value]="map.id">
+                            {{ map.displayName }}
+                        </nb-option>
+                    </nb-autocomplete>
+                </div>
+            </div>
+            <div class="row mt-3">
+                <div class="col-12">
+                    <label>Thông tin bổ sung <sub>(HTML tùy chọn)</sub></label>
+                    <textarea
+                        fullWidth
+                        nbInput
+                        rows="6"
+                        placeholder="Nhập HTML hiển thị trên trang đặt vé..."
+                        [formControl]="extraInfoFormControl"></textarea>
+                </div>
+            </div>
+        </form>
+    </nb-card-body>
+    <nb-card-footer>
+        <div>
+            <button nbButton type="button" (click)="onSubmit()" status="info">
+                {{ !showSession ? 'Lưu nháp' : 'Cập nhật' }}
+            </button>
+            <button
+                *ngIf="showSessionDraft"
+                status="success"
+                (click)="gotoNextStep.emit()"
+                nbButton
+                type="button"
+                class="ml-2">
+                Bước tiếp theo
+            </button>
+        </div>
+    </nb-card-footer>
+</nb-card>

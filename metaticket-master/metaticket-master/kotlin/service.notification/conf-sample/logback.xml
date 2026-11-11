@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration scan="true" scanPeriod="30 seconds">
+    <appender name="APPLICATION" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>logs/application.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+            <fileNamePattern>logs/application.%d{yyyy-MM-dd}.%i.log.zip</fileNamePattern>
+            <maxFileSize>100MB</maxFileSize>
+            <maxHistory>15</maxHistory>
+            <totalSizeCap>10GB</totalSizeCap>
+        </rollingPolicy>
+        <encoder>
+            <pattern>%date [%thread] %logger{15} %-5level %msg%ex%n</pattern>
+        </encoder>
+    </appender>
+
+    <appender name="SIMPLE_MAIL" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>logs/simple_mail.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+            <fileNamePattern>logs/simple_mail.%d{yyyy-MM-dd}.%i.log.zip</fileNamePattern>
+            <maxFileSize>100MB</maxFileSize>
+            <maxHistory>15</maxHistory>
+            <totalSizeCap>10GB</totalSizeCap>
+        </rollingPolicy>
+        <encoder>
+            <pattern>%date [%thread] %logger{15} %-5level %msg%ex%n</pattern>
+        </encoder>
+    </appender>
+
+    <appender name="EMAIL_FAIL_FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>logs/email_failures.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+            <fileNamePattern>logs/email_failures.%d{yyyy-MM-dd}.%i.log.zip</fileNamePattern>
+            <maxFileSize>100MB</maxFileSize>
+            <maxHistory>15</maxHistory>
+            <totalSizeCap>10GB</totalSizeCap>
+        </rollingPolicy>
+        <encoder>
+            <pattern>%date [%thread] %logger{15} %-5level %msg%ex%n</pattern>
+        </encoder>
+    </appender>
+
+    <appender name="MONGODB" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>logs/mongodb.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+            <fileNamePattern>logs/mongodb.%d{yyyy-MM-dd}.%i.log.zip</fileNamePattern>
+            <maxFileSize>100MB</maxFileSize>
+            <maxHistory>15</maxHistory>
+            <totalSizeCap>10GB</totalSizeCap>
+        </rollingPolicy>
+        <encoder>
+            <pattern>%date [%thread] %logger{15} %-5level %msg%ex%n</pattern>
+        </encoder>
+    </appender>
+
+    <appender name="NOTIFICATION" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>logs/notification.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+            <fileNamePattern>logs/notification.%d{yyyy-MM-dd}.%i.log.zip</fileNamePattern>
+            <maxFileSize>100MB</maxFileSize>
+            <maxHistory>15</maxHistory>
+            <totalSizeCap>10GB</totalSizeCap>
+        </rollingPolicy>
+        <encoder>
+            <pattern>%date [%thread] %logger{15} %-5level %msg%ex%n</pattern>
+        </encoder>
+    </appender>
+
+    <logger name="metaticket.notification" level="DEBUG" additivity="false">
+        <appender-ref ref="NOTIFICATION" />
+    </logger>
+    <logger name="metaticket.plugin.mailtemplate" level="DEBUG" additivity="false">
+        <appender-ref ref="NOTIFICATION" />
+    </logger>
+    <logger name="metaticket.plugin.zns" level="DEBUG" additivity="false">
+        <appender-ref ref="NOTIFICATION" />
+    </logger>
+
+    <logger name="org.mongodb" level="WARN" additivity="false">
+        <appender-ref ref="MONGODB" />
+    </logger>
+
+    <logger name="c.i.l.r" level="WARN" additivity="false">
+        <appender-ref ref="HTML_PDF" />
+    </logger>
+    <logger name="c.i.s.c.p.s" level="ERROR" additivity="false">
+        <appender-ref ref="HTML_PDF" />
+    </logger>
+
+    <logger name="EmailPermanentFailure" level="ERROR" additivity="false">
+        <appender-ref ref="EMAIL_FAIL_FILE" />
+    </logger>
+
+    <logger name="org.bbottema" level="WARN" additivity="false">
+        <appender-ref ref="SIMPLE_MAIL" />
+    </logger>
+    <logger name="socks5bridge" level="WARN" additivity="false">
+        <appender-ref ref="SIMPLE_MAIL" />
+    </logger>
+    <logger name="org.simplejavamail" level="WARN" additivity="false">
+        <appender-ref ref="SIMPLE_MAIL" />
+    </logger>
+
+    <logger name="APPLICATION" level="DEBUG" additivity="false" >
+        <appender-ref ref="APPLICATION" />
+    </logger>
+
+    <root level="DEBUG">
+        <appender-ref ref="APPLICATION" />
+    </root>
+</configuration>

@@ -1,0 +1,6 @@
+@mixin nb-overrides() {
+    // Minimal Nebular overrides (missing upstream file restored for local build)
+    nb-menu .menu-item a.active {
+        font-weight: 600;
+    }
+}

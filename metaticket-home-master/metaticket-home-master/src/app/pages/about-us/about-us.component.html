@@ -1,0 +1,45 @@
+<app-layout [isDarkMode]="false">
+  <div class="w-full flex flex-col">
+    <app-navbar />
+    <app-image [sx]="'w-full'" [src]="appImages.bgBannerAboutUs"></app-image>
+  </div>
+  <div class="w-full flex flex-col px-5 laptop:px-0 pt-11 pb-11 space-y-[40px] laptop:space-y-[54px] laptop:py-20 laptop:items-center">
+      <div class="flex flex-col laptop:flex-row laptop:justify-between gap-6 laptop:gap-[114px] laptop:w-3/4 w-full laptop:items-center">
+        <div class="flex flex-col gap-5 md:gap-7 laptop:w-[370px]">
+          <div class="flex flex-col gap-3">
+            <app-image sx="laptop:w-[263px] w-[172px]" [src]="appIcons.icLogoLightMode"></app-image>
+            <p class="laptop:text-24-36 text-16-20 font-normal">TICKET TO ART UNIVERSE</p>
+          </div>
+          <p class="laptop:text-16-24 text-14-20 font-semibold text-blue-163AEA">NỀN TẢNG PHÂN PHỐI TRỰC TUYẾN VÉ SỰ KIỆN ĐA DẠNG THỂ LOẠI HÀNG ĐẦU VIỆT NAM</p>
+        </div>
+        <div class="flex-1">
+          <app-image sx="w-full" [src]="appImages.imgMacbookPhone"></app-image>
+        </div>
+      </div>
+
+      <div class="flex flex-col laptop:grid laptop:grid-cols-3 laptop:w-3/4 w-full gap-[36px] laptop:gap-[100px]">
+
+        <div class="flex flex-col items-start laptop:gap-8 gap-4">
+          <app-image [sx]="'md:w-[63px] w-[52px]'" [src]="appIcons.icSquare"></app-image>
+          <p class="text-14-24 font-normal text-gray-747474">META Ticket là nền tảng phân phối vé trực tuyến đa thể loại - được vận hành bởi những người trẻ yêu nghệ thuật, chuyển động cùng xu hướng phát triển văn hóa - giải trí trên toàn thế giới và tại Việt Nam. </p>
+        </div>
+
+        <div class="flex flex-col items-start laptop:gap-8 gap-4">
+          <app-image [sx]="'md:w-[77px] w-[63px]'" [src]="appIcons.icDoughnutFull"></app-image>
+          <p class="text-14-24 font-normal text-gray-747474">META Ticket ra đời với sứ mệnh phá bỏ mọi rào cản trong việc tiếp cận và thưởng thức nghệ thuật. Chúng tôi muốn trở thành cầu nối giữa những nhà tổ chức sự kiện và tất cả khán giả Việt Nam trong một không gian mua - bán vé văn minh, lành mạnh, thuận tiện và dễ dàng.  </p>
+        </div>
+        <div class="flex flex-col items-start laptop:gap-8 gap-4">
+          <app-image [sx]="'md:w-[65px] w-[56px]'" [src]="appIcons.icSun"></app-image>
+          <p class="text-14-24 font-normal text-gray-747474">Với sự nhạy bén và thấu hiểu những giá trị văn hóa - giải trí hiện đại của người trẻ, META Ticket cung cấp các giải pháp phân phối vé tối ưu cho từng sự kiện, lĩnh vực khác nhau với các tính năng ưu việt. </p>
+        </div>
+      </div>
+
+      <div class="laptop:w-3/4 w-full text-14-18 flex flex-col gap-2 font-normal pt-12 text-black">
+        <p class="font-semibold">LIÊN HỆ VỚI CHÚNG TÔI NGAY HÔM NAY!</p>
+        <p >Hotline: 1900 3392 (Thứ 2 - Thứ 6 | 8:30 - 18:30)</p>
+        <p >Email: <span class="underline underline-offset-1">{{'support@metaticket.com.vn'}}</span></p>
+        <p >Facebook: www.facebook.com/metaticketvietnam</p>
+      </div>
+
+  </div>
+</app-layout>

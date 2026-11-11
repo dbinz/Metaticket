@@ -1,0 +1,4 @@
+server {
+    listen $ACCESSORY_GRPC_CONNECT_PORT;
+    proxy_pass $METATICKET_LOCAL:$ACCESSORY_GRPC_LISTEN_PORT;
+}

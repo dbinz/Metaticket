@@ -1,0 +1,10 @@
+syntax = "proto3";
+
+package metaticket.ticketslots.grpc;
+
+import "ticket_slots_message.proto";
+
+service TicketSlotsService {
+  rpc ScanTicketSlot(ScanTicketSlotRequest) returns(ScanTicketSlotResponse);
+  rpc GetQRCode(GetQRCodeRequest) returns(GetQRCodeResponse);
+}

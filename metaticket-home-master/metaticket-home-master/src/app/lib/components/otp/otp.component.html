@@ -1,0 +1,45 @@
+<div class="flex flex-col gap-6">
+  <div>
+    <p nz-typography class="text-2xl leading-120pct text-black font-medium text-center">{{title}}</p>
+  </div>
+  <div class="flex flex-col gap-2">
+    <p class="text-10 text-center text-[#666666]">{{description ?? 'Vui lòng nhập mã OTP đã được META Ticket gửi đến số điện thoại của bạn'}}</p>
+  </div>
+  <div class="flex gap-5 justify-center">
+    <input
+      *ngFor="let item of list; let i = index"
+      #otpInput
+      class="w-10 lg:w-15 h-20 rounded-[20px] border text-4xl text-center border-[#CFCFCF]"
+      type="text"
+      maxlength="1"
+      (beforeinput)="onBeforeInput($event)"
+      (input)="onInput($event, i)"
+      (keydown)="onKeyDown($event, i)"
+    />
+  </div>
+  <ng-container *ngIf="error | async as e">
+    <p class="text-red-D94D27 text-center">{{ e }}</p>
+  </ng-container>
+  <ng-container *ngIf="false" class="text-center">
+    <p>Chưa nhận được mã OTP?</p>
+    <ng-container *ngIf="!clickAble; else resend">
+      <p>
+        <span class="text-[#989898]">Gửi lại</span>
+        <span>
+          trong
+          <app-countdown-timer
+            [minutes]="minutes"
+            [seconds]="seconds"
+          ></app-countdown-timer
+        ></span>
+      </p>
+    </ng-container>
+    <ng-template #resend>
+      <button class="text-[#4867FC] underline" (click)="resendOtp()">Gửi lại</button>
+    </ng-template>
+  </ng-container>
+  <div class="">
+    <app-button #btnSubmit [isLoading]="loading" [disabled]="!isOtpComplete" title="Tiếp tục" (handlerOnPressed)="onSubmit()"></app-button>
+  </div>
+  <span class="w-ful text-center">Lưu ý: Vui lòng hãy kiểm tra Zalo hoặc tin nhắn SMS</span>
+</div>

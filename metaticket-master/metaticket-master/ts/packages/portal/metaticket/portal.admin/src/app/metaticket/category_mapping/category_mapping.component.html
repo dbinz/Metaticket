@@ -1,0 +1,93 @@
+<nb-card [nbSpinner]="loading > 0" class="w-100 pt-4">
+    <form class="form-inline" [formGroup]="categoryFormGroups">
+        <nb-card-header class="w-100 form-inline">
+            <div class="d-flex flex-column">
+                <label [ngClass]="{ error: showFormControl.invalid }">Sự kiện (*)</label>
+                <input
+                    #autoInputShow
+                    nbInput
+                    placeholder="Nhập Show"
+                    type="text"
+                    (input)="onInputShowChange(autoInputShow.value)"
+                    (click)="onInputShowChange('')"
+                    [nbAutocomplete]="autoCompleteShow"
+                    class="w-100"
+                    [status]="showFormControl.invalid ? 'danger' : 'basic'"
+                    [formControl]="showFormControl" />
+
+                <nb-autocomplete #autoCompleteShow (selectedChange)="onSelectionShowChange($event)">
+                    <nb-option *ngFor="let show of filteredShowList$ | async" [value]="show.id">
+                        {{ show.showName }}
+                    </nb-option>
+                </nb-autocomplete>
+            </div>
+            <div class="d-flex flex-column">
+                <label [ngClass]="{ error: sessionFormControl.invalid }">Session (*)</label>
+                <input
+                    #autoInputSession
+                    nbInput
+                    placeholder="Nhập Session"
+                    type="text"
+                    (input)="onInputSessionChange(autoInputSession.value)"
+                    (click)="onInputSessionChange('')"
+                    [nbAutocomplete]="autoCompleteSession"
+                    class="w-100"
+                    [status]="sessionFormControl.invalid ? 'danger' : 'basic'"
+                    [formControl]="sessionFormControl" />
+
+                <nb-autocomplete #autoCompleteSession (selectedChange)="onSelectionSessionChange($event)">
+                    <nb-option *ngFor="let session of filteredSessionList$ | async" [value]="session.id">
+                        {{ getSessionName(session) }}
+                    </nb-option>
+                </nb-autocomplete>
+            </div>
+            <div>
+                <label [ngClass]="{ error: kindMapFormControl.invalid }">Hình thức vé (*)</label>
+                <input
+                    required
+                    fullWidth
+                    nbInput
+                    type="text"
+                    readonly
+                    [status]="kindMapFormControl.invalid ? 'danger' : 'basic'"
+                    [formControl]="kindMapFormControl" />
+            </div>
+            <div [class.invisible]="kindMapFormControl.value === 'PolicyConfig'" class="d-flex flex-column">
+                <label [ngClass]="{ error: mapFormControl.invalid }">Sơ đồ (*)</label>
+                <input
+                    required
+                    fullWidth
+                    nbInput
+                    type="text"
+                    readonly
+                    [status]="mapFormControl.invalid ? 'danger' : 'basic'"
+                    [formControl]="mapFormControl" />
+            </div>
+        </nb-card-header>
+
+        <nb-card-body class="w-100">
+            <ng-container formArrayName="categoryItemFormGroups" class="w-100 d-flex flex-column">
+                <ng-container *ngFor="let form of getFormGroups(); let index = index">
+                    <category-item
+                        class="w-100"
+                        [seatplanCategory]="selectedSeatplan"
+                        [session]="selectedSession"
+                        [index]="index"
+                        [formGroup]="form"
+                        formGroupName="{{ index }}"
+                        (removeEvent)="removeItem(index, form)"
+                        (createEvent)="createCategory(form)"
+                        (updateEvent)="addOrUpdateCategory(form)" />
+                </ng-container>
+            </ng-container>
+
+            <button
+                *ngIf="selectedSession && !['Open'].includes(selectedSession.status)"
+                class="w-100"
+                nbButton
+                (click)="createNewCatItemFormGroup()">
+                THÊM HẠNG VÉ
+            </button>
+        </nb-card-body>
+    </form>
+</nb-card>

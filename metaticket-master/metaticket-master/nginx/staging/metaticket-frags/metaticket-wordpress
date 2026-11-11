@@ -1,0 +1,68 @@
+# ==========================================
+# WORDPRESS
+# Served at https://news.staging.metaticket.vn/
+# Docker backend: 127.0.0.1:8081
+# ==========================================
+
+# Block PHP execution under wp-content/wp-includes.
+location ~* ^/(?:wp-content|wp-includes)/.*\.php$ {
+    deny all;
+}
+
+# Block sensitive files/directories.
+location ~ /\.(svn|git|env|ht) {
+    deny all;
+    access_log off;
+    log_not_found off;
+}
+
+# Disable XML-RPC.
+location = /xmlrpc.php {
+    deny all;
+}
+
+# Login rate limiting.
+location = /wp-login.php {
+    limit_req zone=wp_login burst=5 nodelay;
+    limit_req_status 429;
+
+    proxy_pass http://127.0.0.1:8081;
+    proxy_http_version 1.1;
+
+    proxy_set_header Host $host;
+    proxy_set_header X-Real-IP $remote_addr;
+    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+    proxy_set_header X-Forwarded-Proto $scheme;
+    proxy_set_header X-Forwarded-Host $host;
+    proxy_set_header X-Forwarded-Port $server_port;
+
+    proxy_read_timeout 120s;
+    client_max_body_size 64m;
+
+    proxy_hide_header X-Frame-Options;
+    add_header Content-Security-Policy "frame-ancestors 'self' https://admin.staging.metaticket.vn" always;
+}
+
+# WordPress root.
+location / {
+    proxy_pass http://127.0.0.1:8081;
+    proxy_http_version 1.1;
+
+    proxy_set_header Host $host;
+    proxy_set_header X-Real-IP $remote_addr;
+    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+    proxy_set_header X-Forwarded-Proto $scheme;
+    proxy_set_header X-Forwarded-Host $host;
+    proxy_set_header X-Forwarded-Port $server_port;
+
+    proxy_read_timeout 120s;
+    client_max_body_size 64m;
+
+    proxy_hide_header X-Frame-Options;
+    add_header Content-Security-Policy "frame-ancestors 'self' https://admin.staging.metaticket.vn" always;
+}
+
+# Direct WP REST bypasses BFF — keep off public edge.
+location /api/public/wordpress/ {
+    deny all;
+}

@@ -1,0 +1,13 @@
+version: '3.8'
+
+services:
+  frontend-staging:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        env: staging
+    ports:
+      - "4000:3000" # Ánh xạ cổng 4000 (host) tới cổng 3000 (container)
+    restart: unless-stopped
+    container_name: metaticket-frontend-staging

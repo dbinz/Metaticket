@@ -1,0 +1,23 @@
+version: '3.8'
+services:
+  prod_metaticket_search:
+    image: prod_metaticket_search
+    container_name: prod_metaticket_search
+    build: .
+    environment:
+      - SPRING_PROFILES_ACTIVE=prod
+      - JAVA_TOOL_OPTIONS=-Xms512m -Xmx512m -XX:+HeapDumpOnOutOfMemoryError -XX:HeapDumpPath=/app/logs/heapdump.hprof -Duser.timezone=Asia/Ho_Chi_Minh
+    mem_limit: 768m
+    memswap_limit: 768m
+    ports:
+      - "8080:8080"
+    networks:
+      default:
+    restart: unless-stopped
+    volumes:
+      - /opt/metaticket/service/homepage/logs:/app/logs
+      - /opt/metaticket/service/homepage/logs:/var/lib/docker/containers/prod_metaticket_search/metaticket_search-json.log
+networks:
+  default:
+    external: true
+    name: prod_metaticket

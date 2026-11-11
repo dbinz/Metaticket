@@ -1,0 +1,51 @@
+<nb-card class="picker" [nbSpinner]="loading">
+    <nb-card-header>Chọn bài viết cho thứ tự {{ pinOrder }}</nb-card-header>
+    <nb-card-body>
+        <div class="picker-filters">
+            <input
+                nbInput
+                fullWidth
+                placeholder="Tìm tiêu đề bài viết"
+                [(ngModel)]="keyword"
+                (keyup.enter)="onSearch()"
+            />
+            <button nbButton status="info" type="button" (click)="onSearch()">Tìm</button>
+        </div>
+        <table class="picker-table">
+            <thead>
+                <tr>
+                    <th>Ảnh</th>
+                    <th>Bài viết</th>
+                    <th>Trạng thái</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr *ngFor="let item of items">
+                    <td>
+                        <img *ngIf="item.thumbnailUrl" class="thumb" [src]="item.thumbnailUrl" [alt]="item.title" />
+                    </td>
+                    <td>
+                        <div>{{ item.title }}</div>
+                        <small>{{ item.slug }}</small>
+                    </td>
+                    <td>{{ item.status }}</td>
+                    <td>
+                        <button nbButton size="small" status="primary" type="button" (click)="select(item)">Chọn</button>
+                    </td>
+                </tr>
+                <tr *ngIf="!loading && items.length === 0">
+                    <td colspan="4">Không có bài viết</td>
+                </tr>
+            </tbody>
+        </table>
+        <div class="pager" *ngIf="totalPages > 0">
+            <button nbButton size="small" type="button" [disabled]="page <= 1" (click)="load(page - 1)">Trước</button>
+            <span>Trang {{ page }} / {{ totalPages }} ({{ totalElements }})</span>
+            <button nbButton size="small" type="button" [disabled]="page >= totalPages" (click)="load(page + 1)">Sau</button>
+        </div>
+    </nb-card-body>
+    <nb-card-footer>
+        <button nbButton type="button" (click)="ref.close()">Đóng</button>
+    </nb-card-footer>
+</nb-card>

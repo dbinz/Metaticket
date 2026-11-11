@@ -1,0 +1,11 @@
+{
+  "name": "@metaticket/editor.common",
+  "version": "1.0.0",
+  "type": "commonjs",
+  "peerDependencies": {
+  },
+  "dependencies": {
+    "tslib": "^2.3.0"
+  },
+  "sideEffects": false
+}

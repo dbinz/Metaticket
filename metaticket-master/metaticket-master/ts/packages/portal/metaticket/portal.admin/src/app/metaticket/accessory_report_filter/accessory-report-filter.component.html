@@ -1,0 +1,41 @@
+<nb-card [nbSpinner]="loading > 0">
+    <nb-card-header fullWidth>
+        <div class="inline-form-card w-100 d-flex align-items-center justify-content-between flex-wrap">
+            <div>
+                <strong>Filters bán hàng</strong>
+                <span class="hint ml-2">Preset thống kê có thể copy link / chia sẻ</span>
+            </div>
+            <a nbButton status="primary" routerLink="/portal/accessory/report/statistic">
+                Mở trang Thống kê
+            </a>
+        </div>
+    </nb-card-header>
+    <nb-card-body>
+        <div class="filter-row mb-3">
+            <label class="filter-label">Lọc theo sự kiện (tuỳ chọn)</label>
+            <div class="d-flex align-items-center" style="gap: 8px">
+                <nb-select
+                    fullWidth
+                    size="medium"
+                    placeholder="Tất cả show…"
+                    [selected]="selectedShowId"
+                    (selectedChange)="onShowChange($event)"
+                >
+                    <nb-option *ngFor="let show of shows" [value]="show.id">
+                        {{ show.code }} — {{ show.name }}
+                    </nb-option>
+                </nb-select>
+                <button nbButton ghost status="basic" type="button" (click)="clearShow()" *ngIf="selectedShowId">
+                    Bỏ lọc
+                </button>
+            </div>
+        </div>
+
+        <angular2-smart-table
+            (custom)="onCustomButton($event)"
+            [source]="source"
+            [settings]="settings"
+        >
+        </angular2-smart-table>
+    </nb-card-body>
+</nb-card>

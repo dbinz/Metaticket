@@ -1,0 +1,11 @@
+.news-card {
+  transition: transform 0.2s ease;
+
+  &:hover {
+    transform: translateY(-2px);
+  }
+
+  &__thumb {
+    padding-bottom: 56.25%;
+  }
+}

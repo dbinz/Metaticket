@@ -1,0 +1,733 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#faf9f5;color:#141413}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>Phiếu xác nhận hoàn tiền</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&display=swap">
+<style>
+/* Bố cục: một cột như biểu mẫu giấy. Điểm nhấn duy nhất là phiếu xác nhận dạng biên lai (mono, đường chấm). */
+:root{
+  --font-ui:"Be Vietnam Pro",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --font-doc:"Source Serif 4",Georgia,"Times New Roman",serif;
+  --font-mono:"IBM Plex Mono",ui-monospace,Menlo,Consolas,monospace;
+  --bg:#F3F6F8; --surface:#FFFFFF; --field:#FBFCFD;
+  --ink:#14283B; --muted:#52646F;
+  --line:#D6DFE6; --line-strong:#8FA1AF;
+  --accent:#072591; --accent-ink:#FFFFFF; --accent-soft:#E2F2EE;
+  --warn-bg:#FFF3DC; --warn-ink:#6B4200; --warn-line:#E5BE76;
+  --err:#B3261E; --ok:#17794A; --focus:#1D5FD1;
+  --ph-bg:#FFE9A8;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#0D1923; --surface:#13222E; --field:#0F1D28;
+    --ink:#E7EFF5; --muted:#9FB2C0;
+    --line:#2A3E4E; --line-strong:#5D7A8F;
+    --accent:#52C7B1; --accent-ink:#052920; --accent-soft:#12302C;
+    --warn-bg:#2A2008; --warn-ink:#F1D28F; --warn-line:#5D4814;
+    --err:#FF8F86; --ok:#72D6A3; --focus:#86B4FF;
+    --ph-bg:#4A3B0C;
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0D1923; --surface:#13222E; --field:#0F1D28;
+  --ink:#E7EFF5; --muted:#9FB2C0;
+  --line:#2A3E4E; --line-strong:#5D7A8F;
+  --accent:#52C7B1; --accent-ink:#052920; --accent-soft:#12302C;
+  --warn-bg:#2A2008; --warn-ink:#F1D28F; --warn-line:#5D4814;
+  --err:#FF8F86; --ok:#72D6A3; --focus:#86B4FF;
+  --ph-bg:#4A3B0C;
+  color-scheme:dark;
+}
+
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font:16px/1.6 var(--font-ui);padding-inline:16px;padding-block:0 56px;margin:0}
+.wrap{max-width:760px;margin-inline:auto}
+h1,h2,h3,h4{text-wrap:balance;margin:0}
+p{margin:0}
+.ph{background:var(--ph-bg);border-radius:3px;padding:0 3px;outline:1px dashed var(--line-strong)}
+.mono{font-family:var(--font-mono);font-variant-numeric:tabular-nums}
+
+/* Thanh tiến độ */
+.bar{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--bg);padding-block:10px 8px;border-bottom:1px solid var(--line)}
+.bar-row{display:flex;justify-content:space-between;gap:12px;font-size:13px;color:var(--muted)}
+.bar-row b{font-family:var(--font-mono);color:var(--ink);font-weight:500}
+.meter{height:4px;background:var(--line);margin-top:6px;border-radius:2px;overflow:hidden}
+.meter i{display:block;height:100%;width:0;background:var(--accent);transition:width .25s}
+@media (prefers-reduced-motion:reduce){.meter i{transition:none}}
+
+/* Đầu trang */
+.head{padding-block:28px 8px;display:flex;flex-direction:column;gap:14px}
+.eyebrow{font-size:12px;letter-spacing:.09em;text-transform:uppercase;color:var(--muted);font-weight:600}
+h1{font-size:clamp(1.55rem,5.4vw,2.15rem);line-height:1.2;font-weight:700;letter-spacing:-.01em}
+.lead{color:var(--muted);max-width:62ch}
+.notice{background:var(--warn-bg);color:var(--warn-ink);border:1px solid var(--warn-line);padding:12px 14px;border-radius:6px;font-size:14.5px}
+.notice strong{font-weight:600}
+.prep{border:1px solid var(--line);background:var(--surface);padding:14px 16px;border-radius:6px;font-size:14.5px}
+.prep h2{font-size:14px;font-weight:600;margin-bottom:6px}
+.prep ul{margin:0;padding-left:1.1rem;display:flex;flex-direction:column;gap:2px;color:var(--muted)}
+
+/* Mục của biểu mẫu */
+form{display:flex;flex-direction:column;gap:20px;margin-top:20px}
+.sec{background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:20px 18px;display:flex;flex-direction:column;gap:18px;scroll-margin-top:72px}
+.sec-h{display:flex;align-items:center;gap:12px}
+.sec-h h2{font-size:1.15rem;font-weight:600;line-height:1.3}
+.num{flex:none;width:30px;height:30px;display:grid;place-items:center;border:1.5px solid var(--accent);color:var(--accent);border-radius:4px;font:500 14px var(--font-mono)}
+.sec.is-done .num{background:var(--accent);color:var(--accent-ink)}
+.sec-note{color:var(--muted);font-size:14.5px;margin-top:-8px}
+.grid2{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,15.5rem),1fr));gap:16px}
+.grid2>*{min-width:0}
+
+.field{display:flex;flex-direction:column;gap:6px;min-width:0;scroll-margin-top:84px}
+label.l{font-size:14px;font-weight:600}
+.opt{font-weight:400;color:var(--muted)}
+input[type=text],input[type=tel],input[type=email],input[type=datetime-local],input:not([type]),select,textarea{
+  font:inherit;width:100%;min-height:46px;padding:10px 12px;border:1px solid var(--line-strong);border-radius:6px;background:var(--field);color:var(--ink)}
+textarea{min-height:84px;resize:vertical}
+input::placeholder,textarea::placeholder{color:var(--muted);opacity:.8}
+:focus-visible{outline:3px solid var(--focus);outline-offset:2px}
+.field.has-err input,.field.has-err select,.field.has-err textarea{border-color:var(--err);border-width:2px}
+.hint{font-size:13px;color:var(--muted)}
+.words{font-size:13.5px;color:var(--ink)}
+.err{font-size:13.5px;color:var(--err);font-weight:500;min-height:0}
+.err:empty{display:none}
+.warnline{font-size:13.5px;color:var(--warn-ink);background:var(--warn-bg);border:1px solid var(--warn-line);padding:8px 10px;border-radius:6px}
+
+/* Lựa chọn dạng thẻ */
+.choices{display:grid;gap:10px}
+label.choice{display:flex;gap:12px;align-items:flex-start;border:1px solid var(--line-strong);border-radius:6px;padding:12px 14px;cursor:pointer;background:var(--field)}
+label.choice:has(input:checked){border-color:var(--accent);background:var(--accent-soft);box-shadow:inset 0 0 0 1px var(--accent)}
+label.choice input{margin-top:4px;accent-color:var(--accent);width:18px;height:18px;flex:none}
+label.choice b{display:block;font-weight:600;font-size:15px}
+label.choice span{display:block;color:var(--muted);font-size:14px}
+.sub{border:1px dashed var(--line-strong);border-radius:6px;padding:14px;display:flex;flex-direction:column;gap:14px}
+.sum{font-size:14px;color:var(--muted);padding:10px 12px;border:1px solid var(--line);border-radius:6px;background:var(--field);overflow-wrap:anywhere}
+
+/* Điều khoản */
+.terms-box{border:1px solid var(--line);border-radius:6px;padding:18px 18px 8px;background:var(--field)}
+.terms-box>h3{font:600 .95rem var(--font-ui);margin-bottom:2px}
+.terms-box>p{font-size:13px;color:var(--muted);margin-bottom:12px}
+ol.terms{list-style:none;padding:0;margin:0;counter-reset:t;font-family:var(--font-doc);font-size:16px;line-height:1.65;max-width:68ch}
+ol.terms li{counter-increment:t;margin-bottom:14px}
+ol.terms h4{font:600 1rem var(--font-doc)}
+ol.terms h4::before{content:"Điều " counter(t) ". "}
+ol.terms p{margin-top:2px}
+
+.group-t{font-size:14px;font-weight:600;margin-bottom:8px}
+.checks{display:flex;flex-direction:column;gap:10px}
+label.check{display:flex;gap:12px;align-items:flex-start;padding:12px 14px;border:1px solid var(--line);border-radius:6px;cursor:pointer;font-size:15px;line-height:1.55}
+label.check input{width:20px;height:20px;margin-top:2px;flex:none;accent-color:var(--accent)}
+label.check:has(input:checked){border-color:var(--accent);background:var(--accent-soft)}
+label.check.bad{border-color:var(--err);border-width:2px}
+.grp-err{margin-top:8px}
+
+/* Nút */
+.actions{display:flex;flex-direction:column;gap:10px}
+.btn{font:600 16px var(--font-ui);min-height:50px;padding:12px 22px;border-radius:6px;border:1.5px solid var(--accent);background:var(--accent);color:var(--accent-ink);cursor:pointer}
+.btn:hover{filter:brightness(1.06)}
+.btn.ghost{background:transparent;color:var(--accent)}
+.stale{font-size:14px}
+
+/* Phiếu xác nhận (biên lai) */
+.slip-wrap{margin-top:24px;display:flex;flex-direction:column;gap:16px;scroll-margin-top:72px}
+.slip{background:var(--surface);border:1px solid var(--line-strong);border-radius:3px;padding:22px 20px;font-family:var(--font-mono);font-size:13.5px;line-height:1.6;position:relative}
+.slip::before,.slip::after{content:"";position:absolute;left:0;right:0;height:8px;background:radial-gradient(circle at 8px 0,var(--bg) 5px,transparent 5.5px) 0 0/16px 8px repeat-x}
+.slip::before{top:-1px}
+.slip::after{bottom:-1px;transform:scaleY(-1)}
+.slip h3{font:600 15px var(--font-mono);letter-spacing:.04em;text-transform:uppercase;text-wrap:balance}
+.slip .meta{color:var(--muted);margin-top:6px}
+.status{display:inline-block;margin-top:10px;font:600 12px var(--font-ui);letter-spacing:.05em;text-transform:uppercase;border:1.5px solid var(--warn-line);color:var(--warn-ink);background:var(--warn-bg);padding:3px 8px;border-radius:3px}
+.slip hr{border:0;border-top:1.5px dashed var(--line-strong);margin:16px 0 12px}
+.slip h4{font:600 12px var(--font-mono);letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin-bottom:6px}
+.row{display:grid;grid-template-columns:minmax(0,12rem) minmax(0,1fr);gap:2px 14px;padding-block:4px;border-bottom:1px dotted var(--line)}
+.row .k{color:var(--muted)}
+.row .v{overflow-wrap:anywhere}
+@media (max-width:520px){.row{grid-template-columns:minmax(0,1fr)}}
+.slip ul{list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:8px;font-size:12.5px}
+.slip li{display:grid;grid-template-columns:auto minmax(0,1fr);gap:8px}
+.slip li::before{content:"[x]";color:var(--ok)}
+.hash{overflow-wrap:anywhere;font-size:12px;color:var(--muted)}
+.next{background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:18px;display:flex;flex-direction:column;gap:12px}
+.next h3{font-size:1.05rem;font-weight:600}
+.next ol{margin:0;padding-left:1.2rem;display:flex;flex-direction:column;gap:4px}
+.copied{font-size:14px;color:var(--ok);font-weight:500;min-height:1.4em}
+details.rawd summary{cursor:pointer;font-size:14px;color:var(--muted)}
+textarea.raw{margin-top:8px;font:12.5px/1.5 var(--font-mono);min-height:220px}
+
+/* Căn cứ pháp lý */
+.basis{margin-top:28px;border-top:1px solid var(--line);padding-top:20px;display:flex;flex-direction:column;gap:10px}
+.basis h2{font-size:1rem;font-weight:600}
+.basis ul{margin:0;padding-left:1.1rem;display:flex;flex-direction:column;gap:6px;font-size:14px;color:var(--muted)}
+.basis li b{color:var(--ink);font-weight:600}
+.basis .fine{font-size:13px;color:var(--muted)}
+</style>
+
+<div class="wrap">
+  <div class="bar" role="status" aria-live="off">
+    <div class="bar-row"><span>Tiến độ điền biểu mẫu</span><span><b id="barN">0</b>/5 phần</span></div>
+    <div class="meter"><i id="meterFill"></i></div>
+  </div>
+
+  <header class="head">
+    <p class="eyebrow">Phiếu xác nhận hoàn tiền · Điều khoản phiên bản <span id="ver"></span></p>
+    <h1>Xác nhận thông tin để nhận lại tiền chuyển nhầm</h1>
+    <p class="lead">Điền 5 phần bên dưới, mất khoảng 5 phút. <span data-k="company"></span> sẽ đối chiếu với dữ liệu giao dịch của ngân hàng và hoàn tiền về tài khoản bạn đã khai.</p>
+    <div class="notice"><strong>Lưu ý bảo mật.</strong> <span data-k="company"></span> không bao giờ hỏi mã OTP, mật khẩu hay mã PIN ngân hàng của bạn. Đừng nhập các thông tin đó vào biểu mẫu này hoặc gửi cho bất kỳ ai.</div>
+    <div class="prep">
+      <h2>Chuẩn bị sẵn</h2>
+      <ul>
+        <li>Mã giao dịch (có trên biên lai hoặc trong ứng dụng ngân hàng)</li>
+        <li>Số tài khoản và tên chủ tài khoản bạn đã dùng để chuyển tiền</li>
+        <li>Ảnh chụp biên lai chuyển khoản, sẽ gửi kèm ở bước cuối</li>
+      </ul>
+    </div>
+  </header>
+
+  <form id="f" novalidate autocomplete="off">
+
+    <section class="sec" id="sec1">
+      <div class="sec-h"><span class="num">1</span><h2>Giao dịch chuyển nhầm</h2></div>
+      <div class="grid2">
+        <div class="field" data-f="amount">
+          <label class="l" for="amount">Số tiền đã chuyển nhầm (đồng)</label>
+          <input id="amount" class="mono" inputmode="numeric" placeholder="Ví dụ: 2.500.000" aria-describedby="amountWords e-amount">
+          <p class="words" id="amountWords" aria-live="polite"></p>
+          <p class="err" id="e-amount" role="alert"></p>
+        </div>
+        <div class="field" data-f="txTime">
+          <label class="l" for="txTime">Thời điểm chuyển tiền</label>
+          <input id="txTime" type="datetime-local" aria-describedby="e-txTime">
+          <p class="err" id="e-txTime" role="alert"></p>
+        </div>
+      </div>
+      <div class="field" data-f="txRef">
+        <label class="l" for="txRef">Mã giao dịch / số tham chiếu</label>
+        <input id="txRef" class="mono" placeholder="Có trên biên lai hoặc ứng dụng ngân hàng" aria-describedby="e-txRef">
+        <p class="err" id="e-txRef" role="alert"></p>
+      </div>
+      <div class="grid2">
+        <div class="field" data-f="fromBank">
+          <label class="l" for="fromBank">Ngân hàng hoặc ví đã chuyển</label>
+          <input id="fromBank" list="banks" placeholder="Chọn hoặc gõ tên" aria-describedby="e-fromBank">
+          <datalist id="banks">
+            <option value="Vietcombank"><option value="VietinBank"><option value="BIDV"><option value="Agribank">
+            <option value="Techcombank"><option value="MB Bank"><option value="ACB"><option value="VPBank">
+            <option value="TPBank"><option value="Sacombank"><option value="HDBank"><option value="SHB">
+            <option value="VIB"><option value="OCB"><option value="MSB"><option value="SeABank">
+            <option value="Eximbank"><option value="LPBank"><option value="Nam A Bank"><option value="Bac A Bank">
+            <option value="MoMo"><option value="ZaloPay"><option value="Viettel Money">
+          </datalist>
+          <p class="err" id="e-fromBank" role="alert"></p>
+        </div>
+        <div class="field" data-f="fromAcc">
+          <label class="l" for="fromAcc">Số tài khoản đã chuyển</label>
+          <input id="fromAcc" class="mono" inputmode="numeric" placeholder="Chỉ nhập chữ số" aria-describedby="e-fromAcc">
+          <p class="err" id="e-fromAcc" role="alert"></p>
+        </div>
+      </div>
+      <div class="field" data-f="fromName">
+        <label class="l" for="fromName">Tên chủ tài khoản đã chuyển</label>
+        <input id="fromName" placeholder="Đúng như hiển thị trong ngân hàng" aria-describedby="fromNameHint e-fromName">
+        <p class="hint" id="fromNameHint">Viết đúng tên chủ tài khoản. Tên này phải trùng với tên chủ tài khoản nhận hoàn.</p>
+        <p class="err" id="e-fromName" role="alert"></p>
+      </div>
+      <div class="field" data-f="reason">
+        <label class="l" for="reason">Lý do chuyển nhầm</label>
+        <select id="reason" aria-describedby="e-reason">
+          <option value="">Chọn lý do</option>
+          <option value="wrong-acc">Nhập sai số tài khoản người nhận</option>
+          <option value="dup">Chuyển trùng nhiều lần</option>
+          <option value="wrong-amt">Nhập sai số tiền</option>
+          <option value="wrong-org">Tôi không có giao dịch nào với đơn vị này</option>
+          <option value="other">Lý do khác</option>
+        </select>
+        <p class="err" id="e-reason" role="alert"></p>
+      </div>
+      <div class="field" data-f="reasonNote">
+        <label class="l" for="reasonNote">Mô tả thêm <span class="opt">(bắt buộc nếu chọn “Lý do khác”)</span></label>
+        <textarea id="reasonNote" aria-describedby="e-reasonNote"></textarea>
+        <p class="err" id="e-reasonNote" role="alert"></p>
+      </div>
+      <div class="field" data-f="memo">
+        <label class="l" for="memo">Nội dung chuyển khoản <span class="opt">(không bắt buộc)</span></label>
+        <input id="memo" placeholder="Nội dung bạn đã ghi khi chuyển">
+      </div>
+    </section>
+
+    <section class="sec" id="sec2">
+      <div class="sec-h"><span class="num">2</span><h2>Người yêu cầu hoàn tiền</h2></div>
+      <div class="grid2">
+        <div class="field" data-f="fullName">
+          <label class="l" for="fullName">Họ và tên</label>
+          <input id="fullName" autocomplete="name" aria-describedby="e-fullName w-fullName">
+          <p class="warnline" id="w-fullName" hidden></p>
+          <p class="err" id="e-fullName" role="alert"></p>
+        </div>
+        <div class="field" data-f="idLast4">
+          <label class="l" for="idLast4">4 ký tự cuối CCCD / hộ chiếu</label>
+          <input id="idLast4" class="mono" maxlength="4" placeholder="Ví dụ: 4821" aria-describedby="idHint e-idLast4">
+          <p class="hint" id="idHint">Chúng tôi chỉ hỏi 4 ký tự cuối. Nếu cần xem giấy tờ đầy đủ, chúng tôi sẽ liên hệ riêng.</p>
+          <p class="err" id="e-idLast4" role="alert"></p>
+        </div>
+        <div class="field" data-f="phone">
+          <label class="l" for="phone">Số điện thoại</label>
+          <input id="phone" type="tel" class="mono" autocomplete="tel" placeholder="09xx xxx xxx" aria-describedby="e-phone">
+          <p class="err" id="e-phone" role="alert"></p>
+        </div>
+        <div class="field" data-f="email">
+          <label class="l" for="email">Email</label>
+          <input id="email" type="email" autocomplete="email" aria-describedby="e-email">
+          <p class="err" id="e-email" role="alert"></p>
+        </div>
+      </div>
+      <div>
+        <p class="group-t" id="roleT">Bạn là ai trong giao dịch này?</p>
+        <div class="choices" role="radiogroup" aria-labelledby="roleT">
+          <label class="choice"><input type="radio" name="role" value="owner" checked><div><b>Tôi là chủ tài khoản đã chuyển tiền</b></div></label>
+          <label class="choice"><input type="radio" name="role" value="proxy"><div><b>Tôi được chủ tài khoản ủy quyền</b><span>Cần có giấy ủy quyền bằng văn bản, gửi kèm ở bước cuối.</span></div></label>
+        </div>
+      </div>
+    </section>
+
+    <section class="sec" id="sec3">
+      <div class="sec-h"><span class="num">3</span><h2>Tài khoản nhận tiền hoàn</h2></div>
+      <p class="sec-note">Để phòng ngừa gian lận, chúng tôi chỉ hoàn về tài khoản đứng tên chủ tài khoản đã chuyển tiền.</p>
+      <div class="choices" role="radiogroup" aria-label="Tài khoản nhận hoàn">
+        <label class="choice"><input type="radio" name="refund" value="same" checked><div><b>Hoàn về chính tài khoản đã chuyển</b><span>Cách nhanh nhất và được khuyến nghị.</span></div></label>
+        <label class="choice"><input type="radio" name="refund" value="other"><div><b>Hoàn về tài khoản khác cùng tên chủ tài khoản</b><span>Tên chủ tài khoản phải trùng với tên đã khai ở mục 1.</span></div></label>
+      </div>
+      <p class="sum" id="sameSum"></p>
+      <div class="sub" id="otherAcc" hidden>
+        <div class="grid2">
+          <div class="field" data-f="toBank">
+            <label class="l" for="toBank">Ngân hàng nhận hoàn</label>
+            <input id="toBank" list="banks" aria-describedby="e-toBank">
+            <p class="err" id="e-toBank" role="alert"></p>
+          </div>
+          <div class="field" data-f="toAcc">
+            <label class="l" for="toAcc">Số tài khoản nhận hoàn</label>
+            <input id="toAcc" class="mono" inputmode="numeric" aria-describedby="e-toAcc">
+            <p class="err" id="e-toAcc" role="alert"></p>
+          </div>
+        </div>
+        <div class="field" data-f="toName">
+          <label class="l" for="toName">Tên chủ tài khoản nhận hoàn</label>
+          <input id="toName" aria-describedby="e-toName">
+          <p class="err" id="e-toName" role="alert"></p>
+        </div>
+      </div>
+    </section>
+
+    <section class="sec" id="sec4">
+      <div class="sec-h"><span class="num">4</span><h2>Điều khoản, cam kết và đồng ý</h2></div>
+      <div class="terms-box">
+        <h3>Điều khoản hoàn tiền chuyển nhầm</h3>
+        <p>Phiên bản <span id="ver2"></span>. Vui lòng đọc kỹ trước khi đồng ý.</p>
+        <ol class="terms" id="terms"></ol>
+      </div>
+      <div>
+        <p class="group-t">Cam kết của tôi</p>
+        <div class="checks" id="commitsA"></div>
+        <p class="err grp-err" id="e-grpA" role="alert"></p>
+      </div>
+      <div>
+        <p class="group-t">Đồng ý</p>
+        <div class="checks" id="commitsB"></div>
+        <p class="err grp-err" id="e-grpB" role="alert"></p>
+      </div>
+    </section>
+
+    <section class="sec" id="sec5">
+      <div class="sec-h"><span class="num">5</span><h2>Ký xác nhận điện tử</h2></div>
+      <p class="sec-note">Gõ đầy đủ họ và tên đã khai ở mục 2 để ký. Họ tên đánh máy này cùng mã xác nhận và thời điểm tạo là chữ ký điện tử của bạn trên phiếu.</p>
+      <div class="field" data-f="sign">
+        <label class="l" for="sign">Họ và tên người ký</label>
+        <input id="sign" aria-describedby="e-sign">
+        <p class="err" id="e-sign" role="alert"></p>
+      </div>
+      <div class="actions">
+        <button class="btn" type="submit" id="submitBtn">Tạo phiếu xác nhận</button>
+        <p class="stale" id="stale" hidden>Bạn vừa sửa thông tin nên phiếu cũ đã được ẩn. Bấm “Tạo phiếu xác nhận” để tạo lại.</p>
+        <p class="err" id="e-form" role="alert"></p>
+      </div>
+    </section>
+  </form>
+
+  <section class="slip-wrap" id="slipWrap" hidden>
+    <article class="slip" id="slip" aria-label="Phiếu xác nhận hoàn tiền"></article>
+    <div class="next">
+      <h3>Bước cuối: gửi phiếu cho <span data-k="company"></span></h3>
+      <p>Trang này không tự gửi dữ liệu đi. Yêu cầu của bạn chỉ được tiếp nhận khi chúng tôi nhận được nội dung phiếu.</p>
+      <ol>
+        <li>Bấm “Sao chép nội dung phiếu”.</li>
+        <li>Dán và gửi qua <span data-k="channel"></span>, kèm ảnh biên lai chuyển khoản (và giấy ủy quyền nếu có).</li>
+      </ol>
+      <button class="btn" type="button" id="copyBtn">Sao chép nội dung phiếu</button>
+      <p class="copied" id="copied" role="status" aria-live="polite"></p>
+      <details class="rawd" id="rawWrap">
+        <summary>Xem bản văn bản thuần</summary>
+        <textarea class="raw" id="raw" readonly aria-label="Nội dung phiếu dạng văn bản"></textarea>
+      </details>
+    </div>
+  </section>
+
+  <section class="basis">
+    <h2>Căn cứ pháp lý tham khảo</h2>
+    <ul>
+      <li><b>Bộ luật Dân sự 2015, Điều 579:</b> nghĩa vụ hoàn trả khi chiếm hữu, sử dụng tài sản hoặc được lợi về tài sản không có căn cứ pháp luật.</li>
+      <li><b>Bộ luật Dân sự 2015, Điều 117 và Điều 119:</b> điều kiện có hiệu lực của giao dịch dân sự (tự nguyện) và hình thức giao dịch, gồm thông điệp dữ liệu.</li>
+      <li><b>Luật Giao dịch điện tử 2023:</b> giá trị pháp lý của thông điệp dữ liệu và chữ ký điện tử.</li>
+      <li><b>Bộ luật Hình sự 2015 (sửa đổi, bổ sung 2017), Điều 174 và Điều 176:</b> tội lừa đảo chiếm đoạt tài sản và tội chiếm giữ trái phép tài sản.</li>
+      <li><b>Luật Bảo vệ dữ liệu cá nhân 2025 (hiệu lực từ 01/01/2026):</b> xử lý dữ liệu cá nhân theo sự đồng ý và quyền của chủ thể dữ liệu.</li>
+    </ul>
+    <p class="fine">Các quy định trên chỉ để tham khảo, không thay thế tư vấn pháp lý.</p>
+  </section>
+</div>
+
+<script>
+/* ===== Cấu hình: thay các giá trị trong ngoặc vuông trước khi gửi cho khách ===== */
+const CONFIG = {
+  company: "META Ticket",
+  days: "07",
+  channel: "META Ticket",
+  contact: "support@metaticket.com.vn",
+  version: "v2026"
+};
+
+const TERMS = [
+  ["Phạm vi", "Điều khoản này áp dụng cho yêu cầu hoàn lại khoản tiền bạn đã chuyển nhầm vào tài khoản của {company}. Việc {company} tiếp nhận yêu cầu hoặc hoàn tiền không có nghĩa là {company} có lỗi trong việc phát sinh giao dịch nhầm."],
+  ["Điều kiện hoàn tiền", "{company} chỉ hoàn tiền khi (a) giao dịch có thật và tiền đã được ghi có vào tài khoản của {company}; (b) khoản tiền không phải thanh toán cho đơn hàng, dịch vụ hoặc hợp đồng hợp lệ nào với {company}; (c) thông tin bạn khai khớp với dữ liệu giao dịch của ngân hàng; (d) bạn đã hoàn tất xác nhận này."],
+  ["Tài khoản nhận hoàn", "Để phòng ngừa gian lận và rửa tiền, {company} chỉ hoàn tiền về tài khoản đứng tên chủ tài khoản đã chuyển tiền: chính tài khoản đã chuyển, hoặc một tài khoản khác cùng tên chủ tài khoản. {company} không hoàn về tài khoản của bên thứ ba, kể cả khi người yêu cầu là người được ủy quyền."],
+  ["Số tiền và chi phí", "Số tiền hoàn bằng số tiền {company} thực nhận, không kèm lãi hay khoản bồi thường nào khác. Phí chuyển khoản phát sinh khi hoàn tiền (nếu có) do người yêu cầu chịu và được trừ trực tiếp vào số tiền hoàn. Phí đã phát sinh ở lần chuyển ban đầu không được hoàn lại."],
+  ["Thời hạn hoàn tiền", "{company} hoàn tiền trong vòng {days} ngày làm việc kể từ khi nhận được phiếu xác nhận hợp lệ và xác minh xong thông tin. Thời gian chờ ngân hàng hoặc bên thứ ba xử lý, hoặc do bạn bổ sung giấy tờ chậm, không tính vào thời hạn này."],
+  ["Trách nhiệm về thông tin", "Bạn chịu trách nhiệm về tính chính xác của mọi thông tin đã khai, đặc biệt là số tài khoản và tên chủ tài khoản. {company} hoàn tiền đúng theo thông tin bạn đã khai thì xem như đã hoàn thành nghĩa vụ hoàn trả, và không chịu trách nhiệm với thiệt hại phát sinh do thông tin sai hoặc thiếu, trừ trường hợp lỗi thuộc về {company}."],
+  ["Quyền xác minh, tạm dừng và từ chối", "{company} có quyền yêu cầu bổ sung giấy tờ, gọi điện xác minh, tạm dừng hoặc từ chối hoàn tiền nếu thông tin không khớp, có dấu hiệu gian lận hoặc khi cơ quan nhà nước có thẩm quyền yêu cầu. Khi có dấu hiệu vi phạm pháp luật, {company} có thể cung cấp hồ sơ cho cơ quan chức năng."],
+  ["Hoàn nhiều lần và tra soát", "Nếu bạn đã hoặc sẽ yêu cầu ngân hàng, ví điện tử hay cơ quan khác hoàn hoặc tra soát khoản tiền này, bạn phải báo cho {company} ngay. Nếu khoản tiền bị hoàn nhiều hơn một lần, bạn hoàn trả phần dư trong vòng 03 ngày làm việc kể từ khi nhận thông báo."],
+  ["Sau khi hoàn tiền", "Khi {company} đã hoàn tiền về tài khoản bạn khai, bạn xác nhận đã nhận đủ và không còn khiếu nại, yêu cầu bồi thường hay khởi kiện nào khác liên quan đến khoản tiền này. Quy định này không loại trừ quyền của bạn nếu {company} không thực hiện đúng cam kết hoàn tiền ở đây."],
+  ["Dữ liệu cá nhân", "{company} xử lý họ tên, 4 ký tự cuối giấy tờ, số điện thoại, email, thông tin tài khoản và thông tin giao dịch của bạn để xác minh, hoàn tiền, đối soát kế toán, giải quyết tranh chấp và thực hiện nghĩa vụ pháp lý. Dữ liệu được lưu trong thời gian cần thiết cho các mục đích này và theo thời hạn lưu trữ chứng từ kế toán, và được chia sẻ cho ngân hàng, cơ quan nhà nước có thẩm quyền khi cần. Bạn có quyền yêu cầu truy cập, chỉnh sửa, xóa dữ liệu (trong phạm vi pháp luật cho phép) hoặc rút lại đồng ý bằng cách liên hệ {contact}. Việc rút lại đồng ý có thể khiến {company} không thể tiếp tục hoàn tiền."],
+  ["Giá trị của xác nhận điện tử", "Phiếu xác nhận kèm mã xác nhận và thời điểm tạo, gửi qua kênh tiếp nhận chính thức của {company}, có giá trị như văn bản. {company} được lưu phiếu, sao kê và lịch sử trao đổi để làm chứng cứ."],
+  ["Luật áp dụng và giải quyết tranh chấp", "Điều khoản này theo pháp luật Việt Nam. Hai bên ưu tiên thương lượng trong 15 ngày kể từ khi phát sinh tranh chấp; nếu không thành, tranh chấp do Tòa án nhân dân có thẩm quyền giải quyết."]
+];
+
+const COMMITS_A = [
+  ["c1", "Tôi cam kết mọi thông tin đã khai là chính xác, đầy đủ, trung thực và tự chịu trách nhiệm trước pháp luật về các thông tin này. Tôi hiểu rằng khai gian dối nhằm chiếm đoạt tài sản có thể bị xử lý hành chính hoặc truy cứu trách nhiệm hình sự."],
+  ["c2", "Tôi là chủ tài khoản đã thực hiện giao dịch chuyển nhầm, hoặc được chủ tài khoản ủy quyền hợp pháp bằng văn bản và sẽ gửi giấy ủy quyền khi {company} yêu cầu."],
+  ["c3", "Khoản tiền này tôi chuyển nhầm. Đó không phải khoản thanh toán cho đơn hàng, dịch vụ hay hợp đồng nào với {company}, và không bên thứ ba nào có quyền đối với khoản tiền này."],
+  ["c4", "Tôi chưa và sẽ không yêu cầu hoàn hoặc tra soát khoản tiền này qua kênh khác trong lúc yêu cầu này đang xử lý. Nếu khoản tiền bị hoàn nhiều hơn một lần, tôi sẽ hoàn trả phần dư."],
+  ["c5", "Tôi đồng ý để {company} đối chiếu thông tin với dữ liệu ngân hàng và có thể yêu cầu tôi bổ sung giấy tờ. Nếu thông tin không khớp, {company} có quyền tạm dừng hoặc từ chối hoàn tiền. Tôi chỉ nhận lại đúng số tiền {company} thực nhận, đã trừ phí chuyển khoản (nếu có), không kèm lãi hay khoản bồi thường nào khác."],
+  ["c6", "Sau khi {company} hoàn tiền đúng tài khoản tôi đã khai, tôi không còn khiếu nại, yêu cầu bồi thường hay khởi kiện liên quan đến khoản tiền này. {company} không chịu trách nhiệm với thiệt hại do thông tin tôi khai sai hoặc thiếu."]
+];
+const COMMITS_B = [
+  ["d1", "Tôi đã đọc, hiểu và đồng ý với Điều khoản hoàn tiền ở trên."],
+  ["d2", "Tôi đồng ý để {company} thu thập và xử lý dữ liệu cá nhân của tôi cho các mục đích nêu tại Điều 10 của Điều khoản. Tôi biết mình có thể rút lại đồng ý bất cứ lúc nào."],
+  ["d3", "Tôi đồng ý xác nhận bằng hình thức điện tử và hiểu phiếu xác nhận này có giá trị pháp lý."]
+];
+const ALL_C = COMMITS_A.concat(COMMITS_B);
+const REASONS = {
+  "wrong-acc": "Nhập sai số tài khoản người nhận",
+  "dup": "Chuyển trùng nhiều lần",
+  "wrong-amt": "Nhập sai số tiền",
+  "wrong-org": "Không có giao dịch nào với đơn vị này",
+  "other": "Lý do khác"
+};
+
+/* ===== Tiện ích ===== */
+const $ = id => document.getElementById(id);
+const esc = s => String(s).replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const plain = s => s.replace(/\{(\w+)\}/g, (m, k) => (CONFIG[k] != null ? CONFIG[k] : m));
+const html = s => esc(s).replace(/\{(\w+)\}/g, (m, k) => {
+  const v = CONFIG[k]; if (v == null) return m;
+  return v.charAt(0) === "[" ? '<span class="ph">' + esc(v) + "</span>" : esc(v);
+});
+const val = id => $(id).value.trim();
+const norm = s => s.normalize("NFD").replace(/[̀-ͯ]/g, "").replace(/đ/g, "d").replace(/Đ/g, "D").toLowerCase().replace(/\s+/g, " ").trim();
+const pad = n => String(n).padStart(2, "0");
+const fmt = n => String(n).replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+const amountNum = () => parseInt(($("amount").value || "").replace(/\D/g, ""), 10) || 0;
+const radio = name => document.querySelector('input[name="' + name + '"]:checked').value;
+
+/*MW*/
+const DIG = ["không","một","hai","ba","bốn","năm","sáu","bảy","tám","chín"];
+function readTriple(n, full) {
+  const h = Math.floor(n / 100), t = Math.floor((n % 100) / 10), u = n % 10, s = [];
+  if (h > 0 || full) s.push(DIG[h], "trăm");
+  if (t > 1) {
+    s.push(DIG[t], "mươi");
+    if (u === 1) s.push("mốt"); else if (u === 4) s.push("tư"); else if (u === 5) s.push("lăm"); else if (u > 0) s.push(DIG[u]);
+  } else if (t === 1) {
+    s.push("mười");
+    if (u === 5) s.push("lăm"); else if (u > 0) s.push(DIG[u]);
+  } else if (u > 0) {
+    if (h > 0 || full) s.push("lẻ");
+    s.push(DIG[u]);
+  }
+  return s.join(" ");
+}
+function moneyWords(n) {
+  if (!n || n < 0 || n > 999999999999) return "";
+  const units = ["", "nghìn", "triệu", "tỷ"], g = [];
+  let x = n; while (x > 0) { g.push(x % 1000); x = Math.floor(x / 1000); }
+  const out = []; let started = false;
+  for (let i = g.length - 1; i >= 0; i--) {
+    if (g[i] === 0) continue;
+    out.push(readTriple(g[i], started) + (units[i] ? " " + units[i] : ""));
+    started = true;
+  }
+  const s = out.join(" ") + " đồng";
+  return s.charAt(0).toUpperCase() + s.slice(1);
+}
+/*END*/
+
+/* ===== Dựng nội dung tĩnh ===== */
+document.querySelectorAll("[data-k]").forEach(el => { el.innerHTML = html("{" + el.dataset.k + "}"); });
+$("ver").textContent = CONFIG.version; $("ver2").textContent = CONFIG.version;
+$("terms").innerHTML = TERMS.map(t => "<li><h4>" + html(t[0]) + "</h4><p>" + html(t[1]) + "</p></li>").join("");
+function renderChecks(box, list) {
+  box.innerHTML = list.map(c => '<label class="check" for="' + c[0] + '"><input type="checkbox" id="' + c[0] + '"><span>' + html(c[1]) + "</span></label>").join("");
+}
+renderChecks($("commitsA"), COMMITS_A); renderChecks($("commitsB"), COMMITS_B);
+
+(function setMax() {
+  const d = new Date();
+  $("txTime").max = d.getFullYear() + "-" + pad(d.getMonth() + 1) + "-" + pad(d.getDate()) + "T" + pad(d.getHours()) + ":" + pad(d.getMinutes());
+})();
+
+/* ===== Hành vi biểu mẫu ===== */
+let generated = false;
+const f = $("f");
+
+$("amount").addEventListener("input", e => {
+  const n = amountNum();
+  e.target.value = n ? fmt(n) : "";
+  const w = moneyWords(n);
+  $("amountWords").textContent = w ? "Bằng chữ: " + w : "";
+});
+
+function syncSame() {
+  const a = [val("fromBank"), val("fromAcc"), val("fromName")];
+  $("sameSum").textContent = a.every(Boolean)
+    ? "Tài khoản nhận hoàn: " + a[0] + " · " + a[1] + " · " + a[2]
+    : "Điền mục 1 để xem tài khoản nhận hoàn.";
+}
+function syncMode() {
+  $("otherAcc").hidden = radio("refund") !== "other";
+  $("sameSum").hidden = radio("refund") !== "same";
+}
+function syncNameWarn() {
+  const w = $("w-fullName"), a = val("fullName"), b = val("fromName");
+  const show = radio("role") === "owner" && a && b && norm(a) !== norm(b);
+  w.hidden = !show;
+  if (show) w.textContent = "Tên này khác tên chủ tài khoản đã chuyển ở mục 1. Nếu bạn là chủ tài khoản, hãy kiểm tra lại. Nếu bạn được ủy quyền, hãy chọn “Tôi được ủy quyền”.";
+}
+
+function sectionsDone() {
+  const s = [];
+  s[0] = !!(amountNum() > 0 && val("txTime") && val("txRef") && val("fromBank") && val("fromAcc") && val("fromName") && val("reason"));
+  s[1] = !!(val("fullName") && val("idLast4") && val("phone") && val("email"));
+  s[2] = radio("refund") === "same" || !!(val("toBank") && val("toAcc") && val("toName"));
+  s[3] = ALL_C.every(c => $(c[0]).checked);
+  s[4] = !!val("sign");
+  return s;
+}
+function updateProgress() {
+  const s = sectionsDone();
+  s.forEach((d, i) => $("sec" + (i + 1)).classList.toggle("is-done", d));
+  const n = s.filter(Boolean).length;
+  $("barN").textContent = n;
+  $("meterFill").style.width = (n * 20) + "%";
+}
+
+function clearErr(id) {
+  const el = $(id), fld = el && el.closest(".field");
+  if (fld) fld.classList.remove("has-err");
+  if (el) el.removeAttribute("aria-invalid");
+  const e = $("e-" + id); if (e) e.textContent = "";
+}
+function setErr(id, msg) {
+  const el = $(id), fld = el.closest(".field");
+  fld.classList.add("has-err"); el.setAttribute("aria-invalid", "true");
+  $("e-" + id).textContent = msg;
+}
+function onChange(e) {
+  if (e && e.target && e.target.id) clearErr(e.target.id);
+  syncSame(); syncMode(); syncNameWarn(); updateProgress();
+  if (generated) { $("slipWrap").hidden = true; generated = false; $("stale").hidden = false; }
+}
+f.addEventListener("input", onChange);
+f.addEventListener("change", onChange);
+
+function validate() {
+  const bad = [];
+  document.querySelectorAll(".field.has-err").forEach(x => x.classList.remove("has-err"));
+  document.querySelectorAll("[aria-invalid]").forEach(x => x.removeAttribute("aria-invalid"));
+  document.querySelectorAll(".err").forEach(x => { x.textContent = ""; });
+  document.querySelectorAll("label.check.bad").forEach(x => x.classList.remove("bad"));
+  const fail = (id, msg) => { setErr(id, msg); bad.push(id); };
+
+  const n = amountNum();
+  if (n < 1000 || n > 999999999999) fail("amount", "Nhập số tiền hợp lệ, tối thiểu 1.000 đồng.");
+  const t = val("txTime");
+  if (!t) fail("txTime", "Chọn thời điểm bạn đã chuyển tiền.");
+  else if (new Date(t) > new Date()) fail("txTime", "Thời điểm chuyển không được ở tương lai.");
+  if (!/^[A-Za-z0-9._\-\/ ]{4,60}$/.test(val("txRef"))) fail("txRef", "Nhập mã giao dịch có trên biên lai (ít nhất 4 ký tự).");
+  if (!val("fromBank")) fail("fromBank", "Chọn hoặc nhập ngân hàng, ví đã chuyển.");
+  if (!/^\d{6,20}$/.test(val("fromAcc").replace(/[\s.\-]/g, ""))) fail("fromAcc", "Số tài khoản gồm 6 đến 20 chữ số.");
+  if (val("fromName").length < 3) fail("fromName", "Nhập tên chủ tài khoản đã chuyển.");
+  if (!val("reason")) fail("reason", "Chọn lý do chuyển nhầm.");
+  if (val("reason") === "other" && val("reasonNote").length < 5) fail("reasonNote", "Hãy mô tả ngắn gọn lý do của bạn.");
+
+  if (val("fullName").split(/\s+/).filter(Boolean).length < 2) fail("fullName", "Nhập đầy đủ họ và tên.");
+  if (!/^[A-Za-z0-9]{4}$/.test(val("idLast4"))) fail("idLast4", "Nhập đúng 4 ký tự cuối của CCCD hoặc hộ chiếu.");
+  if (!/^(0|\+84)\d{9}$/.test(val("phone").replace(/[\s.\-]/g, ""))) fail("phone", "Nhập số điện thoại Việt Nam hợp lệ, ví dụ 0901234567.");
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(val("email"))) fail("email", "Nhập địa chỉ email hợp lệ.");
+
+  if (radio("refund") === "other") {
+    if (!val("toBank")) fail("toBank", "Chọn hoặc nhập ngân hàng nhận hoàn.");
+    if (!/^\d{6,20}$/.test(val("toAcc").replace(/[\s.\-]/g, ""))) fail("toAcc", "Số tài khoản gồm 6 đến 20 chữ số.");
+    if (!val("toName")) fail("toName", "Nhập tên chủ tài khoản nhận hoàn.");
+    else if (norm(val("toName")) !== norm(val("fromName"))) fail("toName", "Tên chủ tài khoản nhận hoàn phải trùng tên chủ tài khoản đã chuyển. Chúng tôi không hoàn về tài khoản của người khác.");
+  }
+
+  let missA = 0, missB = 0;
+  COMMITS_A.forEach(c => { if (!$(c[0]).checked) { missA++; $(c[0]).closest("label").classList.add("bad"); } });
+  COMMITS_B.forEach(c => { if (!$(c[0]).checked) { missB++; $(c[0]).closest("label").classList.add("bad"); } });
+  if (missA) { $("e-grpA").textContent = "Cần đồng ý tất cả các cam kết để tiếp tục. Còn " + missA + " mục chưa chọn."; bad.push("c-first-A"); }
+  if (missB) { $("e-grpB").textContent = "Cần đồng ý tất cả các mục để tiếp tục. Còn " + missB + " mục chưa chọn."; bad.push("c-first-B"); }
+
+  if (!val("sign")) fail("sign", "Gõ họ và tên của bạn để ký.");
+  else if (norm(val("sign")) !== norm(val("fullName"))) fail("sign", "Họ tên ký phải trùng với họ tên đã khai ở mục 2.");
+  return bad;
+}
+
+function focusFirst(bad) {
+  const first = bad[0];
+  let target;
+  if (first === "c-first-A") target = document.querySelector("#commitsA label.bad input");
+  else if (first === "c-first-B") target = document.querySelector("#commitsB label.bad input");
+  else target = $(first);
+  if (!target) return;
+  const reduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  target.scrollIntoView({ behavior: reduce ? "auto" : "smooth", block: "center" });
+  try { target.focus({ preventScroll: true }); } catch (e) { target.focus(); }
+}
+
+/* ===== Tạo phiếu ===== */
+function vnParts(d) {
+  try {
+    const p = {};
+    new Intl.DateTimeFormat("en-GB", { timeZone: "Asia/Ho_Chi_Minh", year: "numeric", month: "2-digit", day: "2-digit", hour: "2-digit", minute: "2-digit", second: "2-digit", hourCycle: "h23" })
+      .formatToParts(d).forEach(x => { p[x.type] = x.value; });
+    return { y: p.year, m: p.month, d: p.day, H: p.hour, M: p.minute, S: p.second };
+  } catch (e) {
+    return { y: String(d.getFullYear()), m: pad(d.getMonth() + 1), d: pad(d.getDate()), H: pad(d.getHours()), M: pad(d.getMinutes()), S: pad(d.getSeconds()) };
+  }
+}
+function rand4() {
+  const a = new Uint8Array(4);
+  try { crypto.getRandomValues(a); } catch (e) { for (let i = 0; i < 4; i++) a[i] = Math.floor(Math.random() * 256); }
+  return Array.from(a).map(b => b.toString(16).padStart(2, "0")).join("").toUpperCase();
+}
+async function sha256(text) {
+  try {
+    const buf = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(text));
+    return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2, "0")).join("");
+  } catch (e) { return null; }
+}
+function fmtTx(v) { const m = v.match(/^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2})/); return m ? m[3] + "/" + m[2] + "/" + m[1] + " " + m[4] + ":" + m[5] : v; }
+function mk(tag, cls, text) { const e = document.createElement(tag); if (cls) e.className = cls; if (text != null) e.textContent = text; return e; }
+
+async function generate() {
+  const now = new Date(), p = vnParts(now);
+  const code = "HT-" + p.y + p.m + p.d + "-" + rand4();
+  const stamp = p.d + "/" + p.m + "/" + p.y + " " + p.H + ":" + p.M + ":" + p.S + " (GMT+7)";
+  const n = amountNum();
+  const reason = REASONS[val("reason")] + (val("reasonNote") ? " — " + val("reasonNote") : "");
+  const same = radio("refund") === "same";
+
+  const secs = [
+    { t: "A. Giao dịch chuyển nhầm", rows: [
+      ["Số tiền", fmt(n) + " đồng"],
+      ["Bằng chữ", moneyWords(n)],
+      ["Thời điểm chuyển", fmtTx(val("txTime"))],
+      ["Mã giao dịch", val("txRef")],
+      ["Ngân hàng / ví chuyển", val("fromBank")],
+      ["Số tài khoản chuyển", val("fromAcc").replace(/[\s.\-]/g, "")],
+      ["Tên chủ tài khoản", val("fromName")],
+      ["Lý do chuyển nhầm", reason]
+    ].concat(val("memo") ? [["Nội dung chuyển khoản", val("memo")]] : []) },
+    { t: "B. Người yêu cầu", rows: [
+      ["Họ và tên", val("fullName")],
+      ["4 ký tự cuối giấy tờ", val("idLast4")],
+      ["Số điện thoại", val("phone")],
+      ["Email", val("email")],
+      ["Tư cách", radio("role") === "owner" ? "Chủ tài khoản đã chuyển tiền" : "Người được chủ tài khoản ủy quyền"]
+    ] },
+    { t: "C. Tài khoản nhận hoàn", rows: same
+      ? [["Hình thức", "Hoàn về chính tài khoản đã chuyển (như mục A)"]]
+      : [["Ngân hàng", val("toBank")], ["Số tài khoản", val("toAcc").replace(/[\s.\-]/g, "")], ["Tên chủ tài khoản", val("toName")]] }
+  ];
+  const commits = ALL_C.map(c => plain(c[1]));
+
+  const L = [];
+  L.push("PHIẾU XÁC NHẬN HOÀN TIỀN CHUYỂN NHẦM");
+  L.push("Mã xác nhận: " + code);
+  L.push("Thời điểm tạo: " + stamp);
+  L.push("Đơn vị tiếp nhận: " + CONFIG.company);
+  L.push("Phiên bản điều khoản: " + CONFIG.version);
+  secs.forEach(s => { L.push(""); L.push(s.t.toUpperCase()); s.rows.forEach(r => L.push("- " + r[0] + ": " + r[1])); });
+  L.push(""); L.push("D. CAM KẾT VÀ ĐỒNG Ý (đã chọn đủ " + commits.length + "/" + commits.length + " mục)");
+  commits.forEach(c => L.push("[x] " + c));
+  L.push(""); L.push("E. KÝ XÁC NHẬN ĐIỆN TỬ");
+  L.push("- Người ký: " + val("sign"));
+  L.push("- Thời điểm ký: " + stamp);
+  const body = L.join("\n");
+  const hash = await sha256(body);
+  const full = hash ? body + "\n\nMã đối chiếu (SHA-256): " + hash : body;
+
+  const slip = $("slip"); slip.textContent = "";
+  slip.appendChild(mk("h3", "", "Phiếu xác nhận hoàn tiền chuyển nhầm"));
+  slip.appendChild(mk("p", "meta", "Mã xác nhận: " + code));
+  slip.appendChild(mk("p", "meta", "Thời điểm tạo: " + stamp));
+  slip.appendChild(mk("p", "meta", "Đơn vị tiếp nhận: " + CONFIG.company + " · Điều khoản " + CONFIG.version));
+  slip.appendChild(mk("span", "status", "Chưa gửi · hãy sao chép và gửi cho đơn vị"));
+  secs.forEach(s => {
+    slip.appendChild(mk("hr"));
+    slip.appendChild(mk("h4", "", s.t));
+    s.rows.forEach(r => { const row = mk("div", "row"); row.appendChild(mk("span", "k", r[0])); row.appendChild(mk("span", "v", r[1])); slip.appendChild(row); });
+  });
+  slip.appendChild(mk("hr"));
+  slip.appendChild(mk("h4", "", "D. Cam kết và đồng ý (" + commits.length + "/" + commits.length + ")"));
+  const ul = mk("ul"); commits.forEach(c => ul.appendChild(mk("li", "", c))); slip.appendChild(ul);
+  slip.appendChild(mk("hr"));
+  slip.appendChild(mk("h4", "", "E. Ký xác nhận điện tử"));
+  [["Người ký", val("sign")], ["Thời điểm ký", stamp]].forEach(r => { const row = mk("div", "row"); row.appendChild(mk("span", "k", r[0])); row.appendChild(mk("span", "v", r[1])); slip.appendChild(row); });
+  if (hash) { slip.appendChild(mk("hr")); slip.appendChild(mk("p", "hash", "Mã đối chiếu (SHA-256): " + hash)); }
+
+  $("raw").value = full;
+  $("copied").textContent = "";
+  $("slipWrap").hidden = false; generated = true; $("stale").hidden = true;
+  const reduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  $("slipWrap").scrollIntoView({ behavior: reduce ? "auto" : "smooth", block: "start" });
+}
+
+f.addEventListener("submit", async e => {
+  e.preventDefault();
+  const bad = validate();
+  if (bad.length) { $("e-form").textContent = "Còn " + bad.length + " mục cần sửa. Chúng tôi đã đưa bạn tới mục đầu tiên."; focusFirst(bad); return; }
+  $("e-form").textContent = "";
+  await generate();
+});
+
+$("copyBtn").addEventListener("click", async () => {
+  const t = $("raw").value;
+  try {
+    await navigator.clipboard.writeText(t);
+    $("copied").textContent = "Đã sao chép. Hãy dán và gửi cho " + plain("{company}") + ".";
+  } catch (err) {
+    $("rawWrap").open = true; $("raw").focus(); $("raw").select();
+    $("copied").textContent = "Chưa tự sao chép được. Nội dung đã được chọn sẵn, hãy nhấn giữ hoặc bấm Ctrl+C để sao chép.";
+  }
+});
+
+syncSame(); syncMode(); updateProgress();
+</script>
+
+</body></html>

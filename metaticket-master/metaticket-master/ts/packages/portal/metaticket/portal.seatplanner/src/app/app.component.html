@@ -1,0 +1,49 @@
+<div class="flex h-full items-stretch">
+    <div class="viewport-container relative border grow border-red-950">
+        <div class="board-viewport h-full" #viewport></div>
+        <editor-ui-group class="absolute with-pad" vAlign="top" hAlign="left" direction="ttb" (loaderEvent)="onEditorUILoaderEvent($event)">
+        </editor-ui-group>
+        <editor-ui-group class="absolute with-pad" vAlign="bottom" hAlign="right" direction="ltr" (loaderEvent)="onZoomUILoaderEvent($event)">
+        </editor-ui-group>
+    </div>
+    <div class="border w-[300px] border-red-950 px-[10px]">
+        <div class="flex py-[10px] gap-[20px]">
+            <button class="vi-btn vi-btn-small vi-btn-outline grow" [disabled]="(doc$ | async) != null" (click)="createDoc()">Tạo mới</button>
+            <button class="vi-btn vi-btn-small vi-btn-outline grow" [disabled]="(doc$ | async) != null" (click)="loadDoc()">Mở</button>
+        </div>
+        <ng-template [ngIf]="(doc$ | async) == null">
+            <div class="vi-form py-[10px]">
+                <input [(ngModel)]="loadId" #model="ngModel" class="vi-input" type="text" placeholder="Nhập tên để load" />
+            </div>
+        </ng-template>
+        <ng-template [ngIf]="(doc$ | async)" let-doc="ngIf">
+            <div>
+                <div class="flex gap-[10px]"><label><strong>ID:</strong></label><span class="grow overflow-auto">{{doc.id}}</span></div>
+                <div class="flex gap-[10px]"><label><strong>Name:</strong></label><span class="grow overflow-auto">{{doc.displayName}}</span></div>
+            </div>
+
+            <div>
+                <h3>Generate tickets</h3>
+                <ng-template [fflow] [fflowBy]="buildTicketGenerationForm(doc)" [fflowNoNav]="true" [fflowSubmit]="generateTickets" let-fum let-f="fflow">
+                    <form [formGroup]="fum" class="vi-form text-[12px]">
+                        <div formGroupName="catMapping">
+                            <div class="my-[5px]" *ngFor="let c of catMapControls(fum)" [formGroupName]="c">
+                                <span>Category {{c}}</span><input class="vi-input !h-[20px] !pr-0 !rounded-none max-w-[75px]" formControlName="catName" type="text"/>
+                                <span>Price</span><input type="number" class="vi-input !pr-0 !rounded-none max-w-[75px]" formControlName="catPrice" step="5000"/>
+                            </div>
+                        </div>
+
+                        <span>Show Id</span>
+                        <input formControlName="showId" class="vi-input !pr-0 !rounded-none !h-[20px]" type="text"/>
+                        <span>Session Id</span>
+                        <input formControlName="sessionId" class="vi-input !pr-0 !rounded-none  !h-[20px]" type="text"/>
+                        <button class="mt-[30px] vi-btn vi-btn-normal vi-btn-focus w-full" [disabled]="!f.canSubmit()" [form-flow-submit]="f">
+                            Tạo vé
+                        </button>
+                    </form>
+                </ng-template>
+            </div>
+        </ng-template>
+    </div>
+</div>
+

@@ -1,0 +1,29 @@
+.hint {
+    font-size: 12px;
+    color: #8f9bb3;
+    font-weight: normal;
+}
+
+.filter-row {
+    max-width: 520px;
+}
+
+.filter-label {
+    display: block;
+    margin-bottom: 6px;
+    font-weight: 600;
+    font-size: 13px;
+}
+
+.empty-hint {
+    margin: 10px 0 0;
+    color: #8f9bb3;
+    font-size: 13px;
+}
+
+.header-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+    align-items: center;
+}

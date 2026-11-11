@@ -1,0 +1,82 @@
+location /api/public {
+    proxy_set_header Host $host;
+    proxy_set_header X-Real-IP $remote_addr;
+    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+
+    location /api/public/show {
+        proxy_pass http://show_service/public/show/;
+        if ($request_method = GET) {
+            add_header Cache-Control "public, max-age=10";
+        }
+    }
+    location /api/public/ticket {
+        proxy_pass http://ticket_service/public/ticket/;
+        if ($request_method = GET) {
+            add_header Cache-Control "public, max-age=10";
+        }
+    }
+    location /api/public/order {
+        proxy_pass http://order_service/public/order/;
+    }
+    location /api/public/payment {
+        proxy_pass http://payment_service/public/payment/;
+    }
+    location /api/public/accessory {
+        # Inherits X-Real-IP / X-Forwarded-For from the parent /api/public block
+        # so service.accessory's rate limiter sees the true client IP.
+        proxy_pass http://accessory_service/public/accessory/;
+    }
+    location /api/public/jobrunr {
+        proxy_pass http://jobrunr_service/public/jobrunr/;
+    }
+    location /api/public/notification {
+        proxy_pass http://notification_service/public/notification/;
+    }
+    location /api/public/ticket-slots {
+        proxy_pass http://ticket_slots_service/public/ticket-slots/;
+    }
+    location /api/public/qrcode {
+        proxy_pass http://qrcode_service/public/qrcode/;
+    }
+    # Trailing slash on the prefix is required: without it, /api/public/authenticationregister also
+    # matches here and proxy_pass rewrites it to /public/authentication/register. Registration now lives
+    # under /private/ (auth_request); block any public hit.
+    location /api/public/authentication/ {
+        proxy_pass http://authentication_service/public/authentication/;
+    }
+    location = /api/public/authentication/register {
+        return 403;
+    }
+    location /api/public/authorization {
+        proxy_pass http://authorization_service/public/authorization/;
+    }
+    location /api/public/odc {
+        proxy_pass http://odc_service/public/odc/;
+    }
+    location /api/public/admin {
+        proxy_pass http://admin_service/public/admin/;
+    }
+    location /api/public/customer-user {
+        proxy_pass http://customer_user_service/public/customer-user/;
+    }
+    location /api/public/customer-auth {
+        proxy_pass http://customer_auth_service/public/customer-auth/;
+    }
+    location /api/public/metasearch/ {
+        proxy_pass http://metasearch_service/public/metasearch/;
+        if ($request_method = GET) {
+            add_header Cache-Control "public, max-age=300";
+        }
+    }
+    location /api/public/editor/policydesc {
+        proxy_pass http://editor_policydesc_service/editor/policydesc/;
+    }
+    location /api/public/editor/seatplanner {
+        proxy_pass http://editor_seatplanner_service/editor/seatplanner/;
+    }
+    # Strip /api prefix for Spring (/public/news/…); avoid double-slash from proxy_pass URI replace
+    location /api/public/news/ {
+        rewrite ^/api/public/news/(.*)$ /public/news/$1 break;
+        proxy_pass http://news_service;
+    }
+}

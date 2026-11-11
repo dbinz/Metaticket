@@ -1,0 +1,10 @@
+<app-navbar />
+<div class="relative w-full h-[190px] md:h-[380px] bg-cover bg-center" [ngStyle]="{ 'background-image': 'url(' + banner + ')' }">
+  <div class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
+    <p class="text-white text-[35px] md:text-[48px] font-medium">{{ name }}</p>
+  </div>
+
+  <div class="absolute bottom-[-20px] lg:bottom-[-80px] z-1">
+    <app-image [sx]="'lg:h-[165px] h-[75px]'" [src]="appIcons.icRubik" />
+  </div>
+</div>

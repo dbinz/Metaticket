@@ -1,0 +1,12 @@
+<main *ngIf="!isLoading" class="w-full min-h-screen flex flex-col">
+  <ng-content></ng-content>
+  <app-footer [isDarkMode]="isDarkMode"/>
+</main>
+
+<main
+  *ngIf="isLoading"
+  class="w-full h-screen flex flex-col items-center justify-center space-y-6 {{isDarkMode ? 'bg-blue-163AEA' : 'bg-grey-F4F4F4'}}"
+>
+  <app-image [src]="appIcons.music" [sx]="'w-36'"/>
+  <p class="text-xl leading-normal font-medium {{isDarkMode ? 'text-white' : 'text-black'}}">Loading ...</p>
+</main>

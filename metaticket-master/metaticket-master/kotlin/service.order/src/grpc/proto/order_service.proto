@@ -1,0 +1,25 @@
+syntax = "proto3";
+
+package metaticket.order.notification.grpc;
+
+import "google/protobuf/empty.proto";
+import "google/protobuf/wrappers.proto";
+import "order_message.proto";
+
+service OrderNotificationService {
+  rpc NotifyPaymentStarted(NotifyPaymentStartedRequest) returns (google.protobuf.Empty);
+  rpc NotifyPaymentStatusChanged(NotifyPaymentStatusChangedRequest) returns (google.protobuf.Empty);
+}
+
+service OrderService {
+  rpc GetOrderById(GetOrderByIdRequest) returns (OrderProto);
+  rpc GetOrderStatus(GetOrderByIdRequest) returns (GetOrderStatusResponse);
+  rpc CreateOrder(CreateOrderRequest) returns (google.protobuf.StringValue);
+  rpc CancelOrder(GetOrderByIdRequest) returns (google.protobuf.Empty);
+
+  rpc CreateOrderCustomFieldsMapping(CreateOrderCustomFieldsMappingRequest) returns (CreateOrderCustomFieldsMappingResponse);
+
+  rpc CreateOrderPromotion(CreateOrderPromotionRequest) returns (google.protobuf.Empty);
+
+  rpc GetReport(GetReportRequest) returns (GetReportResponse);
+}

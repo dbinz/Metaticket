@@ -1,0 +1,2 @@
+# The repo uses core.autocrlf=true; a CRLF shebang breaks the gate script on the Linux gateway.
+mt-maintenance text eol=lf

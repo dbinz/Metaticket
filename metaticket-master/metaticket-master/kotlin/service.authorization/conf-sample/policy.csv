@@ -1,0 +1,34 @@
+p, user-role-admins, *, *
+
+p, user-role-default, act-role-default, res-role-default
+
+p, user-role-operators, act-role-crud, res-role-shows
+p, user-role-operators, act-start-show, res-role-shows
+
+p, user-role-operators, act-role-crud, res-role-tickets
+p, user-role-operators, act-init-ticket, res-role-tickets
+
+p, user-role-distributors, act-view, res-role-shows
+p, user-role-distributors, act-view, res-role-tickets
+
+p, user-role-reporters, act-view, res-role-reports
+
+g2, act-role-crud, act-create
+g2, act-role-crud, act-edit
+g2, act-role-crud, act-view
+g2, act-role-crud, act-delete
+
+g3, res-role-tickets, res-ticket/:showId
+g3, res-role-shows, res-show/:showId
+g3, res-role-reports, res-report/:showId
+
+g, admin, user-role-admins
+g, opt, user-role-operators
+g, dist, user-role-distributors
+g, rep, user-role-reporters
+
+p, dist/1, act-view, res-show/1
+p, rep/1, act-view, res-report/1
+
+p, dist/2, act-view, res-show/2
+p, rep/2, act-view, res-report/2

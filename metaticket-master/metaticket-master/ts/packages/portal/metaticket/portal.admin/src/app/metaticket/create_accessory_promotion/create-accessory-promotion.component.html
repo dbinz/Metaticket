@@ -1,0 +1,110 @@
+<nb-card [nbSpinner]="loading > 0">
+    <nb-card-header>
+        <div class="d-flex flex-column">
+            <a class="back-link" [routerLink]="['/portal/accessory/promotions']" [queryParams]="showId ? { showId: showId } : {}">
+                ← Khuyến mãi
+            </a>
+            <strong>{{ pageTitle }}</strong>
+            <span class="hint" *ngIf="show">{{ show.code }} — {{ show.name }}</span>
+        </div>
+    </nb-card-header>
+    <nb-card-body>
+        <form [formGroup]="form" (ngSubmit)="submit()" class="promo-form">
+            <div class="form-row">
+                <label>Mã khuyến mãi</label>
+                <input nbInput fullWidth formControlName="code" [readonly]="isEdit" placeholder="VD: THEFLOB10" />
+                <span class="hint" *ngIf="isEdit">Mã không đổi sau khi tạo</span>
+            </div>
+
+            <div class="form-row">
+                <label>Loại</label>
+                <nb-select fullWidth formControlName="type" (selectedChange)="onTypeChange()">
+                    <nb-option *ngFor="let t of typeOptions" [value]="t">{{ t }}</nb-option>
+                </nb-select>
+                <span class="hint">Nhập mã tại giỏ hàng rồi bấm Áp dụng để kiểm tra (không tự áp dụng)</span>
+            </div>
+
+            <ng-container *ngIf="showRewardFields">
+                <div class="form-row" *ngIf="type === 'EarlyBird'">
+                    <label>Dạng giảm Early Bird</label>
+                    <nb-select fullWidth formControlName="rewardType">
+                        <nb-option value="Percentage">Percentage (%)</nb-option>
+                        <nb-option value="FixedAmount">FixedAmount (VND)</nb-option>
+                    </nb-select>
+                </div>
+
+                <div class="form-row two-col">
+                    <div>
+                        <label>
+                            Giá trị
+                            <span *ngIf="type === 'Percentage' || (type === 'EarlyBird' && form.value.rewardType === 'Percentage')">(%)</span>
+                            <span *ngIf="type === 'FixedAmount' || (type === 'EarlyBird' && form.value.rewardType === 'FixedAmount')">(VND)</span>
+                        </label>
+                        <input nbInput fullWidth type="number" formControlName="value" />
+                    </div>
+                    <div>
+                        <label>Cap tối đa (VND, optional — % only)</label>
+                        <input nbInput fullWidth type="number" formControlName="maxDiscountAmount" />
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <label>Đơn tối thiểu (VND)</label>
+                    <input nbInput fullWidth type="number" formControlName="minOrderAmount" />
+                </div>
+            </ng-container>
+
+            <div class="form-row" *ngIf="type === 'Tiered'">
+                <div class="d-flex align-items-center justify-content-between mb-2">
+                    <label class="mb-0">Các mốc (chọn mốc cao nhất đủ điều kiện)</label>
+                    <button nbButton type="button" size="small" status="basic" (click)="addTier()">+ Mốc</button>
+                </div>
+                <div class="tier-row" *ngFor="let tier of tiers; let i = index">
+                    <input nbInput type="number" [(ngModel)]="tier.minOrderAmount" [ngModelOptions]="{standalone: true}" placeholder="Từ (VND)" />
+                    <nb-select [selected]="tier.type" (selectedChange)="tier.type = $event">
+                        <nb-option value="FixedAmount">Fixed</nb-option>
+                        <nb-option value="Percentage">%</nb-option>
+                    </nb-select>
+                    <input nbInput type="number" [(ngModel)]="tier.value" [ngModelOptions]="{standalone: true}" placeholder="Giá trị" />
+                    <input nbInput type="number" [(ngModel)]="tier.maxDiscountAmount" [ngModelOptions]="{standalone: true}" placeholder="Cap %" />
+                    <button nbButton type="button" ghost status="danger" (click)="removeTier(i)">×</button>
+                </div>
+            </div>
+
+            <div class="form-row two-col">
+                <div>
+                    <label>Bắt đầu (giờ Việt Nam)</label>
+                    <input nbInput fullWidth type="datetime-local" formControlName="startAtLocal" />
+                </div>
+                <div>
+                    <label>Kết thúc (giờ Việt Nam)</label>
+                    <input nbInput fullWidth type="datetime-local" formControlName="endAtLocal" />
+                </div>
+            </div>
+            <span class="hint">Thời gian lưu theo múi giờ Asia/Ho_Chi_Minh (+07), không phụ thuộc giờ máy trình duyệt</span>
+            <span class="hint" *ngIf="type === 'EarlyBird'">Early Bird bắt buộc có cửa sổ thời gian</span>
+
+            <div class="form-row">
+                <nb-checkbox formControlName="unlimitedUsage">Không giới hạn số lần áp dụng</nb-checkbox>
+            </div>
+            <div class="form-row" *ngIf="!form.value.unlimitedUsage">
+                <label>Giới hạn số lần (usageLimit)</label>
+                <input nbInput fullWidth type="number" formControlName="usageLimit" />
+            </div>
+            <p class="hint" *ngIf="isEdit">Đã dùng: {{ usedCount }}</p>
+
+            <div class="form-row">
+                <nb-checkbox formControlName="active">Active</nb-checkbox>
+            </div>
+
+            <div class="actions">
+                <button nbButton type="button" ghost status="basic"
+                    [routerLink]="['/portal/accessory/promotions']"
+                    [queryParams]="showId ? { showId: showId } : {}">
+                    Hủy
+                </button>
+                <button nbButton status="primary" type="submit" [disabled]="loading > 0">Lưu</button>
+            </div>
+        </form>
+    </nb-card-body>
+</nb-card>

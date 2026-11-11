@@ -1,0 +1,68 @@
+<nb-card [nbSpinner]="loading > 0">
+    <nb-card-header fullWidth>
+        <div class="inline-form-card w-100 d-flex align-items-center justify-content-between flex-wrap">
+            <div>
+                <strong>Đơn hàng phụ kiện</strong>
+                <span class="hint ml-2">Danh sách đơn theo sự kiện bán hàng</span>
+            </div>
+        </div>
+    </nb-card-header>
+    <nb-card-body>
+        <div class="filter-row mb-3">
+            <label class="filter-label">Sự kiện bán hàng</label>
+            <nb-select
+                fullWidth
+                size="medium"
+                placeholder="Chọn show…"
+                [selected]="selectedShowId"
+                (selectedChange)="onShowChange($event)"
+            >
+                <nb-option *ngFor="let show of shows" [value]="show.id">
+                    {{ show.code }} — {{ show.name }} ({{ show.status }})
+                </nb-option>
+            </nb-select>
+            <p class="empty-hint" *ngIf="!loading && shows.length === 0">
+                Chưa có sự kiện bán hàng. Tạo show trước tại
+                <a routerLink="/portal/accessory/shows">Sự kiện bán hàng</a>.
+            </p>
+            <p class="empty-hint" *ngIf="!loading && shows.length > 0 && !selectedShowId">
+                Chọn một show để tải thống kê và danh sách đơn hàng.
+            </p>
+        </div>
+
+        <div class="stats-row" *ngIf="selectedShowId && stats">
+            <div class="stat-card">
+                <div class="stat-label">Tổng đơn</div>
+                <div class="stat-value">{{ stats.totalOrders }}</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Đã thanh toán</div>
+                <div class="stat-value">{{ stats.paidOrders }}</div>
+            </div>
+            <div class="stat-card accent">
+                <div class="stat-label">Doanh thu (đã TT)</div>
+                <div class="stat-value">{{ formatVnd(stats.revenue) }}</div>
+            </div>
+            <div class="stat-card status-card" *ngIf="statusChips.length">
+                <div class="stat-label">Theo trạng thái</div>
+                <div class="status-chips">
+                    <nb-tag
+                        *ngFor="let chip of statusChips"
+                        [text]="chip.label + ': ' + chip.count"
+                        status="basic"
+                        size="tiny"
+                    ></nb-tag>
+                </div>
+            </div>
+        </div>
+
+        <angular2-smart-table
+            *ngIf="selectedShowId"
+            class="order-table"
+            [source]="source"
+            [settings]="settings"
+            (userRowSelect)="onUserRowSelect($event)"
+        >
+        </angular2-smart-table>
+    </nb-card-body>
+</nb-card>

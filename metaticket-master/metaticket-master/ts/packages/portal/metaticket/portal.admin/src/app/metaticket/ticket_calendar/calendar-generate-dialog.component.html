@@ -1,0 +1,209 @@
+<div class="calendar-dialog calendar-dialog--wide">
+    <nb-card class="mb-0" [nbSpinner]="loading">
+        <nb-card-header>Sinh lịch / Gia hạn</nb-card-header>
+        <nb-card-body *ngIf="!result">
+            <p class="hint mb-3">
+                Thời gian của suất: {{ displayYmd(sessionFrom) }} – {{ displayYmd(sessionTo) }}. Ngày/loại vé đã có sẽ
+                được bỏ qua, nên muốn gia hạn chỉ cần chọn khoảng ngày tiếp theo.
+            </p>
+
+            <div class="form-row two-col">
+                <div>
+                    <label>Khoảng ngày (*)</label>
+                    <input
+                        nbInput
+                        fullWidth
+                        placeholder="Chọn khoảng ngày"
+                        [nbDatepicker]="rangePicker"
+                        [(ngModel)]="range" />
+                    <nb-rangepicker #rangePicker></nb-rangepicker>
+                </div>
+                <div>
+                    <label>Ngày nghỉ (không bán)</label>
+                    <input
+                        nbInput
+                        fullWidth
+                        placeholder="Chọn ngày để thêm"
+                        [nbDatepicker]="excludePicker"
+                        [(ngModel)]="excludeInput" />
+                    <nb-datepicker #excludePicker (dateChange)="addExcludeDate($event)"></nb-datepicker>
+                    <div class="chip-list" *ngIf="excludeDates.length">
+                        <span class="chip" *ngFor="let d of excludeDates">
+                            {{ displayYmd(d) }}
+                            <button type="button" class="chip-remove" (click)="removeExcludeDate(d)" title="Bỏ">
+                                ×
+                            </button>
+                        </span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-row">
+                <label>Thứ được bán (*)</label>
+                <div class="weekday-list">
+                    <nb-checkbox
+                        *ngFor="let d of weekdays"
+                        [checked]="selectedDays.has(d.value)"
+                        (checkedChange)="toggleDay(d.value, $event)">
+                        {{ d.label }}
+                    </nb-checkbox>
+                </div>
+            </div>
+
+            <div class="form-row">
+                <label>Giá / số lượng theo loại vé</label>
+                <p class="hint" *ngIf="!rows.length">
+                    Suất chưa có hạng vé. Tạo hạng vé ở màn <b>Hạng vé</b> trước khi sinh lịch.
+                </p>
+                <div class="matrix-wrap" *ngIf="rows.length">
+                    <table class="matrix">
+                        <thead>
+                            <tr>
+                                <th>Loại vé</th>
+                                <th>Mặc định</th>
+                                <th *ngFor="let d of selectedWeekdays">{{ d.label }}</th>
+                            </tr>
+                            <tr class="matrix-actions">
+                                <th></th>
+                                <th>
+                                    <button
+                                        nbButton
+                                        size="tiny"
+                                        ghost
+                                        type="button"
+                                        (click)="applyQuotaToColumn('default')">
+                                        Cùng SL cả cột
+                                    </button>
+                                </th>
+                                <th *ngFor="let d of selectedWeekdays">
+                                    <button
+                                        nbButton
+                                        size="tiny"
+                                        ghost
+                                        type="button"
+                                        (click)="applyQuotaToColumn(d.value)">
+                                        Cùng SL cả cột
+                                    </button>
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr *ngFor="let row of rows" [class.matrix-row--off]="!row.include">
+                                <td class="matrix-name">
+                                    <nb-checkbox [(ngModel)]="row.include">{{ row.displayName }}</nb-checkbox>
+                                    <button nbButton size="tiny" ghost type="button" (click)="applyPriceToRow(row)">
+                                        Cùng giá cả hàng
+                                    </button>
+                                </td>
+                                <td>
+                                    <input
+                                        nbInput
+                                        fieldSize="small"
+                                        type="number"
+                                        min="0"
+                                        placeholder="Giá"
+                                        [disabled]="!row.include"
+                                        [(ngModel)]="row.defaultPrice" />
+                                    <input
+                                        nbInput
+                                        fieldSize="small"
+                                        type="number"
+                                        min="1"
+                                        placeholder="SL"
+                                        [disabled]="!row.include"
+                                        [(ngModel)]="row.defaultQuota" />
+                                </td>
+                                <td *ngFor="let d of selectedWeekdays">
+                                    <input
+                                        nbInput
+                                        fieldSize="small"
+                                        type="number"
+                                        min="0"
+                                        [placeholder]="row.defaultPrice ?? 'Giá'"
+                                        [disabled]="!row.include"
+                                        [(ngModel)]="row.price[d.value]" />
+                                    <input
+                                        nbInput
+                                        fieldSize="small"
+                                        type="number"
+                                        min="1"
+                                        [placeholder]="row.defaultQuota ?? 'SL'"
+                                        [disabled]="!row.include"
+                                        [(ngModel)]="row.quota[d.value]" />
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <p class="hint">Ô để trống dùng giá/số lượng ở cột "Mặc định" của hàng.</p>
+            </div>
+
+            <div class="form-row">
+                <nb-checkbox [(ngModel)]="useDailyCapacity">Giới hạn sức chứa chung cả ngày (mọi loại vé)</nb-checkbox>
+                <div class="capacity-row" *ngIf="useDailyCapacity">
+                    <div>
+                        <span class="hint">Mặc định</span>
+                        <input nbInput fieldSize="small" type="number" min="1" [(ngModel)]="capacityDefault" />
+                    </div>
+                    <div *ngFor="let d of selectedWeekdays">
+                        <span class="hint">{{ d.label }}</span>
+                        <input
+                            nbInput
+                            fieldSize="small"
+                            type="number"
+                            min="1"
+                            [placeholder]="capacityDefault ?? ''"
+                            [(ngModel)]="capacityByDay[d.value]" />
+                    </div>
+                </div>
+            </div>
+
+            <div class="preview-box">
+                <div>
+                    <b>Xem trước:</b> {{ previewDates.length }} ngày
+                    <ng-container *ngIf="previewDates.length">
+                        ({{ displayYmd(previewDates[0]) }} – {{ displayYmd(previewDates[previewDates.length - 1]) }})
+                    </ng-container>
+                    × {{ includedRows.length }} loại vé
+                </div>
+                <table class="matrix matrix--preview mt-2" *ngIf="previewDates.length && includedRows.length">
+                    <thead>
+                        <tr>
+                            <th>Mẫu một tuần</th>
+                            <th *ngFor="let d of selectedWeekdays">{{ d.label }}</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr *ngFor="let row of includedRows">
+                            <td>{{ row.displayName }}</td>
+                            <td *ngFor="let d of selectedWeekdays">
+                                {{ (resolvedPrice(row, d.value) | number: '1.0-0') ?? '—' }}đ ·
+                                {{ resolvedQuota(row, d.value) ?? '—' }} vé
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </nb-card-body>
+
+        <nb-card-body *ngIf="result">
+            <p>
+                Đã tạo <b>{{ result.createdDays }}</b> ngày, <b>{{ result.createdTickets }}</b> vé.
+                <ng-container *ngIf="result.skipped.length">Bỏ qua {{ result.skipped.length }} ô:</ng-container>
+            </p>
+            <ul class="skip-list" *ngIf="skippedLines.length">
+                <li *ngFor="let line of skippedLines">{{ line }}</li>
+            </ul>
+            <p class="hint" *ngIf="result.skipped.length > skippedLines.length">
+                … và {{ result.skipped.length - skippedLines.length }} ô khác.
+            </p>
+        </nb-card-body>
+
+        <nb-card-footer class="dialog-footer">
+            <button nbButton type="button" (click)="cancel()">Đóng</button>
+            <button nbButton status="primary" type="button" *ngIf="!result" [disabled]="loading" (click)="onSubmit()">
+                Sinh lịch
+            </button>
+        </nb-card-footer>
+    </nb-card>
+</div>

@@ -1,0 +1,47 @@
+<div class="">
+  <div class="w-full bg-white flex flex-col items-center">
+    <p
+      nz-typography
+      class="text-2xl leading-120pct text-black font-medium"
+    >
+      Đăng nhập
+    </p>
+    <form
+      class="w-full"
+      nz-form
+      [formGroup]="formGroup"
+    >
+      <div class="w-full flex flex-col space-y-6 mt-6 mb-8">
+        <app-form-input
+          [label]="'Số điện thoại'"
+          [placeholder]="'VD: 012345678'"
+          [formControl]="formGroup.controls.phoneNumber"
+        />
+        <app-form-input
+          [label]="'Mật khẩu'"
+          [placeholder]="'Nhập mật khẩu của bạn'"
+          [type]="'password'"
+          [formControl]="formGroup.controls.password"
+        />
+      </div>
+      <app-button
+        class="w-full"
+        [title]="'Đăng nhập'"
+        [fontSize]="'lg'"
+        (handlerOnPressed)="login()"
+      />
+    </form>
+    <span
+      nz-typography
+      class="text-sm leading-normal text-black font-semibold self-start pt-4"
+    >
+      Chưa có tài khoản đăng nhập?
+      <button
+        class="text-blue-4867FC"
+        (click)="changeValue('register')"
+      >
+        Đăng ký
+      </button>
+    </span>
+  </div>
+</div>

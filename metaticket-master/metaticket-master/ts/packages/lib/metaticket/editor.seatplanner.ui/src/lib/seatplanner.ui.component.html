@@ -1,0 +1,183 @@
+<ng-template [ngIf]="(spToolBar$ | async)" let-tb="ngIf">
+    <div class="v-toolbar" *ngIf="showing">
+        <div class="v-tool-group">
+            <button *ngIf="hasTool('seat', tb)" class="v-tool-btn"
+                (click) = "switchTool('seat', tb)"
+                [ngClass]="{active: (activeTool$ | async) == 'seat' }" >
+                <span class="">S</span>
+            </button>
+
+            <button *ngIf="hasTool('segment', tb)" class="v-tool-btn"
+                (click) = "switchTool('segment', tb)"
+                [ngClass]="{active: (activeTool$ | async) == 'segment' }">
+                <span class="">SL</span>
+            </button>
+
+            <button *ngIf="hasTool('seatzone', tb)" class="v-tool-btn"
+                (click) = "switchTool('seatzone', tb)"
+                [ngClass]="{active: (activeTool$ | async) == 'seatzone' }">
+                <span class="">SZ</span>
+            </button>
+
+            <button *ngIf="hasTool('loadtool', tb)" class="v-tool-btn"
+                (click) = "switchTool('loadtool', tb)"
+                [ngClass]="{active: (activeTool$ | async) == 'loadtool' }">
+                <span class="text-red-500">L</span>
+            </button>
+        </div>
+
+    </div>
+
+    <ng-template [ngIf]="(activeTool$ | async) == 'loadtool'" >
+        <ng-template [ngIf]="(load$ | async)" let-state="ngIf">
+            <div class="bg-white border border-gray-600 rounded-[10px] w-[200px] overflow-hidden p-[10px] mt-[10px]">
+               <div class="vi-form text-[12px]">
+                   <div class="mb-[10px]"><span>Seat planner Name</span><br/><input class="vi-input !pr-0 !rounded-none max-w-[150px]" [ngModel]="state.docName" (change)="saveDocName(tb, $any($event.target).value)" /></div>
+               </div>
+           </div>
+
+            <div class="bg-white border border-gray-600 rounded-[10px] w-[200px] overflow-hidden p-[10px] mt-[10px]">
+               <div class="vi-form text-[12px]">
+                   <div><span>Categories</span></div>
+                   <div class="flex flex-wrap gap-[5px] mb-[10px]">
+                       <span *ngFor="let cat of state.categories" class="bg-gray-200 px-[5px] rounded flex items-center gap-[5px]">
+                           {{cat}} <span class="cursor-pointer text-red-500 font-bold" (click)="removeCategory(tb, state.categories, cat)">x</span>
+                       </span>
+                   </div>
+                   <div>
+                       <input #newCat class="vi-input !pr-0 !rounded-none max-w-[100px]" placeholder="New Cat" />
+                       <button class="vi-btn vi-btn-small vi-btn-outline ml-[5px]" (click)="addCategory(tb, state.categories, newCat.value); newCat.value=''">Add</button>
+                   </div>
+               </div>
+           </div>
+
+           <div class="bg-white border border-gray-600 rounded-[10px] w-[200px] overflow-hidden p-[10px] mt-[10px]">
+               <div class="vi-form text-[12px]">
+                   <div><span>Background Image</span></div>
+                   <div class="mb-[5px]">
+                        <input class="vi-input !pr-0 !rounded-none w-full" [ngModel]="state.baseImgUrl" (change)="updateBaseImgUrl(tb, $any($event.target).value)" placeholder="Image URL" />
+                   </div>
+                   <div>
+                       <input type="file" (change)="uploadImage(tb, $event)" accept="image/*" />
+                   </div>
+               </div>
+           </div>
+       </ng-template>
+
+        <div class="bg-white border border-gray-600 rounded-[10px] w-[200px] overflow-hidden p-[10px] mt-[10px]">
+            <form class="text-[12px]">
+                <span class="mr-[10px]">Style</span><input class="" type="file" (change)="changeStyle(tb, $event)"/><br/><br/>
+                <span class="mr-[10px]">Defs</span><input class="" type="file" placeholder="Definition" (change)="changeDefinition(tb, $event)"/>
+            </form>
+        </div>
+    </ng-template>
+
+    <ng-template [ngIf]="(activeTool$ | async) == 'segment'" >
+        <ng-template [ngIf]="(segment$ | async)" let-cp="ngIf" >
+            <div class="bg-white border border-gray-600 rounded-[10px] w-[200px] overflow-hidden p-[10px] mt-[10px]">
+                <div class="vi-form text-[12px]">
+                    <div class="flex flex-wrap gap-[10px]">
+                        <div><span>Capacity</span><br/><input class="vi-input !pr-0 !rounded-none max-w-[75px]" [(ngModel)]="cp.seatCal.capacity" value="0" type="number" step="1" max="50"/></div>
+                        <div><span>Start Margin</span><br/><input class="vi-input !pr-0 !rounded-none max-w-[75px]" [(ngModel)]="cp.seatCal.start" value="0" type="number" step="0.001" max="1"/></div>
+                        <div><span>End Margin</span><br/><input class="vi-input !pr-0 !rounded-none max-w-[75px]" [(ngModel)]="cp.seatCal.end" value="0" type="number" step="0.001" max="1"/></div>
+                    </div>
+                    <div class="py-[10px]">
+                        <button class="vi-btn vi-btn-small vi-btn-outline" (click)="generateSeatInLine(tb, cp.seatCal)">Tạo / Sửa</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-white border border-gray-600 rounded-[10px] w-[200px] overflow-hidden p-[10px] mt-[10px]">
+                <div class="vi-form text-[12px]">
+                    <div class="flex flex-wrap gap-[10px]">
+                        <div><span>Line Id</span><br/><input class="vi-input !rounded-none max-w-[75px] !h-[20px]" type="text" [(ngModel)]="cp.lineName" /></div>
+                        <div>
+                            <span>Seat Category</span><br/>
+                            <select class="vi-input !rounded-none max-w-[75px]" [(ngModel)]="cp.seatCat">
+                                <option *ngFor="let cat of cp.availableCats" [value]="cat">{{cat}}</option>
+                            </select>
+                        </div>
+                        <div><span>Range start</span><br/><input class="vi-input !pr-0 !rounded-none max-w-[75px]" [(ngModel)]="cp.naming.start" value="0" type="number" step="1" min="0" /></div>
+                        <div><span>Range end</span><br/><input class="vi-input !pr-0 !rounded-none max-w-[75px]" [(ngModel)]="cp.naming.end" value="0" type="number" step="1" min="0" /></div>
+                        <div><span>Step</span><br/><input class="vi-input !pr-0 !rounded-none max-w-[75px]" [(ngModel)]="cp.naming.step" value="0" type="number" step="1" min="1" max="5"/></div>
+                    </div>
+                    <div class="py-[10px]">
+                        <button class="vi-btn vi-btn-small vi-btn-outline" (click)="updateSeatNaming(tb, cp.naming, cp.lineName, cp.seatCat)">Cập nhật tên</button>
+                    </div>
+                </div>
+            </div>
+        </ng-template>
+    </ng-template>
+
+    <ng-template [ngIf]="(activeTool$ | async) == 'seat'" >
+        <ng-template [ngIf]="(seat$ | async)" let-cs="ngIf" >
+            <div class="bg-white border border-gray-600 rounded-[10px] w-[200px] overflow-hidden p-[10px] mt-[10px]">
+                <div class="vi-form text-[12px]">
+                    <div class="flex flex-wrap gap-[10px]">
+                        <div><span>Seat Id</span><br/><input class="vi-input !pr-0 !rounded-none max-w-[75px]" [(ngModel)]="cs.seatId" /></div>
+                        <div><span>Display Name</span><br/><input class="vi-input !pr-0 !rounded-none max-w-[75px]" [(ngModel)]="cs.displayName" /></div>
+                    </div>
+                    <div class="py-[10px]">
+                        <button class="vi-btn vi-btn-small vi-btn-outline" (click)="updateSeat(tb, cs)">Cập nhật</button>
+                    </div>
+                </div>
+            </div>
+        </ng-template>
+    </ng-template>
+
+    <ng-template [ngIf]="(activeTool$ | async) == 'seatzone'" >
+        <ng-template [ngIf]="(seatzone$ | async)" let-cs="ngIf" >
+            <div class="bg-white border border-gray-600 rounded-[10px] w-[200px] overflow-hidden p-[10px] mt-[10px]">
+                <div class="vi-form text-[12px]">
+
+                    <div class="flex flex-wrap gap-[10px]">
+                        <div><span>Seat Id</span><br/><input class="vi-input !pr-0 !rounded-none max-w-[75px]" [(ngModel)]="cs.seatId" /></div>
+                        <div><span>Display Name</span><br/><input class="vi-input !pr-0 !rounded-none max-w-[75px]" [(ngModel)]="cs.displayName" /></div>
+                    </div>
+                    <div class="flex flex-wrap gap-[10px]">
+                        <div>
+                            <span>Seat Category</span><br/>
+                            <select class="vi-input !rounded-none max-w-[75px]" [(ngModel)]="cs.seatCat">
+                                <option *ngFor="let cat of cs.availableCats" [value]="cat">{{cat}}</option>
+                            </select>
+                        </div>
+                        <div>
+                            <span>Label Rotation</span><br/>
+                            <input type="number" step="1" min="-360" max="360" class="vi-input !pr-0 !rounded-none max-w-[75px]" [(ngModel)]="cs.labelRot" />
+                        </div>
+                    </div>
+                    <div class="flex flex-wrap gap-[10px]">
+                        <div><span>Style class</span><br/><input class="vi-input !pr-0 !rounded-none max-w-[75px]" [(ngModel)]="cs.labelStyle" /></div>
+                    </div>
+                    <div class="py-[10px]">
+                        <button class="vi-btn vi-btn-small vi-btn-outline" (click)="updateSeatZone(tb, cs)">Cập nhật</button>
+                    </div>
+
+                    <div class="flex flex-wrap gap-[10px]">
+                        <div><span>Num ctrl points</span><br/>
+                            <input type="number" step="1" min="0" max="2" class="vi-input !pr-0 !rounded-none max-w-[75px]" [(ngModel)]="cs.numCtrlPoint" /></div>
+                    </div>
+
+                    <div class="py-[10px]">
+                        <button class="vi-btn vi-btn-small vi-btn-outline" (click)="updateZoneConfig(tb, cs)">Cập nhật config</button>
+                    </div>
+                </div>
+            </div>
+        </ng-template>
+    </ng-template>
+
+    <ng-template [ngIf]="(errors$ | async)" let-errors="ngIf">
+        <div class="position-fixed top-0 left-0 bottom-0 right-0 bg-gray-800 bg-opacity-30 flex items-center">
+            <div class="relative ml-auto mr-auto bg-white border border-gray-800 w-[60%] h-[40%] p-6">
+                <div class="text-lg mb-5">ERRORS</div>
+
+                <div *ngFor="let e of errors" class="text-red-600">
+                    {{e.msg}}
+                </div>
+
+                <div class="absolute bottom-[10px]"><button class="vi-btn vi-btn-small vi-btn-outline" (click)="clearErrorDisplay()">Close</button></div>
+            </div>
+        </div>
+    </ng-template>
+
+</ng-template>

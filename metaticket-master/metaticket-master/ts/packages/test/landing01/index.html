@@ -1,0 +1,31 @@
+<html>
+    <head>
+        <script type="text/javascript" src="index.js"></script>
+        <script type="text/javascript" src="/modules/viclass/ww/mfe.webrt.js"></script>
+        <script type="text/javascript" src="/modules/metaticket/ww/planner.wrapper.js"></script>
+    </head>
+    <style>
+        .board-viewport {
+            position: relative;
+            background: linear-gradient(-90deg, rgba(0, 0, 0, .05) 1px, transparent 1px),
+                linear-gradient(rgba(0, 0, 0, .05) 1px, transparent 1px),
+                linear-gradient(-90deg, rgba(0, 0, 0, .08) 1px, transparent 1px),
+                linear-gradient(rgba(0, 0, 0, .08) 1px, transparent 1px),
+                #fff;
+            background-size: 20px 20px, 20px 20px, 100px 100px, 100px 100px;
+            z-index: 1;
+        }
+        .vi-wrapping-unbounded-svg-layer::-webkit-scrollbar {
+            display: none
+        }
+    </style>
+    <body onload="startApplication()">
+        <button onclick="clearAll()">Clear All</button>
+        <button onclick="clearSelection()">Clear A1 A2</button>
+        <button onclick="zoomIn()">zoom in</button>
+        <button onclick="zoomOut()">zoom out</button>
+        <button onclick="pan()">pan</button>
+        <button onclick="clearTool()">clear</button>
+        <div id="my-viewport" data-zoom="1" class="board-viewport" style="margin-left: auto; margin-right: auto; width:80%; height:100%; border:1px solid red;"></div>
+    </body>
+</html>

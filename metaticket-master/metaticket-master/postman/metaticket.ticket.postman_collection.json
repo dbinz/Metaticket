@@ -1,0 +1,293 @@
+{
+	"info": {
+		"_postman_id": "e0e8d8a8-5df7-4cd0-86e9-5d71318879b6",
+		"name": "metaticket.ticket",
+		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json",
+		"_exporter_id": "1394169",
+		"_collection_link": "https://metaticket.postman.co/workspace/metaticket~466a8b95-4177-4d10-8fb9-ccf969abdd7e/collection/1394169-e0e8d8a8-5df7-4cd0-86e9-5d71318879b6?action=share&creator=1394169&source=collection_link"
+	},
+	"item": [
+		{
+			"name": "create ticket document",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"showId\": \"64b4fa9737f9f26f5a06745c\",\r\n    \"sessionId\": \"64b639fc21e77e62de30aad4\",\r\n    \"tickets\": [{\r\n        \"sid\": \"A6\",\r\n        \"seatType\": \"Seat\",\r\n        \"totCap\": 1,\r\n        \"priceCat\": \"gold\",\r\n        \"basePrice\": 1000000\r\n    }]\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": "{{base_ticket_url}}/ticket/doc/create"
+			},
+			"response": []
+		},
+		{
+			"name": "init ticket remain",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{base_ticket_url}}/ticket/remaining/init?showId=64b4fa9737f9f26f5a06745c&sessionId=64b639fc21e77e62de30aad4",
+					"host": [
+						"{{base_ticket_url}}"
+					],
+					"path": [
+						"ticket",
+						"remaining",
+						"init"
+					],
+					"query": [
+						{
+							"key": "showId",
+							"value": "64b4fa9737f9f26f5a06745c"
+						},
+						{
+							"key": "sessionId",
+							"value": "64b639fc21e77e62de30aad4"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "reset ticket",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{base_ticket_url}}/ticket/reset?showId=64b4fa9737f9f26f5a06745c&sessionId=64b639fc21e77e62de30aad4",
+					"host": [
+						"{{base_ticket_url}}"
+					],
+					"path": [
+						"ticket",
+						"reset"
+					],
+					"query": [
+						{
+							"key": "showId",
+							"value": "64b4fa9737f9f26f5a06745c"
+						},
+						{
+							"key": "sessionId",
+							"value": "64b639fc21e77e62de30aad4"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "open all ticket",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "showId",
+						"value": "64b4fa9737f9f26f5a06745c",
+						"type": "text"
+					},
+					{
+						"key": "sessionId",
+						"value": "64b639fc21e77e62de30aad4",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{base_ticket_url}}/ticket/doc/open-all?showId=64b4fa9737f9f26f5a06745c&sessionId=64b639fc21e77e62de30aad4",
+					"host": [
+						"{{base_ticket_url}}"
+					],
+					"path": [
+						"ticket",
+						"doc",
+						"open-all"
+					],
+					"query": [
+						{
+							"key": "showId",
+							"value": "64b4fa9737f9f26f5a06745c"
+						},
+						{
+							"key": "sessionId",
+							"value": "64b639fc21e77e62de30aad4"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "fetch all ticket document",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"showId\": \"64b4fa9737f9f26f5a06745c\",\r\n    \"sessionId\": \"64b639fc21e77e62de30aad4\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": "{{base_ticket_url}}/ticket/doc/fetch-all"
+			},
+			"response": []
+		},
+		{
+			"name": "fetch ticket document by time",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"showId\": \"64b4fa9737f9f26f5a06745c\",\r\n    \"sessionId\": \"64b639fc21e77e62de30aad4\",\r\n    \"startTime\": 1589265577386,\r\n    \"endTime\": 1689267960000\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": "{{base_ticket_url}}/ticket/doc/fetch-time"
+			},
+			"response": []
+		},
+		{
+			"name": "create reservation",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"showId\": \"64b4fa9737f9f26f5a06745c\",\r\n    \"sessionId\": \"64b639fc21e77e62de30aad4\",\r\n    \"details\": [\r\n    {\r\n        \"ticketId\": \"64b7ece6bcddce11809b796e\",\r\n        \"quantity\": 1,\r\n        \"priceCat\": \"gold\"\r\n    }\r\n    ]\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": "{{base_ticket_url}}/ticket/reservation/create"
+			},
+			"response": []
+		},
+		{
+			"name": "reserve reservation",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{base_ticket_url}}/ticket/reservation/reserve?id=64c1608b9c552d43cac913d1",
+					"host": [
+						"{{base_ticket_url}}"
+					],
+					"path": [
+						"ticket",
+						"reservation",
+						"reserve"
+					],
+					"query": [
+						{
+							"key": "id",
+							"value": "64c1608b9c552d43cac913d1"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "release reservation",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{base_ticket_url}}/ticket/reservation/release?id=64c15cf99c552d43cac913d0",
+					"host": [
+						"{{base_ticket_url}}"
+					],
+					"path": [
+						"ticket",
+						"reservation",
+						"release"
+					],
+					"query": [
+						{
+							"key": "id",
+							"value": "64c15cf99c552d43cac913d0"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "fetch single reservation by id",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{base_ticket_url}}/ticket/reservation/fetch?id=64c15cf99c552d43cac913d0",
+					"host": [
+						"{{base_ticket_url}}"
+					],
+					"path": [
+						"ticket",
+						"reservation",
+						"fetch"
+					],
+					"query": [
+						{
+							"key": "id",
+							"value": "64c15cf99c552d43cac913d0"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "fetch multi reservation",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "[\"64b272d2eaf79f5ce67c25ca\"]",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": "{{base_ticket_url}}/ticket/reservation/fetch"
+			},
+			"response": []
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	]
+}

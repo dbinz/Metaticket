@@ -1,0 +1,53 @@
+<div class="div-inline">
+    <div class="w-100 mb-2">
+        <label class="font-weight-bold">Điều kiện khuyến mãi</label>
+        <button nbButton size="tiny" status="primary" class="ml-2" (click)="addCondition()" type="button">Thêm điều kiện</button>
+    </div>
+    <div class="w-100" *ngFor="let condition of conditionsControls; let i = index" [formGroup]="condition">
+        <div class="row align-items-center mb-2">
+            <div class="col-md-4">
+                <label *ngIf="i === 0">Loại vé (*)</label>
+                <input nbInput fullWidth placeholder="Loại vé (Ví dụ: VIP)" formControlName="priceCat" required />
+            </div>
+            <div class="col-md-3">
+                <label *ngIf="i === 0">SL tối thiểu (*)</label>
+                <input nbInput fullWidth type="number" formControlName="minQuantity" required />
+            </div>
+            <div class="col-md-3">
+                <label *ngIf="i === 0">SL tối đa</label>
+                <input nbInput fullWidth type="number" formControlName="maxQuantity" />
+            </div>
+            <div class="col-md-2 d-flex align-items-end" [ngClass]="{'mt-4': i === 0}">
+                    <button nbButton size="tiny" status="danger" ghost (click)="removeCondition(i)" type="button">
+                    <nb-icon icon="trash-2-outline"></nb-icon>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div class="row mt-3">
+        <div class="w-25">
+            <label>Phương thức giảm(*)</label>
+            <nb-radio-group [formControl]="discountOptionFormControl" name="radio-{{ index }}">
+                <nb-radio name="radio-{{ index }}" *ngFor="let option of discountOptions" value="{{ option.value }}">
+                    {{ option.label }}
+                </nb-radio>
+            </nb-radio-group>
+        </div>
+        <div class="w-25" *ngIf="discountOptionFormControl.value === 'DiscountPercent'">
+            <label>Áp dụng trên(*)</label>
+            <nb-radio-group [formControl]="applyDiscountOnFormControl" name="radio-apply-on-{{ index }}">
+                <nb-radio name="radio-apply-on-{{ index }}" *ngFor="let option of applyDiscountOnOptions" value="{{ option.value }}">
+                    {{ option.label }}
+                </nb-radio>
+            </nb-radio-group>
+        </div>
+        <div class="w-50">
+            <label>Giá giảm (*)</label>
+            <nb-form-field>
+                <input [formControl]="discountValueFormControl" required fullWidth nbInput type="number" />
+                <label nbSuffix>{{ discountOptionFormControl.value === 'DiscountPercent' ? '%' : 'đ' }}</label>
+            </nb-form-field>
+        </div>
+    </div>
+</div>

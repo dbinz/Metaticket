@@ -1,0 +1,139 @@
+<nb-card class="order-detail-card">
+    <nb-card-header>
+        <div class="header-row">
+            <div>
+                <strong>Chi tiết đơn hàng</strong>
+                <span class="order-code" *ngIf="order">#{{ order.code }}</span>
+            </div>
+            <button nbButton ghost size="small" (click)="close()" aria-label="Đóng">✕</button>
+        </div>
+    </nb-card-header>
+
+    <nb-card-body *ngIf="order">
+        <section class="section">
+            <h4 class="section-title">Thông tin đơn</h4>
+            <div class="grid">
+                <div class="field">
+                    <span class="label">Trạng thái</span>
+                    <span class="value">{{ statusLabel }}</span>
+                </div>
+                <div class="field">
+                    <span class="label">Hình thức nhận</span>
+                    <span class="value">{{ fulfillmentLabel }}</span>
+                </div>
+                <div class="field">
+                    <span class="label">Thời gian</span>
+                    <span class="value">{{ formatTime(order.createdAt) }}</span>
+                </div>
+                <div class="field" *ngIf="order.paymentId">
+                    <span class="label">Payment ID</span>
+                    <span class="value mono">{{ order.paymentId }}</span>
+                </div>
+            </div>
+        </section>
+
+        <section class="section">
+            <h4 class="section-title">Khách hàng</h4>
+            <div class="grid">
+                <div class="field" *ngIf="order.customerUserId">
+                    <span class="label">Customer User ID</span>
+                    <span class="value mono">{{ order.customerUserId }}</span>
+                </div>
+                <div class="field">
+                    <span class="label">Họ tên</span>
+                    <span class="value">{{ order.customerName }}</span>
+                </div>
+                <div class="field">
+                    <span class="label">Số điện thoại</span>
+                    <span class="value">{{ order.customerPhone }}</span>
+                </div>
+                <div class="field">
+                    <span class="label">Email</span>
+                    <span class="value">{{ order.customerEmail }}</span>
+                </div>
+            </div>
+        </section>
+
+        <section class="section" *ngIf="isPickupAtShow && order.showSessionLabel">
+            <h4 class="section-title">Buổi nhận tại show</h4>
+            <p class="plain">{{ order.showSessionLabel }}</p>
+        </section>
+
+        <section class="section" *ngIf="isMetaTicketPickup">
+            <h4 class="section-title">Điểm nhận META Ticket</h4>
+            <p class="plain" *ngIf="order.pickupPointName">{{ order.pickupPointName }}</p>
+            <p class="plain muted" *ngIf="order.pickupPointAddress">{{ order.pickupPointAddress }}</p>
+        </section>
+
+        <section class="section" *ngIf="isDelivery">
+            <h4 class="section-title">Địa chỉ giao hàng</h4>
+            <div class="grid">
+                <div class="field full">
+                    <span class="label">Địa chỉ</span>
+                    <span class="value">{{ order.deliveryAddress || '—' }}</span>
+                </div>
+                <div class="field">
+                    <span class="label">Phường/Xã</span>
+                    <span class="value">{{ order.deliveryWard || '—' }}</span>
+                </div>
+                <div class="field">
+                    <span class="label">Tỉnh/TP</span>
+                    <span class="value">{{ order.deliveryCity || '—' }}</span>
+                </div>
+                <div class="field full" *ngIf="order.deliveryNote">
+                    <span class="label">Ghi chú</span>
+                    <span class="value">{{ order.deliveryNote }}</span>
+                </div>
+            </div>
+        </section>
+
+        <section class="section">
+            <h4 class="section-title">Sản phẩm</h4>
+            <table class="lines-table" *ngIf="order.lines?.length; else noLines">
+                <thead>
+                    <tr>
+                        <th>Sản phẩm</th>
+                        <th>SKU</th>
+                        <th class="num">Đơn giá</th>
+                        <th class="num">SL</th>
+                        <th class="num">Thành tiền</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let line of order.lines">
+                        <td>
+                            <div>{{ line.name }}</div>
+                            <div class="variant" *ngIf="line.variantLabel">{{ line.variantLabel }}</div>
+                        </td>
+                        <td class="mono">{{ line.sku }}</td>
+                        <td class="num">{{ formatVnd(line.unitPrice) }}</td>
+                        <td class="num">{{ line.quantity }}</td>
+                        <td class="num">{{ formatVnd(lineTotal(line.unitPrice, line.quantity)) }}</td>
+                    </tr>
+                </tbody>
+            </table>
+            <ng-template #noLines>
+                <p class="plain muted">Không có sản phẩm.</p>
+            </ng-template>
+        </section>
+
+        <section class="section totals">
+            <div class="total-row">
+                <span>Tạm tính</span>
+                <span>{{ formatVnd(order.subtotal) }}</span>
+            </div>
+            <div class="total-row" *ngIf="order.discountAmount > 0">
+                <span>Giảm giá<span *ngIf="order.discountCode"> ({{ order.discountCode }})</span></span>
+                <span>-{{ formatVnd(order.discountAmount) }}</span>
+            </div>
+            <div class="total-row grand">
+                <span>Thành tiền</span>
+                <span>{{ formatVnd(order.total) }}</span>
+            </div>
+        </section>
+    </nb-card-body>
+
+    <nb-card-footer>
+        <button nbButton status="basic" (click)="close()">Đóng</button>
+    </nb-card-footer>
+</nb-card>

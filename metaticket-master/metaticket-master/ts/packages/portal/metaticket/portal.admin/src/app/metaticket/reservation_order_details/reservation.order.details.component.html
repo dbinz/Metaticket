@@ -1,0 +1,80 @@
+<nb-card>
+    <nb-card-body>
+        <ng-container *ngIf="order">
+            <h5>Thông tin đơn hàng</h5>
+            <div>
+                Code: <code>{{ order.orderCode }}</code>
+            </div>
+            <div>
+                Trạng thái: <code>{{ order.orderStatus }}</code>
+            </div>
+            <div>
+                Thời gian tạo đơn hàng: <code>{{ dateTimeLocal(order.createdAt) }}</code>
+            </div>
+            <p></p>
+            <div *ngIf="order.paymentOffline">
+                Payment Offline: <code>{{ order.paymentOffline }}</code>
+            </div>
+            <div>
+                Trạng thái thanh toán: <code>{{ order.paymentInfo?.payStatus }}</code>
+            </div>
+            <div>
+                Thời gian thanh toán: <code>{{ order.paymentInfo?.payTime }}</code>
+            </div>
+            <p></p>
+            <div>
+                Tên người mua: <code>{{ order.buyerInfo.name }}</code>
+            </div>
+            <div>
+                Số DT người mua: <code>{{ order.buyerInfo.phone }}</code>
+            </div>
+            <div>
+                Email người mua: <code>{{ order.buyerInfo.email }}</code>
+            </div>
+        </ng-container>
+
+        <ng-container *ngIf="reservation && reservation.status === 'Reserved' && !order">
+            <h5>Thông tin đơn hàng</h5>
+            <div *ngIf="reservation.expireInS >= 0">
+                Đơn hàng đang được tạo, và sẽ bị hủy nếu không được tạo lúc
+                {{ dateTimeLocal(currentDate.getTime() + reservation.expireInS * 1000) }}
+            </div>
+            <div *ngIf="reservation.expireInS < 0">Đơn hàng đang được tạo, và không thể hủy</div>
+        </ng-container>
+
+        <hr />
+
+        <ng-container *ngIf="reservation">
+            <h5>Thông tin reservation</h5>
+            <div>
+                Status: <code>{{ reservation.status }}</code>
+            </div>
+            <div>
+                Thời gian tạo: <code>{{ dateTimeLocal(reservation.createdAt) }}</code>
+            </div>
+            <angular2-smart-table [settings]="settings" [source]="source"> </angular2-smart-table>
+        </ng-container>
+    </nb-card-body>
+
+    <nb-card-footer>
+        <ng-container
+            *ngIf="
+                reservation && ['Reserved', 'Locked', 'OrderPaying', 'OrderSuccessful'].includes(reservation.status)
+            ">
+            <button
+                *ngIf="reservation && !order && ['Locked'].includes(reservation.status)"
+                nbButton
+                status="danger"
+                (click)="unlockReservation()">
+                MỞ VÉ LẠI
+            </button>
+            <button
+                *ngIf="order && ['Reserved', 'OrderPaying', 'OrderSuccessful'].includes(reservation.status)"
+                nbButton
+                status="danger"
+                (click)="cancelOrder()">
+                HỦY ĐƠN HÀNG
+            </button>
+        </ng-container>
+    </nb-card-footer>
+</nb-card>

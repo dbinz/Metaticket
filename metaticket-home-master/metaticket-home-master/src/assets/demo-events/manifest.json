@@ -1,0 +1,402 @@
+{
+  "music": [
+    {
+      "title": "Silhouetted Crowd at Vibrant Concert Lighting",
+      "source": "https://www.pexels.com/photo/silhouetted-crowd-at-vibrant-concert-lighting-30164931/",
+      "id": 30164931,
+      "file": "music-1.jpg",
+      "url": "/assets/demo-events/music-1.jpg",
+      "license": "https://www.pexels.com/license/"
+    },
+    {
+      "title": "Man Playing Acoustic Guitar",
+      "source": "https://www.pexels.com/photo/man-playing-acoustic-guitar-7715391/",
+      "id": 7715391,
+      "file": "music-2.jpg",
+      "url": "/assets/demo-events/music-2.jpg",
+      "license": "https://www.pexels.com/license/"
+    },
+    {
+      "title": "Woman in Black Clothes Holding Microphone While Singing",
+      "source": "https://www.pexels.com/photo/woman-in-black-clothes-holding-microphone-while-singing-5648444/",
+      "id": 5648444,
+      "file": "music-3.jpg",
+      "url": "/assets/demo-events/music-3.jpg",
+      "license": "https://www.pexels.com/license/"
+    },
+    {
+      "title": "Musician playing saxophone on illuminated stage",
+      "source": "https://www.pexels.com/photo/musician-playing-saxophone-on-illuminated-stage-4133141/",
+      "id": 4133141,
+      "file": "music-4.jpg",
+      "url": "/assets/demo-events/music-4.jpg",
+      "license": "https://www.pexels.com/license/"
+    },
+    {
+      "title": "Rock Band Performing on Stage",
+      "source": "https://www.pexels.com/photo/rock-band-performing-on-stage-7715754/",
+      "id": 7715754,
+      "file": "music-5.jpg",
+      "url": "/assets/demo-events/music-5.jpg",
+      "license": "https://www.pexels.com/license/"
+    },
+    {
+      "title": "Classical Orchestra Performance with Violin Focus",
+      "source": "https://www.pexels.com/photo/classical-orchestra-performance-with-violin-focus-35061324/",
+      "id": 35061324,
+      "file": "music-6.jpg",
+      "url": "/assets/demo-events/music-6.jpg",
+      "license": "https://www.pexels.com/license/"
+    }
+  ],
+  "stage": [
+    {
+      "title": "People On Stage",
+      "source": "https://www.pexels.com/photo/people-on-stage-6899928/",
+      "id": 6899928,
+      "file": "stage-1.jpg",
+      "url": "/assets/demo-events/stage-1.jpg",
+      "license": "https://www.pexels.com/license/"
+    },
+    {
+      "title": "Man and Woman Performing during a Theater Play",
+      "source": "https://www.pexels.com/photo/man-and-woman-performing-during-a-theater-play-13607538/",
+      "id": 13607538,
+      "file": "stage-2.jpg",
+      "url": "/assets/demo-events/stage-2.jpg",
+      "license": "https://www.pexels.com/license/"
+    },
+    {
+      "title": "Black and White Image of Stand-Up Comedian on Stage",
+      "source": "https://www.pexels.com/photo/black-and-white-image-of-stand-up-comedian-on-stage-35481826/",
+      "id": 35481826,
+      "file": "stage-3.jpg",
+      "url": "/assets/demo-events/stage-3.jpg",
+      "license": "https://www.pexels.com/license/"
+    },
+    {
+      "title": "Dancers Performance on Stage",
+      "source": "https://www.pexels.com/photo/dancers-performance-on-stage-26576010/",
+      "id": 26576010,
+      "file": "stage-4.jpg",
+      "url": "/assets/demo-events/stage-4.jpg",
+      "license": "https://www.pexels.com/license/"
+    },
+    {
+      "title": "Actors in Performance on Stage",
+      "source": "https://www.pexels.com/photo/actors-in-performance-on-stage-26843132/",
+      "id": 26843132,
+      "file": "stage-5.jpg",
+      "url": "/assets/demo-events/stage-5.jpg",
+      "license": "https://www.pexels.com/license/"
+    },
+    {
+      "title": "Traditional Vietnamese Music Performance",
+      "source": "https://www.pexels.com/photo/traditional-vietnamese-music-performance-30600020/",
+      "id": 30600020,
+      "file": "stage-6.jpg",
+      "url": "/assets/demo-events/stage-6.jpg",
+      "license": "https://www.pexels.com/license/"
+    }
+  ],
+  "sport": [
+    {
+      "title": "Young Basketball Players on Outdoor Court",
+      "source": "https://www.pexels.com/photo/young-basketball-players-on-outdoor-court-32759165/",
+      "id": 32759165,
+      "file": "sport-1.jpg",
+      "url": "/assets/demo-events/sport-1.jpg",
+      "license": "https://www.pexels.com/license/"
+    },
+    {
+      "title": "Running Event with Diverse Participants at Sunrise",
+      "source": "https://www.pexels.com/photo/running-event-with-diverse-participants-at-sunrise-29840349/",
+      "id": 29840349,
+      "file": "sport-2.jpg",
+      "url": "/assets/demo-events/sport-2.jpg",
+      "license": "https://www.pexels.com/license/"
+    },
+    {
+      "title": "Dynamic Basketball Match Captured Outdoors",
+      "source": "https://www.pexels.com/photo/dynamic-basketball-match-captured-outdoors-32619160/",
+      "id": 32619160,
+      "file": "sport-3.jpg",
+      "url": "/assets/demo-events/sport-3.jpg",
+      "license": "https://www.pexels.com/license/"
+    },
+    {
+      "title": "Outdoor Yoga Meditation Class in a Park",
+      "source": "https://www.pexels.com/photo/outdoor-yoga-meditation-class-in-a-park-34395954/",
+      "id": 34395954,
+      "file": "sport-4.jpg",
+      "url": "/assets/demo-events/sport-4.jpg",
+      "license": "https://www.pexels.com/license/"
+    },
+    {
+      "title": "Bicycle Race ",
+      "source": "https://www.pexels.com/photo/bicycle-race-5840720/",
+      "id": 5840720,
+      "file": "sport-5.jpg",
+      "url": "/assets/demo-events/sport-5.jpg",
+      "license": "https://www.pexels.com/license/"
+    },
+    {
+      "title": "Badminton Player on a Court",
+      "source": "https://www.pexels.com/photo/badminton-player-on-a-court-8796050/",
+      "id": 8796050,
+      "file": "sport-6.jpg",
+      "url": "/assets/demo-events/sport-6.jpg",
+      "license": "https://www.pexels.com/license/"
+    }
+  ],
+  "conference": [
+    {
+      "title": "Audience Watching a Speaker at a Conference",
+      "source": "https://www.pexels.com/photo/audience-watching-a-speaker-at-a-conference-38786013/",
+      "id": 38786013,
+      "file": "conference-1.jpg",
+      "url": "/assets/demo-events/conference-1.jpg",
+      "license": "https://www.pexels.com/license/"
+    },
+    {
+      "title": "Colleagues having a BUsiness Meeting",
+      "source": "https://www.pexels.com/photo/colleagues-having-a-business-meeting-7793672/",
+      "id": 7793672,
+      "file": "conference-2.jpg",
+      "url": "/assets/demo-events/conference-2.jpg",
+      "license": "https://www.pexels.com/license/"
+    },
+    {
+      "title": "Lively Convention Crowd at Technology Expo",
+      "source": "https://www.pexels.com/photo/lively-convention-crowd-at-technology-expo-28993112/",
+      "id": 28993112,
+      "file": "conference-3.jpg",
+      "url": "/assets/demo-events/conference-3.jpg",
+      "license": "https://www.pexels.com/license/"
+    },
+    {
+      "title": "People Having a Business Meeting",
+      "source": "https://www.pexels.com/photo/people-having-a-business-meeting-6340631/",
+      "id": 6340631,
+      "file": "conference-4.jpg",
+      "url": "/assets/demo-events/conference-4.jpg",
+      "license": "https://www.pexels.com/license/"
+    },
+    {
+      "title": "Business Partners Having a Meeting at the Office",
+      "source": "https://www.pexels.com/photo/business-partners-having-a-meeting-at-the-office-7433848/",
+      "id": 7433848,
+      "file": "conference-5.jpg",
+      "url": "/assets/demo-events/conference-5.jpg",
+      "license": "https://www.pexels.com/license/"
+    },
+    {
+      "title": "Casual Meetup Host in a Networking Event",
+      "source": "https://www.pexels.com/photo/casual-meetup-host-in-a-networking-event-34086088/",
+      "id": 34086088,
+      "file": "conference-6.jpg",
+      "url": "/assets/demo-events/conference-6.jpg",
+      "license": "https://www.pexels.com/license/"
+    }
+  ],
+  "children": [
+    {
+      "title": "People Entertaining Children on a Festival",
+      "source": "https://www.pexels.com/photo/people-entertaining-children-on-a-festival-12685529/",
+      "id": 12685529,
+      "file": "children-1.jpg",
+      "url": "/assets/demo-events/children-1.jpg",
+      "license": "https://www.pexels.com/license/"
+    },
+    {
+      "title": "Theater with Puppets",
+      "source": "https://www.pexels.com/photo/theater-with-puppets-7356599/",
+      "id": 7356599,
+      "file": "children-2.jpg",
+      "url": "/assets/demo-events/children-2.jpg",
+      "license": "https://www.pexels.com/license/"
+    },
+    {
+      "title": "Two Women Enjoy Aerial Acrobatics on Trapeze",
+      "source": "https://www.pexels.com/photo/two-women-enjoy-aerial-acrobatics-on-trapeze-33768805/",
+      "id": 33768805,
+      "file": "children-3.jpg",
+      "url": "/assets/demo-events/children-3.jpg",
+      "license": "https://www.pexels.com/license/"
+    },
+    {
+      "title": "Students Doing a Science Experiment Inside the Laboratory",
+      "source": "https://www.pexels.com/photo/students-doing-a-science-experiment-inside-the-laboratory-8471835/",
+      "id": 8471835,
+      "file": "children-4.jpg",
+      "url": "/assets/demo-events/children-4.jpg",
+      "license": "https://www.pexels.com/license/"
+    },
+    {
+      "title": "Children Painting on Wall",
+      "source": "https://www.pexels.com/photo/children-painting-on-wall-6964704/",
+      "id": 6964704,
+      "file": "children-5.jpg",
+      "url": "/assets/demo-events/children-5.jpg",
+      "license": "https://www.pexels.com/license/"
+    },
+    {
+      "title": "Children Hiking and Exploring Nature Outdoors",
+      "source": "https://www.pexels.com/photo/children-hiking-and-exploring-nature-outdoors-31494982/",
+      "id": 31494982,
+      "file": "children-6.jpg",
+      "url": "/assets/demo-events/children-6.jpg",
+      "license": "https://www.pexels.com/license/"
+    }
+  ],
+  "tourist": [
+    {
+      "title": "Aerial View of Vietnamese Countryside Landscape",
+      "source": "https://www.pexels.com/photo/aerial-view-of-vietnamese-countryside-landscape-37114134/",
+      "id": 37114134,
+      "file": "tourist-1.jpg",
+      "url": "/assets/demo-events/tourist-1.jpg",
+      "license": "https://www.pexels.com/license/"
+    },
+    {
+      "title": "Hoi An Ancient Town",
+      "source": "https://www.pexels.com/photo/hoi-an-ancient-town-28146542/",
+      "id": 28146542,
+      "file": "tourist-2.jpg",
+      "url": "/assets/demo-events/tourist-2.jpg",
+      "license": "https://www.pexels.com/license/"
+    },
+    {
+      "title": "Women Having a Picnic by the Lake ",
+      "source": "https://www.pexels.com/photo/women-having-a-picnic-by-the-lake-10669591/",
+      "id": 10669591,
+      "file": "tourist-3.jpg",
+      "url": "/assets/demo-events/tourist-3.jpg",
+      "license": "https://www.pexels.com/license/"
+    },
+    {
+      "title": "Artisan Crafting Pottery in Ho Chi Minh City",
+      "source": "https://www.pexels.com/photo/artisan-crafting-pottery-in-ho-chi-minh-city-31365719/",
+      "id": 31365719,
+      "file": "tourist-4.jpg",
+      "url": "/assets/demo-events/tourist-4.jpg",
+      "license": "https://www.pexels.com/license/"
+    },
+    {
+      "title": "Person Carrying Green Backpack in Forest",
+      "source": "https://www.pexels.com/photo/person-carrying-green-backpack-in-forest-2415438/",
+      "id": 2415438,
+      "file": "tourist-5.jpg",
+      "url": "/assets/demo-events/tourist-5.jpg",
+      "license": "https://www.pexels.com/license/"
+    },
+    {
+      "title": "Elders in Traditional Dress at Vietnamese Festival",
+      "source": "https://www.pexels.com/photo/elders-in-traditional-dress-at-vietnamese-festival-40505101/",
+      "id": 40505101,
+      "file": "tourist-6.jpg",
+      "url": "/assets/demo-events/tourist-6.jpg",
+      "license": "https://www.pexels.com/license/"
+    }
+  ],
+  "workshop": [
+    {
+      "title": "Art Students Engaged in Creative Workshop",
+      "source": "https://www.pexels.com/photo/art-students-engaged-in-creative-workshop-35376319/",
+      "id": 35376319,
+      "file": "workshop-1.jpg",
+      "url": "/assets/demo-events/workshop-1.jpg",
+      "license": "https://www.pexels.com/license/"
+    },
+    {
+      "title": "Pottery Workshop Artisan Crafting Ceramics",
+      "source": "https://www.pexels.com/photo/pottery-workshop-artisan-crafting-ceramics-37827261/",
+      "id": 37827261,
+      "file": "workshop-2.jpg",
+      "url": "/assets/demo-events/workshop-2.jpg",
+      "license": "https://www.pexels.com/license/"
+    },
+    {
+      "title": "Person Using Watercolor Palette",
+      "source": "https://www.pexels.com/photo/person-using-watercolor-palette-7859162/",
+      "id": 7859162,
+      "file": "workshop-3.jpg",
+      "url": "/assets/demo-events/workshop-3.jpg",
+      "license": "https://www.pexels.com/license/"
+    },
+    {
+      "title": "Barista preparing espresso at coffee shop",
+      "source": "https://www.pexels.com/photo/barista-preparing-espresso-at-coffee-shop-34297775/",
+      "id": 34297775,
+      "file": "workshop-4.jpg",
+      "url": "/assets/demo-events/workshop-4.jpg",
+      "license": "https://www.pexels.com/license/"
+    },
+    {
+      "title": "Close-up of Woman Making Handmade Candles in Workshop",
+      "source": "https://www.pexels.com/photo/close-up-of-woman-making-handmade-candles-in-workshop-6755796/",
+      "id": 6755796,
+      "file": "workshop-5.jpg",
+      "url": "/assets/demo-events/workshop-5.jpg",
+      "license": "https://www.pexels.com/license/"
+    },
+    {
+      "title": "Photographer Capturing Workshop Moments Indoors",
+      "source": "https://www.pexels.com/photo/photographer-capturing-workshop-moments-indoors-29284333/",
+      "id": 29284333,
+      "file": "workshop-6.jpg",
+      "url": "/assets/demo-events/workshop-6.jpg",
+      "license": "https://www.pexels.com/license/"
+    }
+  ],
+  "cinema": [
+    {
+      "title": "High-Angle Shot of People Watching Movie Inside the Theater",
+      "source": "https://www.pexels.com/photo/high-angle-shot-of-people-watching-movie-inside-the-theater-7081182/",
+      "id": 7081182,
+      "file": "cinema-1.jpg",
+      "url": "/assets/demo-events/cinema-1.jpg",
+      "license": "https://www.pexels.com/license/"
+    },
+    {
+      "title": "People Sitting in Open Air Cinema",
+      "source": "https://www.pexels.com/photo/people-sitting-in-open-air-cinema-18125140/",
+      "id": 18125140,
+      "file": "cinema-2.jpg",
+      "url": "/assets/demo-events/cinema-2.jpg",
+      "license": "https://www.pexels.com/license/"
+    },
+    {
+      "title": "People Watching a Movie on a Festival",
+      "source": "https://www.pexels.com/photo/people-watching-a-movie-on-a-festival-14551498/",
+      "id": 14551498,
+      "file": "cinema-3.jpg",
+      "url": "/assets/demo-events/cinema-3.jpg",
+      "license": "https://www.pexels.com/license/"
+    },
+    {
+      "title": "Classical Orchestra Violinists in Concert",
+      "source": "https://www.pexels.com/photo/classical-orchestra-violinists-in-concert-36772944/",
+      "id": 36772944,
+      "file": "cinema-4.jpg",
+      "url": "/assets/demo-events/cinema-4.jpg",
+      "license": "https://www.pexels.com/license/"
+    },
+    {
+      "title": "Children Enjoying Movie Night at Theater",
+      "source": "https://www.pexels.com/photo/children-enjoying-movie-night-at-theater-28397786/",
+      "id": 28397786,
+      "file": "cinema-5.jpg",
+      "url": "/assets/demo-events/cinema-5.jpg",
+      "license": "https://www.pexels.com/license/"
+    },
+    {
+      "title": "A Cameraman Working on Set",
+      "source": "https://www.pexels.com/photo/a-cameraman-working-on-set-8088381/",
+      "id": 8088381,
+      "file": "cinema-6.jpg",
+      "url": "/assets/demo-events/cinema-6.jpg",
+      "license": "https://www.pexels.com/license/"
+    }
+  ]
+}

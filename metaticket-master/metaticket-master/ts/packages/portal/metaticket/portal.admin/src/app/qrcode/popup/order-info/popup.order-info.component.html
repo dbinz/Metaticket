@@ -1,0 +1,22 @@
+<div class="popup-wrapper">
+    <div class="popup-container scan-result scan-result--valid">
+        <div class="scan-result__banner">
+            <span class="eva eva-checkmark-circle-2-outline scan-result__icon"></span>
+            <div class="scan-result__title">Vé hợp lệ</div>
+            <div>Mời khách vào cửa</div>
+        </div>
+        <div class="scan-result__body">
+            <div class="scan-result__row">
+                <span>Mã đơn hàng</span><strong>{{ ticketInfo.orderCode }}</strong>
+            </div>
+            <div class="scan-result__row">
+                <span>Hạng vé / khu vực</span><strong>{{ ticketInfo.cat }}</strong>
+            </div>
+            <!-- Quantity tickets use the category as sid; only seat-plan tickets carry a real seat. -->
+            <div *ngIf="ticketInfo.sid && ticketInfo.sid !== ticketInfo.cat" class="scan-result__row">
+                <span>Ghế</span><strong>{{ ticketInfo.sid }}</strong>
+            </div>
+        </div>
+        <button nbButton status="success" (click)="ref.close()">Quét tiếp</button>
+    </div>
+</div>

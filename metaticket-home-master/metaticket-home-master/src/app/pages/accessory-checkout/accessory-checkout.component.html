@@ -1,0 +1,19 @@
+<app-layout [isDarkMode]="false">
+  <app-navbar />
+  <div class="w-full flex flex-col items-center bg-white px-5 pt-6 pb-8 laptop:px-0 laptop:pt-5 laptop:pb-16">
+    <div class="w-full laptop:w-3/4">
+      <p nz-typography class="text-2xl font-medium text-black mb-4">Thanh toán</p>
+      <blocker-warning-banner />
+      <accessory-breadcrumb
+        [currentIndex]="breadcrumbIndex"
+        [steps]="breadcrumbSteps"
+        [locked]="currentIndex >= 2"
+        (stepSelected)="onSelectBreadcrumbStep($event)"
+      />
+      <nz-divider class="my-6 laptop:mt-5 laptop:mb-10"></nz-divider>
+      <div class="w-full min-h-[500px]">
+        <ng-container *ngComponentOutlet="steps[currentIndex].component"></ng-container>
+      </div>
+    </div>
+  </div>
+</app-layout>

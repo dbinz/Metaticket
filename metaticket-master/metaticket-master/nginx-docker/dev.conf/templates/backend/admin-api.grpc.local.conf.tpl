@@ -1,0 +1,4 @@
+server {
+    listen $ADMIN_API_GRPC_CONNECT_PORT;
+    proxy_pass $METATICKET_LOCAL:$ADMIN_API_GRPC_LISTEN_PORT;
+}

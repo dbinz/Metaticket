@@ -1,0 +1,55 @@
+<div class="div-inline">
+    <div class="row">
+        <label class="w-25">Số tiền giảm tối đa cho toàn bộ đơn hàng</label>
+        <nb-form-field class="w-75">
+            <input
+                [formControl]="maxDiscountTotalFormControl"
+                fullWidth
+                nbInput
+                type="number"
+                placeholder="Để trống nếu không giới hạn" />
+            <label nbSuffix>đ</label>
+        </nb-form-field>
+    </div>
+    <div class="row mt-3">
+        <nb-checkbox [formControl]="enablePerTypeFormControl">Cài đặt giới hạn theo từng loại khuyến mãi</nb-checkbox>
+    </div>
+    <div *ngIf="enablePerTypeFormControl.value" class="per-type-section">
+        <div class="row">
+            <label class="w-25">Giới hạn KM theo ngày (Early Bird)</label>
+            <nb-form-field class="w-75">
+                <input
+                    [formControl]="maxDiscountByDateFormControl"
+                    fullWidth
+                    nbInput
+                    type="number"
+                    placeholder="Để trống nếu không giới hạn" />
+                <label nbSuffix>đ</label>
+            </nb-form-field>
+        </div>
+        <div class="row">
+            <label class="w-25">Giới hạn KM theo SL vé / loại vé (Combo)</label>
+            <nb-form-field class="w-75">
+                <input
+                    [formControl]="maxDiscountByTicketAmountFormControl"
+                    fullWidth
+                    nbInput
+                    type="number"
+                    placeholder="Để trống nếu không giới hạn" />
+                <label nbSuffix>đ</label>
+            </nb-form-field>
+        </div>
+        <div class="row">
+            <label class="w-25">Giới hạn KM theo mã coupon</label>
+            <nb-form-field class="w-75">
+                <input
+                    [formControl]="maxDiscountByPromotionCodeFormControl"
+                    fullWidth
+                    nbInput
+                    type="number"
+                    placeholder="Để trống nếu không giới hạn" />
+                <label nbSuffix>đ</label>
+            </nb-form-field>
+        </div>
+    </div>
+</div>

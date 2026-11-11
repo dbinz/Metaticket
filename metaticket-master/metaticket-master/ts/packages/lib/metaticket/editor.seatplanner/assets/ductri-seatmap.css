@@ -1,0 +1,92 @@
+.c-path { z-index: 1; opacity: 0.3; stroke: red; stroke-width: 4; fill: none; cursor: pointer; pointer-events: stroke; } 
+.c-point { z-index: 2; opacity:0.3; stroke: red; fill: blue; cursor: pointer; }
+
+text {
+    text-anchor: middle;
+    dominant-baseline: central;
+    font-size: 10px;
+    font-weight: bold;
+    font-family: montserrat;
+    text-rendering: optimizeSpeed;
+    fill: white;
+}
+
+.seat {
+    z-index: 5;
+    cursor: pointer;
+}
+
+.s-default {
+    --seat-color: violet;
+    --seat-outline-color: blue;
+    opacity: 0.7;
+}
+
+.s-h1 {
+    --seat-color: rgb(163, 228, 155);
+    --seat-outline-color: rgb(200, 200, 200, 0.9);
+}
+
+.s-h2 {
+    --seat-color: 	rgb(177, 155, 214);
+    --seat-outline-color: rgb(200, 200, 200, 0.9);
+}
+
+.s-h3 {
+    --seat-color: rgb(68, 71, 153);
+    --seat-outline-color: rgb(200, 200, 200, 0.9);
+}
+
+.s-h4 {
+    --seat-color: rgb(238, 207, 124);
+    --seat-outline-color: rgb(200, 200, 200, 0.9);
+}
+
+.s-h5 {
+    --seat-color: 	rgb(141, 208, 229);
+    --seat-outline-color: rgb(200, 200, 200, 0.9);
+}
+
+.s-h6 {
+    --seat-color: rgb(104, 165, 122);
+    --seat-outline-color: rgb(200, 200, 200, 0.9);
+}
+
+.s-h7 {
+    --seat-color: rgb(151, 151, 151);
+    --seat-outline-color: rgb(200, 200, 200, 0.9);
+}
+
+.s-plat {
+    --seat-color: 	rgb(29, 116, 197);
+    --seat-outline-color: rgb(200, 200, 200, 0.9);
+}
+
+.s-vip {
+    --seat-color: rgb(236, 127, 90);
+    --seat-outline-color: rgb(200, 200, 200, 0.9);
+}
+
+.s-vvip {
+    --seat-color: rgb(194, 54, 35);
+    --seat-outline-color: rgb(200, 200, 200, 0.9);
+}
+
+.highlight {
+    --seat-color: rgb(255, 255, 255, 0.9) !important;
+    --seat-outline-color: rgb(100, 100, 0, 0.9) !important;
+}
+
+.highlight > text {
+    fill : black !important;
+}
+
+.disable {
+    --seat-color: gray !important;
+    --seat-outline-color: black !important;
+    cursor: default;
+}
+
+.disable > text {
+    fill: black !important;
+}

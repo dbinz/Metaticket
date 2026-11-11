@@ -1,0 +1,82 @@
+<div class="flex flex-row items-center w-full mt-10">
+  <button
+    class="ml-12 z-10"
+    (click)="showPrev(selectedIndex)"
+  >
+    <app-image
+      [sx]="'md:w-8 md:h-8 lg:w-11 lg:h-11'"
+      [src]="appIcons.icPrev"
+    />
+  </button>
+  <div class="container mx-auto relative">
+    <div class="slider-container">
+      <div
+        class="slider-item"
+        *ngFor="let image of bannerShows; let i = index; trackBy: trackByShowId"
+        [ngClass]="{
+        selected: selectedIndex === i,
+        prev:
+          (selectedIndex === 0 && i === bannerShows.length - 1) ||
+          i === (selectedIndex - 1 + bannerShows.length) % bannerShows.length,
+        next: (selectedIndex === bannerShows.length - 1 && i === 0) || i === (selectedIndex + 1) % bannerShows.length,
+        hideLeft:
+          i ===
+          (selectedIndex === 0
+            ? (bannerShows.length - 2 + bannerShows.length) % bannerShows.length
+            : selectedIndex <= 1
+              ? (selectedIndex - 2 + bannerShows.length) % bannerShows.length
+              : selectedIndex === bannerShows.length - 1
+                ? bannerShows.length - 3
+                : selectedIndex === bannerShows.length - 2
+                  ? bannerShows.length - 4
+                  : selectedIndex - 2),
+        hideRight:
+          i ===
+          (selectedIndex === bannerShows.length - 2
+            ? 0
+            : selectedIndex === bannerShows.length - 1
+              ? 1
+              : (selectedIndex + 2) % bannerShows.length)
+      }"
+      >
+        <button
+          class="slider-img z-10"
+          (click)="onViewDetail(image)"
+        >
+          <img
+            (panleft)="showNext(i)"
+            (panright)="showPrev(i)"
+            [src]="image.bannerImageUrl"
+            class="w-full h-full img-border"
+            alt=""
+            (mouseover)="onClearInterval()"
+            (mouseout)="onSetInterval()"
+            (focus)="onClearInterval()"
+            (blur)="onSetInterval()"
+          />
+        </button>
+      </div>
+      <div class="img-meta-ticket absolute laptop:top-0 desktop:top-[-10px] z-1">
+      <app-image [sx]="'w-full h-full'" [src]="appIcons.icMetaRound">
+      </app-image>
+      </div>
+    </div>
+  </div>
+  <button
+    class="mr-12 z-10"
+    (click)="showNext(selectedIndex)"
+  >
+    <app-image
+      [sx]="'md:w-8 md:h-8 lg:w-11 lg:h-11'"
+      [src]="appIcons.icNext"
+    />
+  </button>
+</div>
+<div class="flex justify-center my-10">
+  <div class="flex gap-4 rounded-xl mx-auto">
+    <div
+      *ngFor="let item of bannerShows; let i = index; trackBy: trackByIndex"
+      class="w-5 h-1 rounded-xl bg-white {{ selectedIndex === i ? '' : 'opacity-30' }}"
+    ></div>
+  </div>
+</div>

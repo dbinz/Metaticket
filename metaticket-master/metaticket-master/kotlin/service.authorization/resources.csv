@@ -1,0 +1,26 @@
+Cấp 0,Cấp 2,Cấp 3: Service,Cấp 4: Data types,Cấp 5: Data entity
+"
+res-root",res-services,res-service-show,shows,show/id
+,,,,show-tickets
+,,,,show-orders
+,,,,show-order-promotions
+,,,sessions,session/id
+,,,,session-tickets
+,,,,session-orders
+,,,,session-order-promotions
+,,res-service-ticket,tickets,tickets/showId
+,,,,tickets/sessionId
+,,,reservations,reservations/showId
+,,,,reservations/sessionId
+,,,ticket-orders,ticket-orders/showId
+,,,,ticket-orders/sessionId
+,,,,
+,,res-service-order,orders,orders/sessionId
+,,,,orders/showId
+,,,,order-ticket
+,,,,order-promotion
+,,,,order-payment
+,,,,
+,,res-admin,users,
+,,,authorization,
+,,,system,

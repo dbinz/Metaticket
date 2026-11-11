@@ -1,0 +1,74 @@
+<nb-card [nbSpinner]="loading > 0">
+    <nb-card-body>
+        <div class="w-100 flex-row">
+            <label class="font-weight-bold mr-4"> Cập nhật order status mail template </label>
+            <nb-select
+                class="w-100 flex-grow-1"
+                placeholder="Thêm order status"
+                (selectedChange)="onOrderStatusChange($event)">
+                <nb-option *ngFor="let status of orderStatusArray" [value]="status.value">
+                    {{ status.name }}
+                </nb-option>
+            </nb-select>
+            <button
+                class="ml-2"
+                nbButton
+                [disabled]="orderStatus === undefined"
+                (click)="addEmailTemplate(orderStatus, '', '')">
+                Thêm
+            </button>
+        </div>
+        <div class="w-100 mt-2">
+            <form [formGroup]="sessionDraftMailTemplatesForm">
+                <ng-container formArrayName="items" class="w-100">
+                    <ng-container class="form-inline" *ngFor="let itemForm of getItems(); let index = index">
+                        <nb-card class="mt-2">
+                            <nb-card-body class="form-inline">
+                                <div>
+                                    <label>Order Status: </label>
+                                    <label class="ml-1 font-weight-bold">{{ itemForm.get('orderStatus').value }}</label>
+                                </div>
+                                <div>
+                                    <nb-select
+                                        class="w-100"
+                                        placeholder="Chọn mail template"
+                                        [formControl]="getMailTemplateFormControl(itemForm)">
+                                        <nb-option *ngFor="let template of mailTemplates" [value]="template.id">
+                                            {{ template.id }}
+                                        </nb-option>
+                                    </nb-select>
+                                </div>
+                                <div>
+                                    <nb-select
+                                        class="w-100"
+                                        placeholder="Chọn mail plugin"
+                                        [formControl]="getMailPluginFormControl(itemForm)">
+                                        <nb-option *ngFor="let plugin of mailPlugins" [value]="plugin">
+                                            {{ plugin }}
+                                        </nb-option>
+                                    </nb-select>
+                                </div>
+                            </nb-card-body>
+                        </nb-card>
+                    </ng-container>
+                </ng-container>
+            </form>
+        </div>
+    </nb-card-body>
+    <nb-card-footer>
+        <div>
+            <button nbButton type="button" (click)="onSubmit()" status="info">
+                {{ !showSession ? 'Lưu nháp' : 'Cập nhật' }}
+            </button>
+            <button
+                *ngIf="showSessionDraft"
+                status="success"
+                (click)="gotoNextStep.emit()"
+                nbButton
+                type="button"
+                class="ml-2">
+                Bước tiếp theo
+            </button>
+        </div>
+    </nb-card-footer>
+</nb-card>

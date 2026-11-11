@@ -1,0 +1,10 @@
+services:
+  web:
+    build:
+      context: ./metaticket-home-master/metaticket-home-master
+      dockerfile: Dockerfile.local
+    ports:
+      - "127.0.0.1:4300:80"
+    depends_on:
+      gateway:
+        condition: service_started

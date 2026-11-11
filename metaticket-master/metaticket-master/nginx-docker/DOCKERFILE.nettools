@@ -1,0 +1,41 @@
+# Use the official Nginx image as a base
+FROM nginx:latest
+
+# Set environment variables
+ENV DEBIAN_FRONTEND=noninteractive
+
+# Update and install necessary tools
+RUN apt-get update && \
+    apt-get install -y bash net-tools vim iputils-ping curl git && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/*
+
+# Install Oh My Bash
+RUN git clone https://github.com/ohmybash/oh-my-bash.git ~/.oh-my-bash && \
+    cp ~/.oh-my-bash/templates/bashrc.osh-template ~/.bashrc && \
+    sed -i 's/OSH_THEME="font"/OSH_THEME="agnoster"/' ~/.bashrc
+
+# Add a nice .vimrc configuration
+RUN echo "syntax on\n\
+set number\n\
+set relativenumber\n\
+set tabstop=4\n\
+set shiftwidth=4\n\
+set expandtab\n\
+set autoindent\n\
+set cursorline\n\
+set background=dark\n\
+set hlsearch\n\
+set incsearch\n\
+set ignorecase\n\
+set smartcase\n\
+set wrap\n\
+" > /root/.vimrc
+
+# Set up aliases for common commands
+RUN echo "alias ll='ls -alF'\n\
+alias la='ls -A'\n\
+alias l='ls -CF'\n\
+alias grep='grep --color=auto'\n\
+alias cls='clear'\n\
+" >> ~/.bashrc

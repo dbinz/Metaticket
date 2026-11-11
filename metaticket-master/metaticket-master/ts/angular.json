@@ -1,0 +1,608 @@
+{
+    "$schema": "./node_modules/@angular/cli/lib/config/schema.json",
+    "version": 1,
+    "newProjectRoot": "packages/lib",
+    "projects": {
+        "@metaticket/portal.admin": {
+            "root": "packages/portal/metaticket/portal.admin",
+            "sourceRoot": "packages/portal/metaticket/portal.admin/src",
+            "prefix": "app",
+            "projectType": "application",
+            "architect": {
+                "build": {
+                    "builder": "ngx-build-plus:browser",
+                    "options": {
+                        "preserveSymlinks": true,
+                        "outputPath": "dist/metaticket/portal.admin",
+                        "index": "packages/portal/metaticket/portal.admin/src/index.html",
+                        "main": "packages/portal/metaticket/portal.admin/src/main.ts",
+                        "tsConfig": "packages/portal/metaticket/portal.admin/tsconfig.app.json",
+                        "polyfills": [],
+                        "extraWebpackConfig": "packages/portal/metaticket/portal.admin/webpack.config.js",
+                        "commonChunk": false,
+                        "assets": [
+                            "packages/portal/metaticket/portal.admin/src/assets",
+                            "packages/portal/metaticket/portal.admin/src/favicon.ico",
+                            "packages/portal/metaticket/portal.admin/src/favicon.png",
+                            {
+                                "glob": "**/*",
+                                "input": "node_modules/leaflet/dist/images",
+                                "output": "/assets/img/markers"
+                            }
+                        ],
+                        "styles": [
+                            "node_modules/bootstrap/dist/css/bootstrap.css",
+                            "node_modules/typeface-exo/index.css",
+                            "node_modules/roboto-fontface/css/roboto/roboto-fontface.css",
+                            "node_modules/@fortawesome/fontawesome-free/css/all.css",
+                            "node_modules/socicon/css/socicon.css",
+                            "node_modules/eva-icons/style/scss/eva-icons.scss",
+                            "node_modules/pace-js/templates/pace-theme-flash.tmpl.css",
+                            "packages/portal/metaticket/portal.admin/src/app/@theme/styles/styles.scss"
+                        ],
+                        "scripts": [
+                            "node_modules/pace-js/pace.min.js",
+                            "node_modules/tinymce/tinymce.min.js",
+                            "node_modules/tinymce/themes/modern/theme.min.js",
+                            "node_modules/tinymce/plugins/link/plugin.min.js",
+                            "node_modules/tinymce/plugins/paste/plugin.min.js",
+                            "node_modules/tinymce/plugins/table/plugin.min.js",
+                            "node_modules/echarts/dist/echarts.min.js",
+                            "node_modules/echarts/dist/extension/bmap.min.js",
+                            "node_modules/chart.js/dist/Chart.min.js"
+                        ],
+                        "allowedCommonJsDependencies": [
+                            "axios",
+                            "angular2-chartjs",
+                            "echarts",
+                            "lodash",
+                            "zrender/lib/svg/svg",
+                            "zrender/lib/vml/vml"
+                        ],
+                        "vendorChunk": true,
+                        "extractLicenses": false,
+                        "buildOptimizer": false,
+                        "sourceMap": true,
+                        "optimization": false,
+                        "stylePreprocessorOptions": {
+                            "includePaths": [
+                                "packages/portal/metaticket/portal.admin/src"
+                            ]
+                        },
+                        "namedChunks": true
+                    },
+                    "configurations": {
+                        "devlocal": {
+                            "budgets": [
+                                {
+                                    "type": "anyComponentStyle",
+                                    "maximumWarning": "6kb"
+                                }
+                            ],
+                            "optimization": false,
+                            "outputHashing": "none",
+                            "sourceMap": true,
+                            "namedChunks": false,
+                            "extractLicenses": true,
+                            "vendorChunk": false,
+                            "buildOptimizer": false
+                        },
+                        "production": {
+                            "budgets": [
+                                {
+                                    "type": "anyComponentStyle",
+                                    "maximumWarning": "6kb"
+                                }
+                            ],
+                            "optimization": true,
+                            "outputHashing": "all",
+                            "sourceMap": false,
+                            "namedChunks": false,
+                            "extractLicenses": false,
+                            "vendorChunk": true,
+                            "buildOptimizer": true,
+                            "fileReplacements": [
+                                {
+                                    "replace": "packages/portal/metaticket/portal.admin/src/environments/environment.ts",
+                                    "with": "packages/portal/metaticket/portal.admin/src/environments/environment.prod.ts"
+                                }
+                            ]
+                        }
+                    },
+                    "defaultConfiguration": "devlocal"
+                },
+                "serve": {
+                    "builder": "ngx-build-plus:dev-server",
+                    "options": {
+                        "browserTarget": "@metaticket/portal.admin:build:devlocal",
+                        "extraWebpackConfig": "packages/portal/metaticket/portal.admin/webpack.config.js"
+                    },
+                    "configurations": {
+                        "production": {
+                            "browserTarget": "@metaticket/portal.admin:build:production"
+                        },
+                        "devlocal": {
+                            "browserTarget": "@metaticket/portal.admin:build:devlocal"
+                        }
+                    }
+                },
+                "lint": {
+                    "builder": "@angular-eslint/builder:lint",
+                    "options": {
+                        "lintFilePatterns": [
+                            "packages/portal/metaticket/portal.admin/src/**/*.ts",
+                            "packages/portal/metaticket/portal.admin/src/**/*.html"
+                        ]
+                    }
+                },
+                "test": {
+                    "builder": "@angular-devkit/build-angular:karma",
+                    "options": {
+                        "polyfills": [
+                            "zone.js",
+                            "zone.js/testing"
+                        ],
+                        "tsConfig": "packages/portal/metaticket/portal.admin/tsconfig.spec.json",
+                        "inlineStyleLanguage": "scss",
+                        "assets": [],
+                        "styles": [],
+                        "scripts": []
+                    }
+                }
+            }
+        },
+        "@metaticket/portal.order.datacollector": {
+            "projectType": "application",
+            "schematics": {
+                "@schematics/angular:component": {
+                    "style": "scss"
+                }
+            },
+            "root": "packages/portal/metaticket/portal.order.datacollector",
+            "sourceRoot": "packages/portal/metaticket/portal.order.datacollector/src",
+            "prefix": "app",
+            "architect": {
+                "build": {
+                    "builder": "ngx-build-plus:browser",
+                    "options": {
+                        "outputPath": "dist/metaticket/portal.order.datacollector",
+                        "index": "packages/portal/metaticket/portal.order.datacollector/src/index.html",
+                        "main": "packages/portal/metaticket/portal.order.datacollector/src/main.ts",
+                        "polyfills": [],
+                        "tsConfig": "packages/portal/metaticket/portal.order.datacollector/tsconfig.app.json",
+                        "inlineStyleLanguage": "scss",
+                        "assets": [
+                            "packages/portal/metaticket/portal.order.datacollector/src/favicon.ico",
+                            "packages/portal/metaticket/portal.order.datacollector/src/assets"
+                        ],
+                        "styles": [
+                            "packages/portal/metaticket/portal.order.datacollector/src/styles.scss"
+                        ],
+                        "scripts": [],
+                        "extraWebpackConfig": "packages/portal/metaticket/portal.order.datacollector/webpack.config.js",
+                        "commonChunk": false
+                    },
+                    "configurations": {
+                        "production": {
+                            "budgets": [
+                                {
+                                    "type": "initial",
+                                    "maximumWarning": "500kb",
+                                    "maximumError": "1mb"
+                                },
+                                {
+                                    "type": "anyComponentStyle",
+                                    "maximumWarning": "2kb",
+                                    "maximumError": "4kb"
+                                }
+                            ],
+                            "outputHashing": "all",
+                            "fileReplacements": [
+                                {
+                                    "replace": "packages/portal/metaticket/portal.order.datacollector/src/environments/environment.ts",
+                                    "with": "packages/portal/metaticket/portal.order.datacollector/src/environments/environment.prod.ts"
+                                }
+                            ]
+                        },
+                        "local": {
+                            "buildOptimizer": false,
+                            "optimization": false,
+                            "vendorChunk": true,
+                            "extractLicenses": false,
+                            "sourceMap": true,
+                            "namedChunks": true,
+                            "fileReplacements": [
+                                {
+                                    "replace": "packages/portal/metaticket/portal.order.datacollector/src/environments/environment.ts",
+                                    "with": "packages/portal/metaticket/portal.order.datacollector/src/environments/environment.local.ts"
+                                }
+                            ]
+                        },
+                        "devlocal": {
+                            "buildOptimizer": false,
+                            "optimization": false,
+                            "vendorChunk": true,
+                            "extractLicenses": false,
+                            "sourceMap": true,
+                            "namedChunks": true
+                        }
+                    },
+                    "defaultConfiguration": "production"
+                },
+                "serve": {
+                    "builder": "ngx-build-plus:dev-server",
+                    "configurations": {
+                        "production": {
+                            "browserTarget": "@metaticket/portal.order.datacollector:build:production"
+                        },
+                        "devlocal": {
+                            "browserTarget": "@metaticket/portal.order.datacollector:build:devlocal"
+                        }
+                    },
+                    "defaultConfiguration": "devlocal"
+                },
+                "extract-i18n": {
+                    "builder": "@angular-devkit/build-angular:extract-i18n",
+                    "options": {
+                        "browserTarget": "@metaticket/portal.order.datacollector:build"
+                    }
+                },
+                "test": {
+                    "builder": "@angular-devkit/build-angular:karma",
+                    "options": {
+                        "polyfills": [
+                            "zone.js",
+                            "zone.js/testing"
+                        ],
+                        "tsConfig": "packages/portal/metaticket/portal.order.datacollector/tsconfig.spec.json",
+                        "inlineStyleLanguage": "scss",
+                        "assets": [
+                            "packages/portal/metaticket/portal.order.datacollector/src/favicon.ico",
+                            "packages/portal/metaticket/portal.order.datacollector/src/assets"
+                        ],
+                        "styles": [
+                            "packages/portal/metaticket/portal.order.datacollector/src/styles.scss"
+                        ],
+                        "scripts": []
+                    }
+                }
+            }
+        },
+        "@metaticket/portal.seatplanner": {
+            "projectType": "application",
+            "schematics": {
+                "@schematics/angular:component": {
+                    "style": "scss"
+                }
+            },
+            "root": "packages/portal/metaticket/portal.seatplanner",
+            "sourceRoot": "packages/portal/metaticket/portal.seatplanner/src",
+            "prefix": "app",
+            "architect": {
+                "build": {
+                    "builder": "ngx-build-plus:browser",
+                    "options": {
+                        "outputPath": "dist/metaticket/portal.seatplanner",
+                        "index": "packages/portal/metaticket/portal.seatplanner/src/index.html",
+                        "main": "packages/portal/metaticket/portal.seatplanner/src/main.ts",
+                        "polyfills": [],
+                        "tsConfig": "packages/portal/metaticket/portal.seatplanner/tsconfig.app.json",
+                        "inlineStyleLanguage": "scss",
+                        "assets": [
+                            "packages/portal/metaticket/portal.seatplanner/src/favicon.ico",
+                            "packages/portal/metaticket/portal.seatplanner/src/assets"
+                        ],
+                        "styles": [
+                            "packages/portal/metaticket/portal.seatplanner/src/styles.scss"
+                        ],
+                        "scripts": [],
+                        "extraWebpackConfig": "packages/portal/metaticket/portal.seatplanner/webpack.config.js",
+                        "commonChunk": false
+                    },
+                    "configurations": {
+                        "production": {
+                            "budgets": [
+                                {
+                                    "type": "initial",
+                                    "maximumWarning": "500kb",
+                                    "maximumError": "1mb"
+                                },
+                                {
+                                    "type": "anyComponentStyle",
+                                    "maximumWarning": "2kb",
+                                    "maximumError": "4kb"
+                                }
+                            ],
+                            "outputHashing": "all",
+                            "fileReplacements": [
+                                {
+                                    "replace": "packages/portal/metaticket/portal.seatplanner/src/environments/environment.ts",
+                                    "with": "packages/portal/metaticket/portal.seatplanner/src/environments/environment.prod.ts"
+                                }
+                            ]
+                        },
+                        "devlocal": {
+                            "buildOptimizer": false,
+                            "optimization": false,
+                            "vendorChunk": true,
+                            "extractLicenses": false,
+                            "sourceMap": true,
+                            "namedChunks": true
+                        }
+                    },
+                    "defaultConfiguration": "production"
+                },
+                "serve": {
+                    "builder": "ngx-build-plus:dev-server",
+                    "configurations": {
+                        "production": {
+                            "browserTarget": "@metaticket/portal.seatplanner:build:production"
+                        },
+                        "devlocal": {
+                            "browserTarget": "@metaticket/portal.seatplanner:build:devlocal"
+                        }
+                    },
+                    "defaultConfiguration": "devlocal"
+                },
+                "extract-i18n": {
+                    "builder": "@angular-devkit/build-angular:extract-i18n",
+                    "options": {
+                        "browserTarget": "@metaticket/portal.seatplanner:build"
+                    }
+                },
+                "test": {
+                    "builder": "@angular-devkit/build-angular:karma",
+                    "options": {
+                        "polyfills": [
+                            "zone.js",
+                            "zone.js/testing"
+                        ],
+                        "tsConfig": "packages/portal/metaticket/portal.seatplanner/tsconfig.spec.json",
+                        "inlineStyleLanguage": "scss",
+                        "assets": [
+                            "packages/portal/metaticket/portal.seatplanner/src/favicon.ico",
+                            "packages/portal/metaticket/portal.seatplanner/src/assets"
+                        ],
+                        "styles": [
+                            "packages/portal/metaticket/portal.seatplanner/src/styles.scss"
+                        ],
+                        "scripts": []
+                    }
+                }
+            }
+        },
+        "@metaticket/editor.common": {
+            "projectType": "library",
+            "root": "packages/lib/metaticket/editor.common",
+            "sourceRoot": "packages/lib/metaticket/editor.common/src",
+            "prefix": "lib",
+            "architect": {
+                "build": {
+                    "builder": "@angular-devkit/build-angular:ng-packagr",
+                    "options": {
+                        "project": "packages/lib/metaticket/editor.common/ng-package.json"
+                    },
+                    "configurations": {
+                        "production": {
+                            "tsConfig": "packages/lib/metaticket/editor.common/tsconfig.lib.prod.json"
+                        },
+                        "devlocal": {
+                            "tsConfig": "packages/lib/metaticket/editor.common/tsconfig.lib.json"
+                        }
+                    },
+                    "defaultConfiguration": "devlocal"
+                },
+                "test": {
+                    "builder": "@angular-devkit/build-angular:karma",
+                    "options": {
+                        "tsConfig": "packages/lib/metaticket/editor.common/tsconfig.spec.json",
+                        "polyfills": [
+                            "zone.js",
+                            "zone.js/testing"
+                        ]
+                    }
+                }
+            }
+        },
+        "@metaticket/editor.policydesc": {
+            "projectType": "library",
+            "root": "packages/lib/metaticket/editor.policydesc",
+            "sourceRoot": "packages/lib/metaticket/editor.policydesc/src",
+            "prefix": "lib",
+            "architect": {
+                "build": {
+                    "builder": "@angular-devkit/build-angular:ng-packagr",
+                    "options": {
+                        "project": "packages/lib/metaticket/editor.policydesc/ng-package.json"
+                    },
+                    "configurations": {
+                        "production": {
+                            "tsConfig": "packages/lib/metaticket/editor.policydesc/tsconfig.lib.prod.json"
+                        },
+                        "devlocal": {
+                            "tsConfig": "packages/lib/metaticket/editor.policydesc/tsconfig.lib.json"
+                        }
+                    },
+                    "defaultConfiguration": "devlocal"
+                },
+                "test": {
+                    "builder": "@angular-devkit/build-angular:karma",
+                    "options": {
+                        "tsConfig": "packages/lib/metaticket/editor.policydesc/tsconfig.spec.json",
+                        "polyfills": [
+                            "zone.js",
+                            "zone.js/testing"
+                        ]
+                    }
+                }
+            }
+        },
+        "@metaticket/editor.seatplanner": {
+            "projectType": "library",
+            "root": "packages/lib/metaticket/editor.seatplanner",
+            "sourceRoot": "packages/lib/metaticket/editor.seatplanner/src",
+            "prefix": "lib",
+            "architect": {
+                "build": {
+                    "builder": "@angular-devkit/build-angular:ng-packagr",
+                    "options": {
+                        "project": "packages/lib/metaticket/editor.seatplanner/ng-package.json"
+                    },
+                    "configurations": {
+                        "production": {
+                            "tsConfig": "packages/lib/metaticket/editor.seatplanner/tsconfig.lib.prod.json"
+                        },
+                        "devlocal": {
+                            "tsConfig": "packages/lib/metaticket/editor.seatplanner/tsconfig.lib.json"
+                        }
+                    },
+                    "defaultConfiguration": "devlocal"
+                },
+                "test": {
+                    "builder": "@angular-devkit/build-angular:karma",
+                    "options": {
+                        "tsConfig": "packages/lib/metaticket/editor.seatplanner/tsconfig.spec.json",
+                        "polyfills": [
+                            "zone.js",
+                            "zone.js/testing"
+                        ]
+                    }
+                }
+            }
+        },
+        "@metaticket/editor.seatplanner.ui": {
+            "projectType": "library",
+            "root": "packages/lib/metaticket/editor.seatplanner.ui",
+            "sourceRoot": "packages/lib/metaticket/editor.seatplanner.ui/src",
+            "prefix": "lib",
+            "architect": {
+                "build": {
+                    "builder": "@angular-devkit/build-angular:ng-packagr",
+                    "options": {
+                        "project": "packages/lib/metaticket/editor.seatplanner.ui/ng-package.json"
+                    },
+                    "configurations": {
+                        "production": {
+                            "tsConfig": "packages/lib/metaticket/editor.seatplanner.ui/tsconfig.lib.prod.json"
+                        },
+                        "devlocal": {
+                            "tsConfig": "packages/lib/metaticket/editor.seatplanner.ui/tsconfig.lib.json"
+                        }
+                    },
+                    "defaultConfiguration": "devlocal"
+                },
+                "test": {
+                    "builder": "@angular-devkit/build-angular:karma",
+                    "options": {
+                        "tsConfig": "packages/lib/metaticket/editor.seatplanner.ui/tsconfig.spec.json",
+                        "polyfills": [
+                            "zone.js",
+                            "zone.js/testing"
+                        ]
+                    }
+                }
+            }
+        },
+        "@metaticket/mfe": {
+            "projectType": "application",
+            "schematics": {
+                "@schematics/angular:component": {
+                    "style": "scss"
+                }
+            },
+            "root": "packages/mfe/metaticket/mfe",
+            "sourceRoot": "packages/mfe/metaticket/mfe/src",
+            "prefix": "app",
+            "architect": {
+                "build": {
+                    "builder": "ngx-build-plus:browser",
+                    "options": {
+                        "outputPath": "dist/metaticket/mfe",
+                        "index": "packages/mfe/metaticket/mfe/src/index.html",
+                        "main": "packages/mfe/metaticket/mfe/src/main.ts",
+                        "polyfills": [],
+                        "tsConfig": "packages/mfe/metaticket/mfe/tsconfig.app.json",
+                        "inlineStyleLanguage": "scss",
+                        "aot": true,
+                        "assets": [],
+                        "styles": [],
+                        "scripts": [],
+                        "extraWebpackConfig": "packages/mfe/metaticket/mfe/webpack.ng.js",
+                        "commonChunk": false
+                    },
+                    "configurations": {
+                        "production": {
+                            "budgets": [
+                                {
+                                    "type": "initial",
+                                    "maximumWarning": "500kb",
+                                    "maximumError": "1mb"
+                                },
+                                {
+                                    "type": "anyComponentStyle",
+                                    "maximumWarning": "2kb",
+                                    "maximumError": "4kb"
+                                }
+                            ],
+                            "fileReplacements": [
+                                {
+                                    "replace": "packages/mfe/metaticket/mfe/src/environments/environment.ts",
+                                    "with": "packages/mfe/metaticket/mfe/src/environments/environment.prod.ts"
+                                }
+                            ],
+                            "outputHashing": "all"
+                        },
+                        "devlocal": {
+                            "buildOptimizer": false,
+                            "optimization": false,
+                            "vendorChunk": true,
+                            "extractLicenses": false,
+                            "sourceMap": true,
+                            "namedChunks": true
+                        }
+                    },
+                    "defaultConfiguration": "devlocal"
+                },
+                "serve": {
+                    "builder": "@angular-devkit/build-angular:dev-server",
+                    "configurations": {
+                        "production": {
+                            "browserTarget": "@metaticket/mfe:build:production"
+                        },
+                        "devlocal": {
+                            "browserTarget": "@metaticket/mfe:build:devlocal"
+                        }
+                    },
+                    "defaultConfiguration": "devlocal"
+                },
+                "extract-i18n": {
+                    "builder": "@angular-devkit/build-angular:extract-i18n",
+                    "options": {
+                        "browserTarget": "@metaticket/mfe:build"
+                    }
+                },
+                "test": {
+                    "builder": "@angular-devkit/build-angular:karma",
+                    "options": {
+                        "main": "packages/mfe/metaticket/mfe/src/test.ts",
+                        "polyfills": "packages/mfe/metaticket/mfe/src/polyfills.ts",
+                        "tsConfig": "packages/mfe/metaticket/mfe/tsconfig.spec.json",
+                        "karmaConfig": "packages/mfe/metaticket/mfe/karma.conf.js",
+                        "inlineStyleLanguage": "sass",
+                        "assets": [
+                            "packages/mfe/metaticket/mfe/src/favicon.ico",
+                            "packages/mfe/metaticket/mfe/src/assets"
+                        ],
+                        "styles": [
+                            "packages/mfe/metaticket/mfe/src/styles.scss"
+                        ],
+                        "scripts": []
+                    }
+                }
+            }
+        }
+    },
+    "cli": {
+        "analytics": false
+    }
+}

@@ -1,0 +1,90 @@
+<div [class.hide]="!hasPermission" [class.h-100]="hasPermission">
+    <nb-card [nbSpinner]="loading > 0" class="h-100">
+        <nb-card-body class="d-flex flex-row align-items-center justify-content-center">
+            <div>
+                <ng-container *ngIf="scanMode === 'none'">
+                    <h5 class="text-center m-0">QUÉT QRCode Bằng</h5>
+                    <div class="scan-toggle-buttons mb-2 flex-col justify-content-center">
+                        <button nbButton status="primary" (click)="toggleScanMode('camera')">
+                            <span class="eva eva-camera-outline mr-1"></span> Camera
+                        </button>
+                        <button nbButton status="primary" (click)="toggleScanMode('device')">
+                            <span class="eva eva-shopping-bag-outline mr-1"></span> Máy Quét
+                        </button>
+                    </div>
+                </ng-container>
+
+                <!-- Camera scanning mode -->
+                <div [class.hide]="scanMode !== 'camera'">
+                    <h5 class="text-center m-0">QUÉT QRCode Bằng</h5>
+                    <div class="p-1 w-100">
+                        <video #videoElem style="width: 100%" hidden></video>
+                        <div #qrcodeElem id="qrcode" class="position-relative">
+                            <span
+                                *ngIf="flash === 'on'"
+                                (click)="turnFlashOff()"
+                                class="eva eva-flash-off-outline position-absolute pt-1 pl-1"></span>
+                            <span
+                                *ngIf="flash === 'off'"
+                                (click)="turnFlashOn()"
+                                class="eva eva-flash-outline position-absolute pt-1 pl-1"></span>
+                        </div>
+                        <div class="pt-2 text-center">Điều chỉnh sao cho QR nằm trong khung này</div>
+                    </div>
+                </div>
+
+                <!-- Barcode scanner device mode -->
+                <ng-container *ngIf="scanMode === 'device'">
+                    <div class="p-1 w-100">
+                        <div class="barcode-input-container">
+                            <input
+                                #barcodeInput
+                                nbInput
+                                fullWidth
+                                type="text"
+                                [style.opacity]="0"
+                                [style.position]="'fixed'"
+                                [style.top]="'0'"
+                                [style.left]="'0'"
+                                [style.width]="'100%'"
+                                [style.height]="'100%'"
+                                [style.zIndex]="-1"
+                                [style.userSelect]="'none'"
+                                [attr.inputmode]="'none'"
+                                [attr.enterkeyhint]="'none'"
+                                placeholder="Quét mã QR bằng máy quét..."
+                                (keyup.enter)="processDeviceInput()"
+                                [(ngModel)]="barcodeValue"
+                                autofocus />
+                        </div>
+                        <div class="mb-3">
+                            <strong>Sẵn sàng nhận dữ liệu từ máy quét</strong>
+                        </div>
+                        <div class="pt-2 device-instructions">
+                            <div class="mb-2 ps-3 text-left">
+                                <span class="eva eva-info-outline mr-1"></span> Hướng dẫn:
+                            </div>
+                            <ol class="text-left">
+                                <li>Vui lòng tắt bộ gõ tiếng Việt (IME)!</li>
+                                <li>Kết nối máy quét với thiết bị</li>
+                                <li>Quét mã QR bằng máy quét</li>
+                            </ol>
+                        </div>
+                    </div>
+                </ng-container>
+            </div>
+        </nb-card-body>
+    </nb-card>
+</div>
+
+<div *ngIf="loading < 1 && hasPermission === false" class="w-50 m-auto">
+    <div class="m-auto d-flex flex-column">
+        <img
+            src="https://cdn.prod.website-files.com/5d8125bcaf917cc3a7c46317/632db6de8a992c98c9d8cade_404.svg"
+            loading="lazy"
+            alt="404"
+            class="img-404" />
+        <h1 class="">Page does not exist</h1>
+        <p class="">It looks like the page is outdated or you dont have permission</p>
+    </div>
+</div>

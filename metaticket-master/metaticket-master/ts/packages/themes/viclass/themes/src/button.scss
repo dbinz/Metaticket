@@ -1,0 +1,57 @@
+.vi-theme {
+    .vi-btn {
+        @apply px-SP2 font-semibold flex items-center gap-[5px] justify-center;
+    }
+
+    --icon-btn-border-width: 0px;
+    --icon-btn-radius: var(--BR2);
+
+    --btn-small-border-width: 0px;
+    --btn-normal-border-width: 0px;
+    --btn-normal-radius: var(--BR2);
+    --btn-small-radius: var(--BR2);
+
+
+    .vi-icon-btn {
+        --icon-btn-height: 24px;
+        --icon-btn-font-size: 20px;
+        @apply h-icon-btn px-SP1 leading-icon-btn text-icon-btn rounded-icon-btn border-icon-btn;
+    }
+
+    .vi-btn-normal {
+        --btn-normal-height: 40px;
+        @apply h-btn-normal px-SP2 leading-btn-normal rounded-btn-normal border-btn-normal;
+
+        .vcon {
+            @apply leading-btn-normal;
+        }
+    }
+
+    .vi-btn-small {
+        --btn-small-height: 30px;
+        @apply h-btn-small px-SP2 leading-btn-small rounded-btn-small border-btn-small;
+
+        .vcon {
+            @apply leading-btn-small;
+        }
+    }
+
+    .vi-btn-focus:not([disabled]) {
+        background-image: var(--GR1);
+        @apply text-BW1;
+    }
+
+    .vi-btn-disable, .vi-btn[disabled] {
+        --btn-normal-border-width: 2px !important;
+        --btn-small-border-width: 2px !important;
+        --icon-btn-border-width: 2px !important;
+        @apply text-BW4 bg-BW5 border-BW4;
+    }
+
+    .vi-btn-outline {
+        --btn-normal-border-width: 2px !important;
+        --btn-small-border-width: 2px !important;
+        --icon-btn-border-width: 2px !important;
+        @apply border-P1;
+    }
+}

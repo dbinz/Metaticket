@@ -1,0 +1,38 @@
+<app-layout [isDarkMode]="false">
+  <div class="w-full flex flex-col">
+    <app-popup-error #popupError ></app-popup-error>
+    <div class="w-full flex flex-col px-5 pt-10 pb-20 bg-white items-center">
+      <div class="w-full max-w-[27rem]">
+
+        <ng-container *ngIf="step === 'PHONE_OTP'">
+            <app-otp title="Xác thực đăng ký tài khoản"
+                     [loading]="loading"
+                     [error]="otpError"
+                     (resenOtp)="onResendOtp()"
+                     (callback)="onInputOtp($event)">
+            </app-otp>
+        </ng-container>
+
+        <div *ngIf="step === 'EMAIL_INPUT'" class="w-full flex flex-col items-center">
+             <h2 class="text-2xl font-bold mb-4 text-center">Xác thực Email</h2>
+             <p class="mb-6 text-center text-gray-600">Vui lòng nhập địa chỉ email của bạn để tiếp tục quá trình đăng ký.</p>
+             <div class="w-full mb-6">
+                 <app-form-input [label]="'Email'" [formControl]="emailControl" [placeholder]="'Nhập email của bạn'"/>
+             </div>
+             <app-button [isLoading]="loading" (handlerOnPressed)="onSendEmail()" [title]="'Gửi mã xác thực'"/>
+        </div>
+
+        <ng-container *ngIf="step === 'EMAIL_OTP'">
+            <app-otp title="Xác thực Email"
+                     description="Vui lòng nhập mã OTP đã được META Ticket gửi đến email của bạn"
+                     [loading]="loading"
+                     [error]="otpError"
+                     (resenOtp)="onResendOtp()"
+                     (callback)="onInputOtp($event)">
+            </app-otp>
+        </ng-container>
+
+      </div>
+    </div>
+  </div>
+</app-layout>

@@ -1,0 +1,29 @@
+.form-inline [fullWidth] {
+    flex: 1;
+}
+
+.form-inline > * {
+    padding: 0 1.5rem 1.5rem 1.5rem;
+    width: 100%;
+}
+
+nb-card.inline-form-card nb-card-body {
+    padding-bottom: 0;
+}
+
+label {
+    display: inline-block;
+    margin-bottom: 0.5rem;
+}
+
+.error {
+    color: red;
+}
+
+.text-transform-none {
+    text-transform: none !important;
+}
+
+.gap-1 {
+    gap: 1rem;
+}

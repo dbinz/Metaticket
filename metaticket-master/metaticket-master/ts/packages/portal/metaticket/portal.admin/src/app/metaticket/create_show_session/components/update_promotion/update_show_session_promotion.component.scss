@@ -1,0 +1,26 @@
+.form-inline > * {
+    padding: 0 1.5rem 1.5rem 1.5rem;
+    width: 100%;
+}
+.dialog-nb-card {
+    width: 100vw !important;
+    height: 100vw !important;
+
+    .cdk-visually-hidden {
+        width: 99% !important;
+        height: 99% !important;
+    }
+    nb-dialog-container {
+        width: 100% !important;
+        height: 100% !important;
+    }
+}
+
+.cdk-overlay-pane {
+    width: 100vw !important;
+    height: 100vw !important;
+}
+nb-dialog-container {
+    width: 100% !important;
+    height: 100% !important;
+}

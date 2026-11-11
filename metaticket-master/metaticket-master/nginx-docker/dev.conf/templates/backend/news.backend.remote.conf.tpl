@@ -1,0 +1,4 @@
+server {
+    listen $NEWS_BACKEND_CONNECT_PORT;
+    proxy_pass $METATICKET_REMOTE:$NEWS_BACKEND_LISTEN_PORT;
+}

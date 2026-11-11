@@ -1,0 +1,10 @@
+syntax = "proto3";
+
+package metaticket.qrcode.grpc;
+
+import "google/protobuf/wrappers.proto";
+import "qrcode_message.proto";
+
+service QRCodeService {
+  rpc GenerateQRCode(GenerateQRCodeRequest) returns (google.protobuf.BytesValue);
+}

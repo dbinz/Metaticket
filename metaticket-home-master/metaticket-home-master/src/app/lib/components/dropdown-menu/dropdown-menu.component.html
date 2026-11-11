@@ -1,0 +1,49 @@
+<div
+  nz-dropdown
+  [nzDropdownMenu]="menu"
+  class="flex flex-row items-center justify-between px-4 py-2 rounded-full bg-transparent hover:bg-blue-4867FC cursor-pointer gap-1"
+  [nzPlacement]="title !=='Sự kiện'? 'bottomRight': 'bottomLeft'"
+  [ngClass]="displayTitle ? 'border-[1px] lg:border-2 border-white' : ''"
+>
+  <p
+    nz-typography
+    class="text-base font-medium one-line-text overflow-hidden"
+    [ngClass]="'text-white'"
+  >
+    {{ displayTitle === '' ? title : displayTitle }}
+  </p>
+  <div class="flex-shrink-0" [ngClass]="'text-white'">
+    <app-image [sx]="'w-5 h-5'" [src]="appIcons.icArrowBottomWhiteThin"/>
+  </div>
+</div>
+
+<nz-dropdown-menu #menu="nzDropdownMenu">
+  <div *ngIf="isLoading" class="w-40 h-40 bg-white p-2 rounded-2xl flex flex-col items-center justify-center space-y-2">
+    <span nz-icon nzType="loading" nzTheme="outline" class="text-2xl text-black"></span>
+    <p nz-typography class="text-sm leading-6 text-black font-medium">Loading ...</p>
+  </div>
+  <ul *ngIf="!isLoading" nz-menu nzSelectable class="p-2 rounded-2xl">
+    <ng-container *ngFor="let item of data">
+      <!-- item có routerLink → render <a> để crawler quét được href -->
+      <a
+        *ngIf="item.routerLink"
+        nz-menu-item
+        class="w-full text-base leading-6 text-black font-medium p-2 block"
+        [routerLink]="item.routerLink"
+        [queryParams]="item.queryParams"
+        (click)="onSelected(item)"
+      >
+        {{ item.title }}
+      </a>
+      <!-- item không có routerLink → giữ <button> như cũ -->
+      <button
+        *ngIf="!item.routerLink"
+        nz-menu-item
+        class="w-full text-base leading-6 text-black font-medium p-2"
+        (click)="onSelected(item)"
+      >
+        {{ item.title }}
+      </button>
+    </ng-container>
+  </ul>
+</nz-dropdown-menu>

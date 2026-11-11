@@ -1,0 +1,17 @@
+{
+    "name": "@metaticket/ww",
+    "version": "3.0.0",
+    "exports": {
+        "./package.json": {
+            "default": "./package.json"
+        }
+    },
+    "scripts": {
+        "build-dev": "npx webpack --config webpack.default.js"
+    },
+    "dependencies": {},
+    "devDependencies": {
+        "terser-webpack-plugin": "^5.3.9",
+        "dotenv-webpack": "^8.0.1"
+    }
+}

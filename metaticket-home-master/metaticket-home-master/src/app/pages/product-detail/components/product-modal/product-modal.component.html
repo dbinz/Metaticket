@@ -1,0 +1,203 @@
+<!-- Overlay -->
+<div
+  class="fixed inset-0 z-[12000] flex items-end laptop:items-center justify-center bg-black/50 p-0 laptop:p-5"
+  (click)="onClose()"
+  (keydown.escape)="onClose()"
+  tabindex="0"
+  role="dialog"
+  aria-modal="true"
+  aria-label="Chi tiết sản phẩm"
+>
+  <!-- Dialog -->
+  <div
+    class="relative w-full laptop:w-[1000px] laptop:max-w-[95vw] max-h-[92vh] overflow-hidden rounded-t-2xl laptop:rounded-2xl bg-white"
+    (click)="$event.stopPropagation()"
+    (keydown.enter)="$event.stopPropagation()"
+    (keydown.space)="$event.stopPropagation()"
+    tabindex="-1"
+  >
+    <div class="max-h-[92vh] overflow-y-auto">
+      <!-- Header breadcrumb (also the back-to-products action) -->
+      <div class="flex items-center gap-1 bg-blue-4867FC px-5 py-4 text-white laptop:px-6">
+        <button
+          type="button"
+          class="flex items-center gap-1 text-14-24 laptop:text-base font-medium opacity-90 hover:opacity-100"
+          (click)="onClose()"
+        >
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M15 6l-6 6 6 6" stroke-linecap="round" stroke-linejoin="round" />
+          </svg>
+          Sản phẩm
+        </button>
+        <span class="opacity-70">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M9 6l6 6-6 6" stroke-linecap="round" stroke-linejoin="round" />
+          </svg>
+        </span>
+        <span class="text-14-24 laptop:text-base font-medium">{{ product.name }}</span>
+      </div>
+
+      <!-- Body -->
+      <div class="flex flex-col tablet:flex-row gap-6 laptop:gap-8 p-5 laptop:p-8">
+        <!-- Image gallery: large preview + thumbnails -->
+        <div class="w-full tablet:w-1/2 shrink-0 flex flex-col gap-3">
+          <div class="pb-[100%] relative w-full rounded-2xl bg-blue-50 overflow-hidden">
+            <app-image
+              [src]="mainImage"
+              [sx]="'w-full h-full absolute left-0 top-0 object-contain p-4'"
+            />
+          </div>
+
+          <div *ngIf="images.length > 1" class="flex flex-row flex-wrap gap-2">
+            <button
+              *ngFor="let image of images; let i = index; trackBy: trackByImage"
+              type="button"
+              class="h-14 w-14 overflow-hidden rounded-lg border-2 bg-blue-50 transition-colors"
+              [class.border-blue-4867FC]="i === selectedImageIndex"
+              [class.border-transparent]="i !== selectedImageIndex"
+              (click)="selectImage(i)"
+              [attr.aria-label]="'Ảnh ' + (i + 1)"
+            >
+              <app-image [src]="image" [sx]="'w-full h-full object-contain p-1'" />
+            </button>
+          </div>
+        </div>
+
+        <!-- Info -->
+        <div class="flex flex-1 flex-col gap-4">
+          <div class="flex flex-col gap-2">
+            <p nz-typography class="text-xl laptop:text-2xl font-medium text-stroke-2 text-black">
+              {{ product.name }}
+            </p>
+            <p nz-typography class="text-2xl font-semibold text-blue-4867FC">{{ product.price | formatPrice }}</p>
+            <span class="w-fit rounded-md bg-green-50 px-3 py-1 text-14-24 font-medium text-green-600">
+              {{ pickupLabel }}
+            </span>
+          </div>
+
+          <div *ngIf="product.description" class="flex flex-col gap-1">
+            <p nz-typography class="text-14-16 font-medium text-gray-A4A4A4">Mô tả</p>
+            <div nz-typography class="text-14-24 text-black" [innerHTML]="product.description"></div>
+          </div>
+
+          <!-- Attribute selectors (up to 2 named dimensions) — Req 2.1, only for variant products -->
+          <ng-container *ngIf="hasVariants && usesAttributes">
+            <div *ngFor="let attr of attributeDefs; trackBy: trackByAttrKey" class="flex flex-col gap-2">
+              <p nz-typography class="text-14-16 font-medium text-black">Chọn {{ attr.name }}</p>
+              <div class="flex flex-wrap gap-2">
+                <button
+                  *ngFor="let value of optionValues(attr.key); trackBy: trackByValue"
+                  type="button"
+                  (click)="onSelectOption(attr.key, value)"
+                  [disabled]="isOptionUnavailable(attr.key, value)"
+                  class="px-4 py-2 rounded-lg border text-14-24 font-medium transition-colors disabled:cursor-not-allowed disabled:opacity-40 disabled:line-through"
+                  [class.border-blue-4867FC]="isOptionSelected(attr.key, value)"
+                  [class.text-blue-4867FC]="isOptionSelected(attr.key, value)"
+                  [class.bg-blue-50]="isOptionSelected(attr.key, value)"
+                  [class.border-gray-C9C9C9]="!isOptionSelected(attr.key, value)"
+                  [class.text-black]="!isOptionSelected(attr.key, value)"
+                >
+                  {{ value }}
+                </button>
+              </div>
+            </div>
+
+            <p *ngIf="!resolvedVariant && !isProductUnavailable" nz-typography class="text-12-24 text-grey-757575">
+              Vui lòng chọn đầy đủ phân loại trước khi thêm vào giỏ.
+            </p>
+          </ng-container>
+
+          <!-- Label-only selector (variants without structured attributes) -->
+          <div *ngIf="hasVariants && !usesAttributes" class="flex flex-col gap-2">
+            <p nz-typography class="text-14-16 font-medium text-black">Chọn phân loại</p>
+            <div class="flex flex-wrap gap-2">
+              <button
+                *ngFor="let variant of variants; trackBy: trackByVariantKey"
+                type="button"
+                (click)="onSelectVariant(variant)"
+                [disabled]="isVariantUnavailable(variant)"
+                class="px-4 py-2 rounded-lg border text-14-24 font-medium transition-colors disabled:cursor-not-allowed disabled:opacity-40 disabled:line-through"
+                [class.border-blue-4867FC]="isSelectedVariant(variant)"
+                [class.text-blue-4867FC]="isSelectedVariant(variant)"
+                [class.bg-blue-50]="isSelectedVariant(variant)"
+                [class.border-gray-C9C9C9]="!isSelectedVariant(variant)"
+                [class.text-black]="!isSelectedVariant(variant)"
+              >
+                {{ variant.label }}
+              </button>
+            </div>
+            <p *ngIf="!selectedVariantKey && !isProductUnavailable" nz-typography class="text-12-24 text-grey-757575">
+              Vui lòng chọn phân loại trước khi thêm vào giỏ.
+            </p>
+          </div>
+
+          <!-- Availability status (single-SKU always; variant once a combination is resolved) -->
+          <div *ngIf="stockLabel" class="flex">
+            <span
+              class="w-fit rounded-md px-3 py-1 text-12-24 font-medium"
+              [class.bg-red-50]="isResolvedUnavailable"
+              [class.text-red-500]="isResolvedUnavailable"
+              [class.bg-orange-50]="!isResolvedUnavailable"
+              [class.text-orange-600]="!isResolvedUnavailable"
+            >
+              {{ stockLabel }}
+            </span>
+          </div>
+
+          <!-- Whole-product unavailable notice (all combinations inactive or out of stock) -->
+          <p *ngIf="isProductUnavailable" nz-typography class="text-12-24 font-medium text-red-500">
+            Sản phẩm hiện không khả dụng.
+          </p>
+
+          <!-- Quantity -->
+          <div class="flex flex-col gap-2 mt-auto">
+            <p nz-typography class="text-14-16 font-medium text-black">Số lượng</p>
+            <div class="flex items-center gap-2">
+              <button
+                type="button"
+                class="h-9 w-9 rounded-lg border border-gray-C9C9C9 text-lg text-black disabled:opacity-40 flex items-center justify-center"
+                [disabled]="quantity <= 1"
+                (click)="changeQuantity(-1)"
+              >
+                −
+              </button>
+              <span class="min-w-[2rem] text-center text-14-24 font-medium text-black">{{ quantity }}</span>
+              <button
+                type="button"
+                class="h-9 w-9 rounded-lg border border-gray-C9C9C9 text-lg text-black disabled:opacity-40 flex items-center justify-center"
+                [disabled]="quantity >= maxQuantity"
+                (click)="changeQuantity(1)"
+              >
+                +
+              </button>
+            </div>
+          </div>
+
+          <!-- Add to cart + Buy now: stacked full-width below laptop, side by side (70% / 30%) from laptop up -->
+          <div class="flex flex-col gap-2 laptop:flex-row laptop:gap-3">
+            <button
+              type="button"
+              class="w-full laptop:w-[70%] rounded-xl bg-blue-4867FC py-3 text-base font-semibold text-white hover:bg-blue-163AEA disabled:opacity-50 disabled:cursor-not-allowed"
+              [disabled]="!canAddToCart"
+              (click)="onAddToCart()"
+            >
+              <ng-container *ngIf="isResolvedUnavailable; else addLabel">
+                {{ isResolvedInactive ? 'Không khả dụng' : 'Hết hàng' }}
+              </ng-container>
+              <ng-template #addLabel>🛒 Thêm vào giỏ — {{ lineTotal | formatPrice }}</ng-template>
+            </button>
+
+            <button
+              type="button"
+              class="w-full laptop:w-[30%] rounded-xl bg-orange-500 py-3 text-base font-semibold text-white hover:bg-orange-600 disabled:opacity-50 disabled:cursor-not-allowed"
+              [disabled]="!canAddToCart"
+              (click)="onBuyNow()"
+            >
+              Mua ngay
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

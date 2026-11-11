@@ -1,0 +1,9 @@
+{
+    "payment" : {
+        "expireInMinute": 5,
+        "scanExpireInMinute": 5,
+        "hashSecret": "METATICKETHASHSECRET",
+        "baseReturnUrl": "https://staging.metaticket.vn/payment-result",
+        "baseIpnUrl": "https://staging.metaticket.vn/api/payment/ipn/result"
+    }
+}

@@ -1,0 +1,91 @@
+<div class="w-full flex flex-col gap-y-8">
+  <div class="w-full flex flex-col gap-y-4 laptop:w-2/3 laptop:pr-6">
+    <div class="flex flex-col gap-y-1">
+      <p nz-typography class="text-base text-black font-medium uppercase">Chọn ngày tham quan</p>
+      <p *ngIf="openingHours" nz-typography class="text-sm text-gray-7B7B7B">
+        {{ openingHours }}. Vé chỉ có giá trị trong ngày đã chọn.
+      </p>
+    </div>
+
+    <div class="w-full flex flex-col gap-y-3 bg-grey-F4F4F4 rounded-[30px] p-4 laptop:p-6">
+      <div class="flex flex-row items-center justify-between">
+        <button type="button" aria-label="Tháng trước" [disabled]="!canGoPrev" (click)="onPrevMonth()"
+          class="w-9 h-9 flex items-center justify-center rounded-full bg-white text-black disabled:opacity-30 disabled:cursor-not-allowed">
+          <svg class="h-5 w-5" width="20" height="20" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"
+            fill="none" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="15 6 9 12 15 18" />
+          </svg>
+        </button>
+        <p nz-typography class="text-base text-black font-semibold">{{ monthLabel }}</p>
+        <button type="button" aria-label="Tháng sau" [disabled]="!canGoNext" (click)="onNextMonth()"
+          class="w-9 h-9 flex items-center justify-center rounded-full bg-white text-black disabled:opacity-30 disabled:cursor-not-allowed">
+          <svg class="h-5 w-5" width="20" height="20" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"
+            fill="none" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 6 15 12 9 18" />
+          </svg>
+        </button>
+      </div>
+
+      <div class="grid grid-cols-7 gap-1 laptop:gap-2">
+        <p *ngFor="let label of weekdayLabels" class="text-center text-xs font-semibold text-gray-7B7B7B py-1">
+          {{ label }}
+        </p>
+        <ng-container *ngFor="let cell of cells; trackBy: trackByIndex">
+          <div *ngIf="!cell.dateKey" aria-hidden="true"></div>
+          <button *ngIf="cell.dateKey" type="button" [disabled]="cell.kind !== 'available'"
+            [attr.aria-label]="cellAriaLabel(cell)" [attr.aria-pressed]="cell.dateKey === selectedDate"
+            (click)="onSelectDate(cell)"
+            class="h-14 laptop:h-16 flex flex-col items-center justify-center gap-y-1 rounded-xl border transition-colors"
+            [ngClass]="{
+              'bg-blue-4867FC border-blue-4867FC text-white': cell.dateKey === selectedDate,
+              'bg-white border-gray-E2E2E2 text-black hover:border-blue-4867FC cursor-pointer':
+                cell.kind === 'available' && cell.dateKey !== selectedDate,
+              'bg-white border-transparent text-gray-A4A4A4 cursor-not-allowed':
+                cell.kind === 'soldOut' && cell.dateKey !== selectedDate,
+              'bg-transparent border-transparent text-gray-C9C9C9 cursor-not-allowed':
+                (cell.kind === 'disabled' || cell.kind === 'loading') && cell.dateKey !== selectedDate
+            }">
+            <span class="text-sm font-medium leading-none laptop:text-base">{{ cell.day }}</span>
+            <span class="h-2.5 text-[10px] leading-none laptop:h-3 laptop:text-xs"
+              [ngClass]="{ 'text-red-D94D27': cell.kind === 'soldOut' && cell.dateKey !== selectedDate }">
+              {{ cell.subLabel }}
+            </span>
+          </button>
+        </ng-container>
+      </div>
+
+      <p *ngIf="isMonthLoading" class="text-sm text-gray-7B7B7B text-center">Đang tải giá vé...</p>
+      <div *ngIf="loadError" class="flex flex-row items-center justify-center gap-x-2">
+        <p class="text-sm text-red-D94D27">{{ loadError }}</p>
+        <button type="button" class="text-sm text-blue-4867FC font-medium underline" (click)="onRetry()">
+          Thử lại
+        </button>
+      </div>
+
+      <div class="flex flex-row flex-wrap items-center gap-x-4 gap-y-2 pt-1 text-xs text-gray-7B7B7B">
+        <span class="flex items-center gap-x-1.5">
+          <span class="w-3 h-3 rounded bg-white border border-gray-E2E2E2"></span>Còn vé
+        </span>
+        <span class="flex items-center gap-x-1.5">
+          <span class="w-3 h-3 rounded bg-blue-4867FC"></span>Đang chọn
+        </span>
+        <span class="flex items-center gap-x-1.5">
+          <span class="w-3 h-3 rounded bg-white"></span><span class="text-red-D94D27">Hết vé</span>
+        </span>
+        <span class="flex items-center gap-x-1.5">
+          <span class="w-3 h-3 rounded bg-gray-E2E2E2"></span>Không bán
+        </span>
+      </div>
+    </div>
+  </div>
+
+  <ng-container *ngIf="selectedDate; else noDate">
+    <p nz-typography class="text-base text-black font-medium">
+      Vé ngày tham quan {{ selectedDateLabel }}
+    </p>
+    <app-booking-policy-desc [visitDate]="selectedDate" />
+  </ng-container>
+  <ng-template #noDate>
+    <p nz-typography class="text-base text-black italic">Vui lòng chọn ngày tham quan để xem vé.</p>
+  </ng-template>
+</div>

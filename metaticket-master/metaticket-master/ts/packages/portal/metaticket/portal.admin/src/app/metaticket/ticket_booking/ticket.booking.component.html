@@ -1,0 +1,110 @@
+<nb-card [nbSpinner]="loading > 0">
+    <nb-card-header fullWidth>
+        <form [formGroup]="uploadForm" (ngSubmit)="onSubmit()" novalidate>
+            <div class="input-row d-flex flex-row">
+                <div class="form-field w-100">
+                    <label for="showInput">Sự kiện:</label>
+                    <input
+                        #autoInputShow
+                        id="showInput"
+                        (input)="onInputShowChange(autoInputShow.value)"
+                        (click)="onInputShowChange('')"
+                        [nbAutocomplete]="autoCompleteShow"
+                        class="w-100"
+                        nbInput
+                        placeholder="Nhập sự kiện"
+                        type="text"
+                        formControlName="showId"
+                        required
+                        [class.invalid]="isInvalid('showId')" />
+
+                    <nb-autocomplete #autoCompleteShow (selectedChange)="onSelectionShowChange($event)">
+                        <nb-option *ngFor="let show of filteredShowList$ | async" [value]="show?.id">
+                            {{ show.showName }}
+                        </nb-option>
+                    </nb-autocomplete>
+                    <div *ngIf="isInvalid('showId')" class="validation-error">Sự kiện is required.</div>
+                </div>
+
+                <div class="form-field w-100">
+                    <label for="sessionInput">Session:</label>
+                    <input
+                        #autoInputSession
+                        id="sessionInput"
+                        (input)="onInputSessionChange(autoInputSession.value)"
+                        (click)="onInputSessionChange('')"
+                        [nbAutocomplete]="autoCompleteSession"
+                        [disabled]="!uploadForm.get('showId')?.value"
+                        class="w-100"
+                        nbInput
+                        placeholder="Nhập Session"
+                        type="text"
+                        formControlName="sessionId"
+                        required
+                        [class.invalid]="isInvalid('sessionId')" />
+
+                    <nb-autocomplete #autoCompleteSession (selectedChange)="onSelectionSessionChange($event)">
+                        <nb-option *ngFor="let session of filteredSessionList$ | async" [value]="session.id">
+                            {{ getSessionName(session) }}
+                        </nb-option>
+                    </nb-autocomplete>
+                    <div *ngIf="isInvalid('sessionId')" class="validation-error">Session is required.</div>
+                </div>
+            </div>
+
+            <div class="form-field file-input-row">
+                <!-- Added class for potential specific styling -->
+                <label for="fileInput">Booking File (CSV, XLSX, XLS):</label>
+                <input
+                    type="file"
+                    id="fileInput"
+                    (click)="clearFeedback()"
+                    (change)="onFileSelected($event)"
+                    [accept]="allowedExtensions.join(',')"
+                    #fileUploadInput
+                    formControlName="fileInput"
+                    required
+                    [class.invalid]="isInvalid('fileInput') && uploadForm.get('fileInput')?.errors?.['required']" />
+                <div
+                    *ngIf="isInvalid('fileInput') && uploadForm.get('fileInput')?.errors?.['required'] && !selectedFile"
+                    class="validation-error">
+                    A file is required.
+                </div>
+            </div>
+
+            <div class="form-actions d-flex flex-row gap-3 align-items-center">
+                <button type="submit" [disabled]="uploadForm.invalid || isLoading" class="me-3">
+                    <span *ngIf="!isLoading">Đặt vé</span>
+                    <span *ngIf="isLoading">Đang tải...</span>
+                </button>
+                <input
+                    id="customerUserIdInput"
+                    class="flex-grow-1"
+                    nbInput
+                    placeholder="Nhập Customer User ID (tùy chọn)"
+                    type="text"
+                    formControlName="customerUserId" />
+            </div>
+        </form>
+
+        <div *ngIf="isLoading" class="loading-indicator">Processing file, please wait...</div>
+
+        <div
+            *ngIf="feedbackMessage"
+            class="feedback-area"
+            [ngClass]="{
+                success: uploadStatus === 'success',
+                'partial-success': uploadStatus === 'partial_success',
+                error: uploadStatus === 'error',
+            }">
+            <p>{{ feedbackMessage }}</p>
+            <div *ngIf="uploadStatus === 'success' && successDetails?.length">...</div>
+            <div *ngIf="uploadStatus === 'partial_success'">...</div>
+            <div *ngIf="uploadStatus === 'error' && errorDetails?.length">...</div>
+        </div>
+    </nb-card-header>
+
+    <nb-card-body>
+        <angular2-smart-table [settings]="settings" [source]="source"></angular2-smart-table>
+    </nb-card-body>
+</nb-card>

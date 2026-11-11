@@ -1,0 +1,7 @@
+<div [attr.inert]="(maintenance.isActive$ | async) ? '' : null">
+  <app-contact-widget></app-contact-widget>
+  <router-outlet></router-outlet>
+</div>
+@if (maintenance.isActive$ | async) {
+  <app-maintenance></app-maintenance>
+}

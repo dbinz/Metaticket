@@ -1,0 +1,29 @@
+/* To learn more about this file see: https://angular.io/config/tsconfig. */
+{
+    "extends": "../../../../tsconfig.json",
+    "compilerOptions": {
+        "outDir": "../../../../out-tsc/spec",
+        "types": ["jasmine"],
+        /*
+         * Mirror the relaxed strictness of the application build (tsconfig.app.json).
+         * The components compiled by the karma/spec build are authored against these
+         * relaxed settings; without them, importing a component into a spec surfaces
+         * pre-existing strict-mode type errors that the app build does not enforce.
+         */
+        "strict": false,
+        "noImplicitAny": false,
+        "strictPropertyInitialization": false,
+        "strictNullChecks": false,
+        "noPropertyAccessFromIndexSignature": false,
+        "noImplicitOverride": false,
+        "useDefineForClassFields": false,
+        "skipLibCheck": true,
+        "noImplicitReturns": false
+    },
+    "angularCompilerOptions": {
+        "strictInjectionParameters": false,
+        "strictInputAccessModifiers": false,
+        "strictTemplates": false
+    },
+    "include": ["src/**/*.spec.ts", "src/**/*.d.ts"]
+}

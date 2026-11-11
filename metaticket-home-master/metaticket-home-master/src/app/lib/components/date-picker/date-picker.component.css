@@ -1,0 +1,11 @@
+.blue-selected{
+  background-color: #4867FC!important;
+  color: white!important;
+}
+.blue-gray-selected{
+  background-color: #B0BEFF;
+  color: white!important;
+}
+.rounded-first{
+  border-radius: 8px;
+}

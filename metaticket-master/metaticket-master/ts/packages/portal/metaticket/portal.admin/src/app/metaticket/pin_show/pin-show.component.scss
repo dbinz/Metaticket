@@ -1,0 +1,50 @@
+.pin-head {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.pin-title {
+    font-weight: 600;
+}
+
+.pin-sub {
+    font-size: 0.85rem;
+    opacity: 0.7;
+    margin-top: 4px;
+}
+
+.pin-actions {
+    display: flex;
+    gap: 8px;
+}
+
+.pin-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.pin-table th,
+.pin-table td {
+    padding: 10px 8px;
+    text-align: left;
+    vertical-align: middle;
+    border-bottom: 1px solid #edf1f7;
+}
+
+.thumb {
+    width: 56px;
+    height: 56px;
+    object-fit: cover;
+    border-radius: 4px;
+}
+
+.muted {
+    opacity: 0.55;
+}
+
+.pin-table nb-select {
+    min-width: 72px;
+}

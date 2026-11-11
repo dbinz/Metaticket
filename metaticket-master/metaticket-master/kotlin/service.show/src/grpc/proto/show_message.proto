@@ -1,0 +1,125 @@
+syntax = "proto3";
+
+package metaticket.show.grpc;
+
+message GetShowByIdRequest {
+  string show_id = 1;
+}
+
+message GetShowResponse {
+  string show_id = 1;
+  string show_name = 2;
+  string code = 3;
+  string status = 4;
+  int64 ship_price = 5;
+  int64 created_at = 6;
+  repeated GetSessionResponse sessions = 7;
+}
+
+message GetSessionByIdRequest {
+  string show_id = 1;
+  string session_id = 2;
+}
+
+message MailPluginTemplateProto {
+  string order_status = 1;
+  string mail_plugin = 2;
+  string mail_template = 3;
+}
+
+message GetSessionResponse {
+  string show_id = 1;
+  string session_id = 2;
+  string code = 3;
+  string status = 4;
+  optional string pg_account_code = 5;
+  repeated string payment_methods = 6;
+  bool require_delivery = 7;
+  optional bool payment_offline = 8;
+  int64 start_time = 9;
+  string venue = 10;
+  optional string order_note = 11;
+  optional string payment_note = 12;
+  repeated MailPluginTemplateProto mail_plugin_template = 13;
+  optional string event_square_image_url = 14;
+  optional string event_name_image_url = 15;
+  optional string ledgend_image_url = 16;
+  optional bool manage_ticket = 17;
+  optional bool qrcode_email = 18;
+  // Optional HTML for booking supplemental info (replaces unused extra_image_url).
+  optional string extra_info = 19;
+  // 20, 21 reserved for seat_plan_id / ed_type (feature/partner-dashboard).
+  // SessionType name; absent = SINGLE.
+  optional string session_type = 22;
+  optional SessionCalendarProto calendar = 23;
+  int64 end_time = 24;
+}
+
+// Calendar-ticket session settings; times are "HH:mm" in Asia/Ho_Chi_Minh.
+message SessionCalendarProto {
+  string open_time = 1;
+  string close_time = 2;
+  int32 booking_window_days = 3;
+  // Absent = no same-day sales.
+  optional int32 same_day_cutoff_minutes = 4;
+}
+
+message GenerateUniqueIdRequest {
+  string show_id = 1;
+  string session_id = 2;
+}
+
+message UpdateSoldTicketRequest {
+  string show_id = 1;
+  int32 sold_ticket = 2;
+}
+
+message GetCityRequest {
+  string city_id = 1;
+}
+
+message CityProto {
+  string city_id = 1;
+  string city_name = 2;
+  string city_code = 3;
+}
+
+message CreateSessionRequest {
+  string show_id = 1;
+  string city_id = 2;
+  string venue = 3;
+  optional string seat_plan_id = 4;
+  optional string ed_type = 5;
+  bool require_delivery = 6;
+  optional bool payment_offline = 7;
+  repeated MailPluginTemplateProto mail_plugin_template = 8;
+  optional string payment_note = 9;
+  optional string order_note = 10;
+  optional string code = 11;
+  optional string session_name = 12;
+  int64 start_time = 13;
+  int64 end_time = 14;
+  optional string ledgend_image = 15;
+  optional string event_square_image = 16;
+  optional string event_name_image = 17;
+  optional string pg_account_code = 18;
+  repeated string payment_methods = 19;
+  optional bool manage_ticket = 23;
+  optional bool qrcode_email = 24;
+  // Optional Session_Slug carried from the draft on promotion to an active session.
+  // Absent (unset/empty/whitespace) → stored as null; present is normalized + validated server-side.
+  optional string slug = 25;
+  // Optional HTML supplemental info promoted from the draft (booking "Thông tin bổ sung").
+  optional string extra_info = 26;
+  optional string session_type = 27;
+  optional SessionCalendarProto calendar = 28;
+}
+
+// Deletes unused session-draft temp uploads under show image_path_temp (admin → show).
+message DeleteTempImagesRequest {
+  repeated string file_paths = 1;
+}
+
+message DeleteTempImagesResponse {
+  int32 deleted_count = 1;
+}

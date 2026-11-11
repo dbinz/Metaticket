@@ -1,0 +1,66 @@
+<ng-template [ngIf]="fontSize === 'base'">
+  <nz-form-item class="w-full flex flex-col m-0 items-start">
+    <nz-form-label [nzLabelWrap]="true" class="p-0 mb-2 *:min-h-6 *:h-auto *:text-base *:font-medium *:whitespace-normal *:break-words whitespace-normal text-left" [ngClass]="{'text-stroke-2': !formControl.invalid, 'text-red-D94D27': formControl.invalid}">
+      {{ label }}<span *ngIf="isRequired" class="text-red-D94D27 ml-1">*</span>
+    </nz-form-label>
+    <nz-form-control class="w-full rounded-full px-4 py-3 border border-gray-C9C9C9 *:min-h-min">
+      <!--      <input-->
+      <!--        nz-input-->
+      <!--        class="text-base font-medium border-0 p-0 focus:border-0 focus:shadow-none placeholder-black-40"-->
+      <!--        [type]="type"-->
+      <!--        [placeholder]="placeholder"-->
+      <!--        [formControl]="formControl"-->
+      <!--      />-->
+    </nz-form-control>
+  </nz-form-item>
+</ng-template>
+
+<ng-template [ngIf]="fontSize === 'sm'">
+  <nz-form-item class="w-full flex flex-col m-0 items-start">
+    <nz-form-label [nzLabelWrap]="true" class="p-0 mb-1 *:min-h-6 *:h-auto *:text-sm *:leading-6 *:font-medium *:whitespace-normal *:break-words whitespace-normal text-left" [ngClass]="{'text-stroke-2': !formControl.invalid, 'text-red-D94D27': formControl.invalid}">
+      {{ label }}<span *ngIf="isRequired" class="text-red-D94D27 ml-1">*</span>
+    </nz-form-label>
+    <nz-form-control class="w-full border border-gray-C9C9C9 rounded-full">
+      <div class="w-full flex flex-row items-center pr-3 relative">
+        <app-input
+          class="flex-1"
+          [id]="idSelectInput"
+          [placeholder]="placeholder"
+          [border]="'none'"
+          [fontSize]="fontSize"
+          [value]="value ?? ''"
+          (handlerOnChanged)="onChangeInput($event)"
+        />
+        <app-image [src]="appIcons.icArrowGray" [sx]="'w-5 h-5 rotate-90 cursor-pointer'" (click)="toggleDropdown($event)"/>
+        <div
+          *ngIf="showSelect"
+          class="w-full flex flex-col p-2 bg-white absolute left-0 top-[50px] z-[100] shadow-[0_3px_8px_rgba(0,0,0,0.24)] rounded-[20px] max-h-44 overflow-auto hidden-scroll-bar"
+        >
+          <button
+            *ngFor="let item of data; index as idx"
+            [id]="idx"
+            nz-typography
+            class="w-full px-2 py-2 text-left text-sm text-black leading-6 font-medium rounded-lg hover:bg-gray-E2E2E2"
+            (click)="onSelectItem(item)"
+          >
+            {{ item.name }}
+          </button>
+          <ng-container *ngIf="data.length === 0" [ngTemplateOutlet]="optionsEmpty"/>
+        </div>
+      </div>
+    </nz-form-control>
+    <ng-container *ngIf="errorCode !== null">
+      <p nz-typography class="text-sm leading-6 text-red-D94D27 mt-1">
+        {{ formControl.getError(errorCode) }}
+      </p>
+    </ng-container>
+  </nz-form-item>
+</ng-template>
+
+<ng-template #optionsEmpty>
+  <div class="w-full h-44 flex items-center justify-center">
+    <p nz-typography class="text-sm text-black leading-6 font-medium text-center">
+      Không có dữ liệu
+    </p>
+  </div>
+</ng-template>

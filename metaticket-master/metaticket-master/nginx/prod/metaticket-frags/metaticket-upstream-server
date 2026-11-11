@@ -1,0 +1,22 @@
+# Define upstreams for backend services
+upstream show_service           { server 127.0.0.1:3003; }
+upstream ticket_service         { server 127.0.0.1:3004; }
+upstream order_service          { server 127.0.0.1:3005; }
+upstream payment_service        { server 127.0.0.1:3006; }
+upstream accessory_service      { server 127.0.0.1:3020; }
+upstream jobrunr_service        { server 127.0.0.1:3007; }
+upstream notification_service   { server 127.0.0.1:3008; }
+upstream ticket_slots_service   { server 127.0.0.1:3009; }
+upstream qrcode_service         { server 127.0.0.1:3010; }
+upstream editor_policydesc_service { server 127.0.0.1:3011; }
+upstream editor_seatplanner_service { server 127.0.0.1:3012; }
+upstream authentication_service { server 127.0.0.1:3030; }
+upstream authorization_service  { server 127.0.0.1:3031; }
+upstream odc_service            { server 127.0.0.1:3032; }
+upstream admin_service          { server 127.0.0.1:3040; }
+upstream news_service           { server 127.0.0.1:3041; }
+upstream customer_user_service  { server 127.0.0.1:3050; }
+upstream customer_auth_service  { server 127.0.0.1:3051; }
+upstream frontend_service       { server 127.0.0.1:3000; }
+upstream metasearch_service     { server 10.0.1.12:8080; }
+upstream homepage_service       { server 10.0.1.12:4200; } # Or https://metaticket.nobisoft.vn;

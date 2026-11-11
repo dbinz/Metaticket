@@ -1,0 +1,46 @@
+{
+    "showId": "64c375d89ca3d2b39d23b41b",
+    "sessionId": "64c375b7c57c0f5f3d44b05c",
+    "catMapping": {
+        "h1": {
+            "catName": "Hạng 1",
+            "catPrice": 3700000
+        },
+        "h2": {
+            "catName": "Hạng 2",
+            "catPrice": 3200000
+        },
+        "h3": {
+            "catName": "Hạng 3",
+            "catPrice": 2700000
+        },
+        "h4": {
+            "catName": "Hạng 4",
+            "catPrice": 2200000
+        },
+        "h5": {
+            "catName": "Hạng 5",
+            "catPrice": 1800000
+        },
+        "h6": {
+            "catName": "Hạng 6",
+            "catPrice": 1500000
+        },
+        "h7": {
+            "catName": "Hạng 7",
+            "catPrice": 1000000
+        },
+        "plat": {
+            "catName": "Platinum",
+            "catPrice": 4700000
+        },
+        "vip": {
+            "catName": "VIP",
+            "catPrice": 5600000
+        },
+        "vvip": {
+            "catName": "VVIP",
+            "catPrice": 6800000
+        }
+    }
+}

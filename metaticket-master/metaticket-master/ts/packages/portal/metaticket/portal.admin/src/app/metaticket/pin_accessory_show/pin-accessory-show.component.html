@@ -1,0 +1,62 @@
+<nb-card [nbSpinner]="loading > 0">
+    <nb-card-header>
+        <div class="pin-head">
+            <div>
+                <div class="pin-title">Ghim sự kiện bán hàng</div>
+                <div class="pin-sub">
+                    Tối đa {{ maxSlots }} sự kiện. Thêm / xóa / đổi thứ tự trên bảng, rồi bấm Xác nhận.
+                </div>
+            </div>
+            <div class="pin-actions">
+                <button nbButton status="basic" type="button" [disabled]="!canAdd" (click)="addSlot()">
+                    Thêm sự kiện
+                </button>
+                <button nbButton status="info" type="button" (click)="refresh()">Làm mới danh sách ghim</button>
+                <button nbButton status="primary" type="button" [disabled]="!dirty" (click)="confirm()">Xác nhận</button>
+            </div>
+        </div>
+    </nb-card-header>
+    <nb-card-body>
+        <table class="pin-table" *ngIf="rows.length > 0">
+            <thead>
+                <tr>
+                    <th>Ảnh sự kiện</th>
+                    <th>Sự kiện</th>
+                    <th>Trạng thái</th>
+                    <th>Thứ tự</th>
+                    <th>Thao tác</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr *ngFor="let row of rows">
+                    <td>
+                        <img *ngIf="imageOf(row.show)" class="thumb" [src]="imageOf(row.show)" [alt]="row.show?.name" />
+                        <span *ngIf="!row.show" class="muted">—</span>
+                    </td>
+                    <td>
+                        <div *ngIf="row.show">{{ row.show.name }}</div>
+                        <small *ngIf="row.show">{{ row.show.code }}</small>
+                        <span *ngIf="!row.show" class="muted">Chưa chọn</span>
+                    </td>
+                    <td>{{ row.show?.status || '—' }}</td>
+                    <td>
+                        <nb-select [selected]="row.pinOrder" (selectedChange)="onOrderChange(row, $event)">
+                            <nb-option *ngFor="let n of orders" [value]="n">{{ n }}</nb-option>
+                        </nb-select>
+                    </td>
+                    <td>
+                        <div class="pin-row-actions">
+                            <button nbButton size="small" status="basic" type="button" (click)="replaceSlot(row)">
+                                Thay thế
+                            </button>
+                            <button nbButton size="small" status="danger" type="button" (click)="removeSlot(row)">
+                                Xóa
+                            </button>
+                        </div> 
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+        <div *ngIf="rows.length === 0" class="muted">Chưa ghim sự kiện nào. Bấm Thêm sự kiện hoặc Làm mới.</div>
+    </nb-card-body>
+</nb-card>

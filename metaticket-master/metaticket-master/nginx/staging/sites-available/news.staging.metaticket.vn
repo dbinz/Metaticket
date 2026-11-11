@@ -1,0 +1,28 @@
+# WordPress news CMS + related public WordPress REST
+# Portal admin stays on admin.staging; iframe/editor hit this host.
+#
+# Deploy guide: metaticket-wordpress/docs/STAGING_DEPLOY.md
+#
+# Enable on staging host:
+#   1) include metaticket-limit-req-zones in http {}
+#   2) sudo ln -sf /etc/nginx/sites-available/news.staging.metaticket.vn \
+#               /etc/nginx/sites-enabled/news.staging.metaticket.vn
+#   3) DNS A/AAAA for news.staging.metaticket.vn + TLS SAN
+#   4) sudo nginx -t && sudo systemctl reload nginx
+
+server {
+    listen 80;
+    listen 443 ssl;
+    listen [::]:443 ssl;
+
+    server_name news.staging.metaticket.vn;
+
+    include /etc/nginx/metaticket-frags/metaticket-ssl;
+
+    gzip on;
+    gzip_types      text/plain application/xml application/javascript text/css application/json image/svg+xml;
+    gzip_proxied    no-cache no-store private expired auth;
+    gzip_min_length 1000;
+
+    include /etc/nginx/metaticket-frags/metaticket-wordpress;
+}

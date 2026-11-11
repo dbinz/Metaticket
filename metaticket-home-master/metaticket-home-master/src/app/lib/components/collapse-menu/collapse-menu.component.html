@@ -1,0 +1,32 @@
+<div class="container">
+  <div tabindex="0" class="accordion-heading flex gap-6 border-b-[1px] border-[#E5E5E5] pb-5" (click)="expandCollapse()"
+    (keydown)="expandCollapse()">
+    <p class="font-medium text-18-22 text-black ">
+      {{title}}
+    </p>
+    <div class="flex-shrink-0" [ngClass]="{'icon':active}">
+      <app-image sx="w-[20px] h-[20px]" [src]="appIcons.icArrowUp"></app-image>
+    </div>
+  </div>
+  <div class="accordion-content " [ngClass]="{'h-0 overflow-hidden': !active} ">
+    <ng-container *ngFor="let item of data">
+      <!-- item có routerLink → render <a> để crawler quét được href -->
+      <a
+        *ngIf="item.routerLink"
+        tabindex="0"
+        [routerLink]="item.routerLink"
+        [queryParams]="item.queryParams"
+        class="block {{displayTitle === item.title ? 'text-blue-163AEA' : 'text-gray-747474' }} font-normal text-18-22 border-b-[1px] border-[#E5E5E5] py-5"
+        (click)="onSelected(item)"
+      >{{ item.title }}</a>
+      <!-- item không có routerLink → giữ <p> như cũ -->
+      <p
+        *ngIf="!item.routerLink"
+        tabindex="0"
+        class="{{displayTitle === item.title ? 'text-blue-163AEA' : 'text-gray-747474' }} font-normal text-18-22 border-b-[1px] border-[#E5E5E5] py-5"
+        (click)="onSelected(item)"
+        (keydown)="onSelected(item)"
+      >{{ item.title }}</p>
+    </ng-container>
+  </div>
+</div>

@@ -1,0 +1,50 @@
+{
+	"info": {
+		"_postman_id": "092664cd-4ec6-4bb8-a94d-a90838bc2930",
+		"name": "seatplanner",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "1890130"
+	},
+	"item": [
+		{
+			"name": "createDoc",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{endpoint.seatplanner}}/createDoc",
+					"host": [
+						"{{endpoint.seatplanner}}"
+					],
+					"path": [
+						"createDoc"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "loadDoc",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{endpoint.seatplanner}}/document?globalId=64b0395d1a30164d79895632",
+					"host": [
+						"{{endpoint.seatplanner}}"
+					],
+					"path": [
+						"document"
+					],
+					"query": [
+						{
+							"key": "globalId",
+							"value": "64b0395d1a30164d79895632"
+						}
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

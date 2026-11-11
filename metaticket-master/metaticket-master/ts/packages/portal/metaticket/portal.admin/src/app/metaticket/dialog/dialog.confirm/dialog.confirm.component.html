@@ -1,0 +1,18 @@
+<nb-card
+    [nbSpinner]="loading$ | async"
+    status="warning"
+    nbSpinnerMessage=""
+    nbSpinnerSize="large"
+    nbSpinnerStatus="danger"
+    size="tiny">
+    <nb-card-header>{{ title }}</nb-card-header>
+
+    <nb-card-body>
+        <div [innerHTML]="content"></div>
+    </nb-card-body>
+
+    <nb-card-footer>
+        <button (click)="confirm()" nbButton>Xác nhận</button>
+        <button (click)="cancel()" nbButton>Đóng</button>
+    </nb-card-footer>
+</nb-card>

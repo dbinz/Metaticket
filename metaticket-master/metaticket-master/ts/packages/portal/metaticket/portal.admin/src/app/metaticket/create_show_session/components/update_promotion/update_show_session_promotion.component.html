@@ -1,0 +1,42 @@
+<nb-card [nbSpinner]="loading > 0">
+    <nb-card-body>
+        <div class="w-100 flex-row">
+            <button nbButton (click)="onClickAddPromotion()">Thêm chương trình khuyến mãi</button>
+        </div>
+        <div class="w-100 mt-2">
+            <ng-container *ngFor="let draftPromotion of draftPromotions; let index = index">
+                <nb-card class="p-2">
+                    <div class="d-flex">
+                        <label>Chương trình khuyến mãi:</label>
+                        <label class="flex-grow-1 ml-2 font-weight-bold">{{ draftPromotion.name }}</label>
+                        <button nbButton (click)="onClickEditDraftPromotion(draftPromotion)">Chỉnh sửa</button>
+                    </div>
+                </nb-card>
+            </ng-container>
+        </div>
+        <div class="w-100 mt-2">
+            <ng-container *ngFor="let promotion of promotions; let index = index">
+                <nb-card class="p-2">
+                    <div class="d-flex">
+                        <label>Chương trình khuyến mãi:</label>
+                        <label class="flex-grow-1 ml-2 font-weight-bold">Promotion {{ index }}</label>
+                        <button nbButton (click)="onClickEditPromotion(promotion)">Chỉnh sửa</button>
+                    </div>
+                </nb-card>
+            </ng-container>
+        </div>
+    </nb-card-body>
+    <nb-card-footer>
+        <div>
+            <button
+                *ngIf="showSessionDraft"
+                status="success"
+                (click)="gotoNextStep.emit()"
+                nbButton
+                type="button"
+                class="ml-2">
+                Bước tiếp theo
+            </button>
+        </div>
+    </nb-card-footer>
+</nb-card>

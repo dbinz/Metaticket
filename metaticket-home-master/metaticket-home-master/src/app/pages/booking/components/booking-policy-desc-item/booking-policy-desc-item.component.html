@@ -1,0 +1,32 @@
+<div class="flex flex-row gap-x-2 items-start justify-start">
+  <div class="flex-1 flex flex-col items-start justify-start pr-4">
+    <p nz-typography class="text-base text-black font-semibold leading-10">
+      {{ item.priceCat }}
+    </p>
+    <div *ngIf="item.policy" class="break-words text-sm text-gray-929292 leading-normal" [innerHTML]="formatDescription(item.policy || '')"></div>
+  </div>
+  <p nz-typography class="w-24 text-base text-black font-semibold leading-10">
+    {{ item.basePrice | formatPrice }}
+  </p>
+  <div class="w-24 h-10 rounded-full border border-gray-B2B2B2 flex flex-row items-center justify-between px-2">
+    <button
+      class="w-5 h-5"
+      [style.opacity]="quantity <= 0 ? 0.5 : 1"
+      [disabled]="quantity <= 0"
+      (click)="onDecreaseQuantity()"
+    >
+      <app-image [src]="appIcons.icMinus" />
+    </button>
+    <p nz-typography class="text-xs text-black leading-5">
+      {{ quantity }}
+    </p>
+    <button
+      class="w-5 h-5"
+      [style.opacity]="quantity >= item.remCap ? 0.5 : 1"
+      [disabled]="quantity >= item.remCap"
+      (click)="onIncreaseQuantity()"
+    >
+      <app-image [src]="appIcons.icPlus" />
+    </button>
+  </div>
+</div>

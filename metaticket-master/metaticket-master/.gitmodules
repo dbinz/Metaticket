@@ -1,0 +1,3 @@
+[submodule "ts/homepage"]
+	path = ts/homepage
+	url = git@gitlab.com:rt83/metaticket-home.git

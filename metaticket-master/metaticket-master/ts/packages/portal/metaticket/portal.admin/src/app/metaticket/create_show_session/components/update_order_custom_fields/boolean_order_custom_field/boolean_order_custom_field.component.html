@@ -1,0 +1,31 @@
+<div class="form-inline">
+    <div>
+        <label [ngClass]="{ error: idFormControl.invalid }">Id (*)</label>
+        <input
+            status="{{ idFormControl.invalid ? 'danger' : 'basic' }}"
+            [formControl]="idFormControl"
+            required
+            fullWidth
+            nbInput
+            type="text" />
+    </div>
+    <div>
+        <label [ngClass]="{ error: displayNameFormControl.invalid }">Tên hiển thị (*)</label>
+        <input
+            status="{{ displayNameFormControl.invalid ? 'danger' : 'basic' }}"
+            [formControl]="displayNameFormControl"
+            required
+            fullWidth
+            nbInput
+            type="text" />
+    </div>
+    <div>
+        <label [ngClass]="{ error: noteFormControl.invalid }">Chú thích</label>
+        <input status="basic" [formControl]="noteFormControl" fullWidth nbInput type="text" />
+    </div>
+    <div [formGroup]="constraintsFormGroup" class="form-inline-child">
+        <div>
+            <nb-checkbox [formControl]="requireConstraintFormControl">Trường bắt buộc nhập</nb-checkbox>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,12 @@
+{
+  "reservationId": "reservation_id_123",
+  "name": "John Doe",
+  "phone": "1234567890",
+  "email": "john.doe@example.com",
+  "deliveryName": "John Doe",
+  "provinceName": "California",
+  "districtName": "Los Angeles",
+  "wardName": "Some Ward",
+  "address": "123 Main Street",
+  "paymentType": "QrCode"
+}

@@ -1,0 +1,12 @@
+<nb-card>
+    <nb-card-header>
+        <span class="me-3">
+            Danh sách Seat Map
+        </span>
+        <button nbButton status="primary" (click)="createNew()">Tạo mới</button>
+    </nb-card-header>
+    <nb-card-body>
+        <angular2-smart-table [settings]="settings" [source]="source" (custom)="onCustomAction($event)">
+        </angular2-smart-table>
+    </nb-card-body>
+</nb-card>

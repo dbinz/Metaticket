@@ -1,0 +1,19 @@
+<div class="pb-14 w-full min-h-[20vh] laptop:min-h-[45vh] bg-blue-072591 flex flex-col items-center laptop:pt-8 relative overflow-hidden">
+  <!-- <pt-6> -->
+  <!-- <home-merch-strip class="w-full" /> -->
+  <div class="w-full flex flex-col items-center px-5 laptop:px-0 pt-10 space-y-20">
+    <home-showcase class="laptop:w-3/4 w-full" />
+    <grid-event-ticket *ngIf="recentShows.length > 0" class="laptop:w-3/4 w-full"
+      [title]="'Tìm kiếm gần đây'" [data]="recentShows" />
+  </div>
+
+  <div class="laptop:block absolute left-[40px] top-[250px] tablet:top-[650px] laptop:top-[515px] desktop:top-[650px] z-1">
+    <app-image [sx]="'h-[72px] h-[72px]'" [src]="appIcons.icStarBlue"/>
+  </div>
+
+  <app-image [sx]="'hidden absolute left-0 top-[250px] tablet:top-[650px] laptop:top-[515px] desktop:top-[680px] w-full scale-125 opacity-50'" [src]="appIcons.icGridHomePage">
+  </app-image>
+</div>
+<app-image [sx]="'absolute bottom-[-60px] right-[0] w-[132px] laptop:w-[200px] laptop:bottom-[-80px]'"
+  [src]="appIcons.icHeadphone">
+</app-image>

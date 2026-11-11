@@ -1,0 +1,18 @@
+<nb-card [nbSpinner]="loading > 0">
+    <nb-card-header fullWidth>
+        <div class="inline-form-card w-100">
+            <a class="mr-2" nbButton routerLink="/portal/pg-account/onepay/create" status="primary"
+                >Create OnePay Account</a
+            >
+            <a class="mr-2" nbButton routerLink="/portal/pg-account/ninepay/create" status="info"
+                >Create NinePay Account</a
+            >
+            <a nbButton routerLink="/portal/pg-account/vnpay/create" status="info">Create VnPay Account</a>
+        </div>
+    </nb-card-header>
+    <nb-card-body>
+        <angular2-smart-table (custom)="onCustomButton($event)" [source]="source" [settings]="settings">
+        </angular2-smart-table>
+    </nb-card-body>
+    <nb-card-footer> </nb-card-footer>
+</nb-card>

@@ -1,0 +1,129 @@
+.c-path { z-index: 1; opacity: 0.3; stroke: red; stroke-width: 4; fill: none; cursor: pointer; pointer-events: stroke; } 
+.c-point { z-index: 2; opacity:0.3; stroke: red; fill: blue; cursor: pointer; }
+
+.seat text {
+    text-anchor: middle;
+    dominant-baseline: central;
+    font-size: 24px;
+    font-weight: bold;
+    font-family: montserrat;
+    text-rendering: optimizeSpeed;
+    fill: var(--seat-label-color);
+}
+/* SEAT ZONE CONFIG */
+.sz-g text {
+    text-anchor: middle;
+    dominant-baseline: central;
+    font-weight: bold;
+    font-family: montserrat;
+    text-rendering: optimizeSpeed;
+
+    cursor: pointer;
+    pointer-events: all;
+
+    fill : var(--zone-label-color)
+}
+
+.sz-g tspan {
+    pointer-events: none;
+}
+
+.sz-g .white-text {
+    --zone-label-color: white !important;
+}
+
+.sz-g .no-border {
+    --zone-outline-color: rgb(200, 200, 200, 0.0)
+}
+
+.sz-g .small-note {
+    font-size: 15px !important;
+    font-weight: normal;
+}
+
+.sz-g path {
+    --zone-outline-stroke-width: 2;
+
+    fill: var(--zone-color);
+    stroke: var(--zone-outline-color);
+    stroke-width: var(--zone-outline-stroke-width);
+
+    cursor: pointer;
+}
+
+.sz-default {
+    --zone-color: violet;
+    --zone-outline-color: blue;
+    --zone-label-color: white;
+
+    fill-opacity: 0.3;
+}
+
+/* SEAT CONFIG */
+.seat {
+    z-index: 5;
+    cursor: pointer;
+}
+
+.s-default {
+    --seat-color: violet;
+    --seat-outline-color: blue;
+    --seat-label-color: white;
+    opacity: 0.7;
+}
+
+/* STYLE */
+.sz-vip1 {
+    --zone-color: #cd0d09;
+    --zone-outline-color: rgb(200, 200, 200, 0.9);
+    --zone-label-color: white;
+    font-size: 32px !important;
+}
+
+.s-vip2 {
+    --seat-color: #f4de6a;
+    --seat-outline-color: rgb(200, 200, 200, 0.9);
+    --seat-label-color: black;
+}
+
+.s-vip3 {
+    --seat-color: #9dd6a4;
+    --seat-outline-color: rgb(200, 200, 200, 0.9);
+    --seat-label-color: black;
+}
+
+
+.highlight {
+    --seat-color: rgb(255, 255, 255, 0.9) !important;
+    --seat-outline-color: rgb(100, 100, 0, 0.9) !important;
+    --seat-label-color: black;
+}
+
+.disable {
+    --seat-color: gray !important;
+    --seat-outline-color: black !important;
+    --seat-label-color: black;
+    cursor: default;
+}
+
+.sz-g.disable {
+    --zone-color: gray !important;
+    --zone-outline-color: black !important;
+    cursor: default !important;
+}
+
+.sz-g.disable > text {
+    --zone-label-color: #AAA !important;
+}
+
+.sz-g.highlight {
+    --zone-color: rgb(255, 255, 255) !important;
+    --zone-outline-color: rgb(100, 100, 0) !important;
+    fill-opacity: 1;
+    stroke-opacity: 1;
+    cursor: default !important;
+}
+
+.sz-g.highlight > text {
+    --zone-label-color: black !important;
+}

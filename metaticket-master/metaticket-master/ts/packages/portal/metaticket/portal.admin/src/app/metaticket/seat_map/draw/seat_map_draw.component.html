@@ -1,0 +1,66 @@
+<div class="h-full vi-theme">
+    <div class="flex h-full items-stretch">
+        <div class="viewport-container relative border grow border-red-950">
+            <div class="board-viewport h-full" #viewport></div>
+            <div>
+                <editor-ui-group class="absolute with-pad" vAlign="top" hAlign="left" direction="ttb" (loaderEvent)="onEditorUILoaderEvent($event)">
+                </editor-ui-group>
+                <editor-ui-group class="absolute with-pad" vAlign="bottom" hAlign="right" direction="ltr" (loaderEvent)="onZoomUILoaderEvent($event)">
+                </editor-ui-group>
+            </div>
+        </div>
+        <nb-card class="w-[300px] h-full max-h-screen border-0 rounded-none shadow-none border-r border-red-950 mb-0">
+            <nb-card-body class="p-3 overflow-y-auto">
+                <!-- Load Doc Input -->
+                <ng-container *ngIf="(doc$ | async) == null">
+                    <div class="flex flex-col gap-2">
+                        <label class="text-xs font-semibold text-gray-500">Seat Map ID</label>
+                        <input nbInput fullWidth fieldSize="small" [(ngModel)]="loadId" placeholder="Nhập tên để mở" />
+                        <button nbButton size="small" status="primary" class="w-full mt-2" (click)="loadDoc()">Mở Seat Map</button>
+                    </div>
+                </ng-container>
+
+                <!-- Loaded Doc Info -->
+                <ng-container *ngIf="(doc$ | async) as doc">
+                    <nb-card class="mb-0 border shadow-sm text-xs">
+                        <nb-card-header class="py-2 px-3 text-xs font-bold uppercase text-gray-600 bg-gray-50 border-b border-gray-100">
+                            Thông tin Seat Map
+                        </nb-card-header>
+                        <nb-card-body class="p-0">
+                            <table class="w-full text-xs">
+                                <tbody>
+                                    <tr class="border-b border-gray-100 last:border-0">
+                                        <td class="w-[60px] p-2 font-bold text-gray-500 bg-gray-50 align-top">ID</td>
+                                        <td class="p-2 font-mono text-gray-700 break-all">{{doc.id}}</td>
+                                    </tr>
+                                    <tr class="border-b border-gray-100 last:border-0">
+                                        <td class="p-2 font-bold text-gray-500 bg-gray-50 align-top">Name</td>
+                                        <td class="p-2 font-medium text-gray-900">{{doc.displayName}}</td>
+                                    </tr>
+                                    <tr class="border-b border-gray-100 last:border-0">
+                                        <td class="p-2 font-bold text-gray-500 bg-gray-50 align-top">Image</td>
+                                        <td class="p-2">
+                                            <div class="text-gray-500 italic break-all" [title]="doc.baseImgUrl">
+                                                {{doc.baseImgUrl || 'No image set'}}
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    <tr class="border-b border-gray-100 last:border-0">
+                                        <td class="p-2 font-bold text-gray-500 bg-gray-50 align-top">Cats</td>
+                                        <td class="p-2">
+                                            <div class="flex flex-wrap gap-1">
+                                                <span *ngFor="let cat of doc.catNames" class="px-1.5 py-0.5 bg-gray-100 text-gray-600 rounded text-[10px] border border-gray-200">{{cat}}</span>
+                                                <span *ngIf="!doc.catNames?.length" class="text-gray-400 italic">None</span>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </nb-card-body>
+                    </nb-card>
+                </ng-container>
+            </nb-card-body>
+        </nb-card>
+    </div>
+</div>
+

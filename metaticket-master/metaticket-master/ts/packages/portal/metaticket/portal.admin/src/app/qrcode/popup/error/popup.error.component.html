@@ -1,0 +1,13 @@
+<div class="popup-wrapper">
+    <div class="popup-container scan-result" [ngClass]="'scan-result--' + outcome">
+        <div class="scan-result__banner">
+            <span class="eva scan-result__icon" [ngClass]="icon"></span>
+            <div class="scan-result__title">{{ title }}</div>
+        </div>
+        <div class="scan-result__body">
+            <div class="scan-result__message">{{ message }}</div>
+            <div *ngIf="status" class="scan-result__code">Mã lỗi: {{ status }}</div>
+        </div>
+        <button nbButton status="basic" (click)="ref.close()">Quét tiếp</button>
+    </div>
+</div>

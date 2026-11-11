@@ -1,0 +1,22 @@
+version: '3.8'
+services:
+  staging_metaticket_search:
+    image: staging_metaticket_search
+    container_name: staging_metaticket_search
+    build: .
+    environment:
+      - SPRING_PROFILES_ACTIVE=staging
+      - JAVA_TOOL_OPTIONS=-Xms512m -Xmx512m -XX:+HeapDumpOnOutOfMemoryError -XX:HeapDumpPath=/app/logs/heapdump.hprof -Duser.timezone=Asia/Ho_Chi_Minh
+    mem_limit: 768m
+    memswap_limit: 768m
+    ports:
+      - "48080:8080"
+    networks:
+      default:
+    restart: unless-stopped
+    volumes:
+      - /staging/metaticket/service/homepage/logs:/app/logs
+networks:
+  default:
+    external: true
+    name: staging_metaticket

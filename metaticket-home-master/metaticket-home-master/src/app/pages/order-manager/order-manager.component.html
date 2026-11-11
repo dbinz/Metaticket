@@ -1,0 +1,262 @@
+<ng-container *ngIf="(selectedOrder$ | async) === undefined; else detailView">
+  <app-layout [isDarkMode]="false">
+    <div class="w-full flex flex-col">
+      <div class="bg-blue-163AEA">
+        <app-navbar></app-navbar>
+      </div>
+      <div class="flex flex-col md:flex-row bg-gray-100 min-h-screen">
+        <aside class="md:w-1/4 p-4">
+          <div class="text-sm text-gray-600 mb-4">
+            <span>Trang chủ</span> /
+            <span class="font-semibold text-black">Quản lý đơn hàng</span>
+          </div>
+
+          <div class="flex md:flex-col border-b md:border-none">
+            <button
+              class="py-2 px-4 text-gray-400 hover:text-black md:text-left md:rounded-full md:bg-transparent"
+              [routerLink]="['/' + routeName.ticketManager]"
+            >
+              Quản lý vé
+            </button>
+            <button
+              class="py-2 px-4 text-black font-semibold border-b-2 border-blue-500 md:bg-white md:text-left md:rounded-full"
+            >
+              Quản lý đơn hàng
+            </button>
+            <button
+              class="py-2 px-4 text-gray-400 hover:text-black md:text-left md:rounded-full md:bg-transparent"
+              [routerLink]="['/' + routeName.accountInfo]"
+            >
+              Thông tin tài khoản
+            </button>
+          </div>
+        </aside>
+
+        <main class="flex-1 p-4">
+          <div class="bg-white rounded-2xl p-4 md:p-6 shadow-sm">
+            <h2 class="text-sm font-semibold mb-4 uppercase">Đơn hàng sản phẩm thành công</h2>
+
+            <ng-container *ngIf="orders$ | async as orders; else loadingOrder">
+              <div *ngIf="orders.length > 0; else noOrders">
+                <div
+                  *ngFor="let order of orders"
+                  role="button"
+                  tabindex="0"
+                  (click)="selectOrder(order)"
+                  (keydown.enter)="selectOrder(order)"
+                  class="flex flex-col md:flex-row gap-4 mb-6 cursor-pointer rounded-xl hover:bg-gray-50 p-2 -mx-2"
+                >
+                  <img
+                    *ngIf="order.bannerImageUrl; else placeholderBanner"
+                    [src]="order.bannerImageUrl"
+                    alt="banner"
+                    class="w-full md:w-[260px] h-[140px] rounded-lg object-cover bg-gray-100"
+                  />
+                  <ng-template #placeholderBanner>
+                    <div
+                      class="w-full md:w-[260px] h-[140px] rounded-lg bg-gray-100 flex items-center justify-center text-gray-400 text-sm"
+                    >
+                      Không có ảnh
+                    </div>
+                  </ng-template>
+                  <div class="flex flex-col justify-center">
+                    <h3 class="font-semibold mb-1">{{ order.showName }}</h3>
+                    <p class="text-sm text-gray-600">
+                      {{ fulfillmentLabel(order.fulfillment) }}
+                      <span *ngIf="order.lines.length"> · {{ order.lines.length }} sản phẩm</span>
+                    </p>
+                    <p class="text-sm text-gray-600 mb-1">{{ formatDate(order.createdAt) }}</p>
+                    <p class="text-sm text-gray-400">Mã đơn: {{ order.code }}</p>
+                    <p class="text-sm font-semibold text-blue-4867FC mt-1">
+                      {{ order.total | formatPrice }}
+                    </p>
+                  </div>
+                </div>
+              </div>
+              <ng-template #noOrders>
+                <p class="text-center text-gray-500 py-8">Bạn chưa có đơn hàng thành công nào.</p>
+              </ng-template>
+            </ng-container>
+
+            <ng-template #loadingOrder>
+              <div class="w-full flex items-center justify-center h-[300px]">
+                <app-loading />
+              </div>
+            </ng-template>
+          </div>
+        </main>
+      </div>
+    </div>
+  </app-layout>
+</ng-container>
+
+<ng-template #detailView>
+  <app-layout [isDarkMode]="false">
+    <div class="w-full flex flex-col" *ngIf="selectedOrder$ | async as order">
+      <div class="bg-blue-163AEA">
+        <app-navbar></app-navbar>
+      </div>
+      <div class="flex flex-col md:flex-row bg-gray-100 min-h-screen">
+        <aside class="md:w-1/4 w-full p-4 border-b md:border-b-0 md:border-r border-gray-200">
+          <div class="text-sm text-gray-600 mb-4">
+            <span
+              class="cursor-pointer hover:underline"
+              role="button"
+              tabindex="0"
+              (click)="goBackToList()"
+              (keydown.enter)="goBackToList()"
+              >Trang chủ</span
+            >
+            /
+            <span
+              class="cursor-pointer font-semibold text-black hover:underline"
+              role="button"
+              tabindex="0"
+              (click)="goBackToList()"
+              (keydown.enter)="goBackToList()"
+              >Quản lý đơn hàng</span
+            >
+            /
+            <span class="font-semibold text-black">Chi tiết</span>
+          </div>
+
+          <div class="flex md:flex-col gap-2">
+            <button
+              class="py-2 px-4 text-sm rounded-full bg-transparent text-gray-600 hover:text-black border border-transparent hover:border-gray-300 text-left"
+              [routerLink]="['/' + routeName.ticketManager]"
+            >
+              Quản lý vé
+            </button>
+            <button
+              class="py-2 px-4 text-sm rounded-full bg-white text-black font-semibold border border-blue-500 text-left"
+              (click)="goBackToList()"
+            >
+              Quản lý đơn hàng
+            </button>
+            <button
+              class="py-2 px-4 text-sm rounded-full bg-transparent text-gray-600 hover:text-black border border-transparent hover:border-gray-300 text-left"
+              [routerLink]="['/' + routeName.accountInfo]"
+            >
+              Thông tin tài khoản
+            </button>
+          </div>
+        </aside>
+
+        <main class="flex-1 p-4">
+          <div class="bg-white rounded-2xl p-4 md:p-6 shadow-sm max-w-3xl">
+            <div class="flex flex-col md:flex-row gap-4 mb-6">
+              <img
+                *ngIf="order.bannerImageUrl"
+                [src]="order.bannerImageUrl"
+                alt="banner"
+                class="w-full md:w-[220px] h-[120px] rounded-lg object-cover bg-gray-100"
+              />
+              <div>
+                <h2 class="text-lg font-semibold mb-1">{{ order.showName }}</h2>
+                <p class="text-sm text-gray-500">Mã đơn: #{{ order.code }}</p>
+                <p class="text-sm text-gray-500">{{ formatDate(order.createdAt) }}</p>
+              </div>
+            </div>
+
+            <!-- Hình thức nhận hàng (ưu tiên hiển thị) -->
+            <section class="mb-6 rounded-xl border border-gray-200 bg-gray-50 p-4">
+              <h3 class="text-sm font-semibold uppercase text-gray-500 mb-3">Hình thức nhận hàng</h3>
+              <p class="text-base font-semibold text-black mb-2">{{ fulfillmentLabel(order.fulfillment) }}</p>
+              <p class="text-sm text-black whitespace-pre-line">{{ order.fulfillmentSummary }}</p>
+
+              <div *ngIf="order.fulfillment === 'PickupAtShow' && order.showSessionLabel" class="mt-3 text-sm text-gray-700">
+                <span class="font-medium">Buổi nhận:</span> {{ order.showSessionLabel }}
+              </div>
+
+              <div *ngIf="order.fulfillment === 'MetaTicketPickup'" class="mt-3 space-y-1 text-sm text-gray-700">
+                <p *ngIf="order.pickupPointName">
+                  <span class="font-medium">Điểm nhận:</span> {{ order.pickupPointName }}
+                </p>
+                <p *ngIf="order.pickupPointAddress">{{ order.pickupPointAddress }}</p>
+              </div>
+
+              <div *ngIf="order.fulfillment === 'Delivery' && order.deliveryAddress as addr" class="mt-3 space-y-1 text-sm text-gray-700">
+                <p>
+                  <span class="font-medium">Địa chỉ:</span>
+                  {{ addr.address }}, {{ addr.ward }}, {{ addr.city }}
+                </p>
+                <p *ngIf="addr.note"><span class="font-medium">Ghi chú:</span> {{ addr.note }}</p>
+              </div>
+            </section>
+
+            <section class="mb-6">
+              <h3 class="text-sm font-semibold uppercase text-gray-500 mb-3">Khách hàng</h3>
+              <p class="text-sm">{{ order.customerName }}</p>
+              <p class="text-sm text-gray-600">{{ order.customerPhone }}</p>
+              <p class="text-sm text-gray-600">{{ order.customerEmail }}</p>
+            </section>
+
+            <!-- Danh sách sản phẩm (ưu tiên hiển thị) -->
+            <section class="mb-6">
+              <h3 class="text-sm font-semibold uppercase text-gray-500 mb-3">
+                Danh sách sản phẩm ({{ order.lines.length || 0 }})
+              </h3>
+              <div *ngIf="order.lines.length; else noLines" class="overflow-x-auto rounded-xl border border-gray-200">
+                <table class="w-full text-sm">
+                  <thead class="bg-gray-50 text-gray-500">
+                    <tr>
+                      <th class="text-left px-3 py-2 font-medium">Sản phẩm</th>
+                      <th class="text-right px-3 py-2 font-medium whitespace-nowrap">Đơn giá</th>
+                      <th class="text-right px-3 py-2 font-medium">SL</th>
+                      <th class="text-right px-3 py-2 font-medium whitespace-nowrap">Thành tiền</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr *ngFor="let line of order.lines" class="border-t border-gray-100">
+                      <td class="px-3 py-3">
+                        <div class="font-medium text-black">{{ line.name }}</div>
+                        <div *ngIf="line.variantLabel" class="text-xs text-gray-500 mt-0.5">
+                          {{ line.variantLabel }}
+                        </div>
+                      </td>
+                      <td class="px-3 py-3 text-right whitespace-nowrap">{{ line.unitPrice | formatPrice }}</td>
+                      <td class="px-3 py-3 text-right">{{ line.quantity }}</td>
+                      <td class="px-3 py-3 text-right font-medium whitespace-nowrap">
+                        {{ line.lineTotal | formatPrice }}
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+              <ng-template #noLines>
+                <p class="text-sm text-gray-500">Không có sản phẩm trong đơn.</p>
+              </ng-template>
+            </section>
+
+            <section class="space-y-2 border-t border-gray-100 pt-4">
+              <div class="flex justify-between text-sm">
+                <span class="text-gray-500">Tạm tính</span>
+                <span>{{ order.subtotal | formatPrice }}</span>
+              </div>
+              <div *ngIf="order.discount as discount" class="flex justify-between text-sm">
+                <span class="text-gray-500">
+                  Giảm giá{{ discount.code ? ' (' + discount.code + ')' : '' }}
+                </span>
+                <span class="text-green-600">− {{ discount.amount | formatPrice }}</span>
+              </div>
+              <div class="flex justify-between text-base font-semibold pt-2">
+                <span>Tổng cộng</span>
+                <span class="text-blue-4867FC">{{ order.total | formatPrice }}</span>
+              </div>
+            </section>
+
+            <div class="mt-8">
+              <button
+                type="button"
+                class="rounded-xl border border-gray-C9C9C9 px-5 py-2.5 text-sm font-medium hover:bg-gray-50"
+                (click)="goBackToList()"
+              >
+                Quay lại danh sách
+              </button>
+            </div>
+          </div>
+        </main>
+      </div>
+    </div>
+  </app-layout>
+</ng-template>

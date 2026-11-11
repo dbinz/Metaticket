@@ -1,0 +1,74 @@
+.c-path { z-index: 1; opacity: 0.3; stroke: red; stroke-width: 4; fill: none; cursor: pointer; pointer-events: stroke; } 
+.c-point { z-index: 2; opacity:0.3; stroke: red; fill: blue; cursor: pointer; }
+
+text {
+    text-anchor: middle;
+    dominant-baseline: central;
+    font-size: 18px;
+    font-weight: bold;
+    font-family: montserrat;
+    text-rendering: optimizeSpeed;
+    fill: var(--seat-label-color);
+}
+
+.seat {
+    z-index: 5;
+    cursor: pointer;
+}
+
+.s-default {
+    --seat-color: violet;
+    --seat-outline-color: blue;
+    opacity: 0.7;
+}
+
+.s-z5 {
+    --seat-color: #9BBB58;
+    --seat-outline-color: rgb(200, 200, 200, 0.9);
+    --seat-label-color: white;
+}
+
+.s-z4 {
+    --seat-color: #8ADBF8;
+    --seat-outline-color: rgb(200, 200, 200, 0.9);
+}
+
+.s-z3 {
+    --seat-color: #F5DE6A;
+    --seat-outline-color: rgb(200, 200, 200, 0.9);
+}
+
+.s-z2 {
+    --seat-color: #F9A55F;
+    --seat-outline-color: rgb(200, 200, 200, 0.9);
+}
+
+.s-z1 {
+    --seat-color: #CB0E08;
+    --seat-outline-color: rgb(200, 200, 200, 0.9);
+    --seat-label-color: white;
+}
+
+.s-vip {
+    --seat-color: 	#DF7B6A;
+    --seat-outline-color: rgb(200, 200, 200, 0.9);
+}
+
+.s-svip {
+    --seat-color: #B93938;
+    --seat-outline-color: rgb(200, 200, 200, 0.9);
+    --seat-label-color: white;
+}
+
+.highlight {
+    --seat-color: rgb(255, 255, 255, 0.9) !important;
+    --seat-outline-color: rgb(100, 100, 0, 0.9) !important;
+    --seat-label-color: black;
+}
+
+.disable {
+    --seat-color: gray !important;
+    --seat-outline-color: black !important;
+    --seat-label-color: black;
+    cursor: default;
+}

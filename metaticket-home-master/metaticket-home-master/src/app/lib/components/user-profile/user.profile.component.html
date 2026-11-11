@@ -1,0 +1,20 @@
+<div class="relative"
+     role="button"
+     tabindex="0"
+     (click)="toggleDropdown()"
+     (keydown.enter)="toggleDropdown()"
+     (keydown.space)="toggleDropdown()">
+  <div class="flex items-center cursor-pointer">
+    <img class="w-8 h-8 rounded-full mr-2" [src]="profile.avatar || appImages.favicon" alt="Avatar" />
+    <span class="text-white">{{ profile.name }}</span>
+    <svg class="ml-1 w-4 h-4" fill="white" stroke="white" viewBox="0 0 24 24">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+    </svg>
+  </div>
+
+  <div *ngIf="dropdownOpen" class="absolute right-0 mt-2 w-48 bg-white border rounded shadow-lg z-50">
+    <button class="block w-full text-left px-4 py-2 hover:bg-gray-100" [routerLink]="'/quan-ly-ve'">Quản Lý Vé</button>
+    <button class="block w-full text-left px-4 py-2 hover:bg-gray-100" [routerLink]="'/thong-tin-tai-khoan'">Thông tin tài khoản</button>
+    <button class="block w-full text-left px-4 py-2 hover:bg-gray-100" (click)="logout()">Đăng Xuất</button>
+  </div>
+</div>

@@ -1,0 +1,41 @@
+<div *ngIf="appS.fgData$|async as data">
+    <div *ngFor="let kv of data.individualTicketsFormGroup|keyvalue; index as catIdx" class="mb-[20px]">
+        <div class="border mb-6" [class.border-red-500]="!kv.value.isValid">
+            <div>
+                <button type="button" (click)="collapse('accordion-collapse-body-cat-', catIdx)"
+                        class="flex items-center justify-between w-full p-5 font-medium text-left text-gray-500 bg-[#43B1E4] hover:bg-[#43B1FF]"
+                >
+                    <h2 class="font-semibold text-xl text-gray-950 uppercase">Hạng vé: {{kv.key}}</h2>
+                    <svg data-accordion-icon class="w-3 h-3 rotate-180 shrink-0" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 10 6">
+                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5 5 1 1 5"/>
+                    </svg>
+                </button>
+            </div>
+            <div id="accordion-collapse-body-cat-{{catIdx}}" [class.hidden]="catIdx>0" class="bg-blue-50 p-6 flex items-center justify-center border-b-4 border-b-gray-200 shadow">
+
+                <div class="container max-w-screen-lg mx-auto">
+                    <div *ngFor="let fg of kv.value.subFormGroup; index as tkIdx" class="mb-[20px]">
+                        <div class="border mb-6" [class.border-red-500]="!fg.isValid">
+                            <div>
+                                <button type="button" (click)="collapse('accordion-collapse-body-cat-'+catIdx+'-ticket-', tkIdx)"
+                                        class="flex items-center gap-[10px] w-full pr-5 font-medium text-left text-gray-500 bg-blue-100 hover:bg-blue-200"
+                                >
+                                    <div class="text-white font-extrabold bg-blue-600 min-w-[3rem] h-[3rem] flex items-center justify-center"><span>{{tkIdx+1}}</span></div>
+                                    <div class="font-semibold text-gray-600 py-3">{{kv.key}}</div>
+                                    <div class="grow"></div>
+                                    <svg data-accordion-icon class="w-3 h-3 rotate-180 shrink-0" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 10 6">
+                                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5 5 1 1 5"/>
+                                    </svg>
+                                </button>
+                            </div>
+                            <div id="accordion-collapse-body-cat-{{catIdx}}-ticket-{{tkIdx}}" [class.hidden]="tkIdx>0">
+                                <form-group [fg]="fg"></form-group>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>

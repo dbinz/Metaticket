@@ -1,0 +1,39 @@
+<app-layout [isDarkMode]="false">
+  <div class="w-full flex flex-col">
+    <app-basic-popup #popupBasic ></app-basic-popup>
+    <app-popup-error #popupError ></app-popup-error>
+    <div class="w-full flex flex-col px-5 pt-10 pb-20 bg-white items-center">
+      <div class="w-full max-w-[27rem]">
+        <p nz-typography class="text-2xl leading-120pct text-black font-medium text-center pb-3">Đăng ký tài khoản</p>
+        <p nz-typography class="text-[12px]">Vui lòng cung cấp thông tin chính xác để nhận những thông tin mới nhất về sự kiện cũng như giúp chúng mình hỗ trợ các bạn trong quá trình mua và xác minh vé nhé</p>
+        <form *ngIf="formGroup" class="w-full" nz-form [formGroup]="formGroup" nzLayout="vertical">
+          <div class="w-full flex flex-col space-y-6 mt-6 mb-8">
+            <app-form-input
+              [label]="'Số điện thoại'"
+              [formControl]="formGroup.controls.phoneNumber"
+              [readOnly] = true
+            />
+            <app-form-input
+              [label]="'Họ và tên'"
+              [placeholder]="''"
+              [formControl]="formGroup.controls.name"
+            />
+            <app-form-input
+              [label]="'Email'"
+              [placeholder]="''"
+              [formControl]="formGroup.controls.email"
+            />
+          </div>
+          <app-button
+            class="w-full"
+            [title]="'Xác nhận'"
+            [fontSize]="'lg'"
+            [isLoading]="loading"
+            [disabled]="formGroup.invalid"
+            (handlerOnPressed)="submit()"
+          />
+        </form>
+      </div>
+    </div>
+  </div>
+</app-layout>

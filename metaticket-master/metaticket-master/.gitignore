@@ -1,0 +1,35 @@
+**/.gradle
+**/.idea
+**/build
+**/logs
+**/out
+node_modules
+**/dist
+yarn-error.log
+.settings/
+.project
+**/conf
+_*
+nginx/ssl/*.pem
+kotlin/**/bin
+*.pem
+yarn.lock
+
+# --- Local-only (do not commit) ---
+
+# Spring `dev` profile overrides — copy from sample / README per service
+kotlin/**/src/main/resources/application-dev.properties
+
+# nginx-docker personal env (template: nginx-docker/sample.dev.env)
+nginx-docker/.env
+nginx-docker/*.dev.env
+!nginx-docker/sample.dev.env
+nginx-docker/*.dev.env.bak*
+
+# Kotlin / test artifacts on developer machine
+kotlin/.kotlin/
+**/.jqwik-database
+
+# service.show uploaded images (runtime data, see conf-sample)
+kotlin/service.show/show-image/
+kotlin/service.show/show-image-temp/

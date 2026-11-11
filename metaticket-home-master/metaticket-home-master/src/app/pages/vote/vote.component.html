@@ -1,0 +1,165 @@
+<app-layout [isDarkMode]="false">
+  <div class="w-full flex flex-col">
+    <app-navbar />
+    <app-popup-error #popupError title="Đã đạt giới hạn" />
+
+    <!-- Banner + giới thiệu + nút chuyển sang bảng bình chọn -->
+    <div *ngIf="showLanding" class="w-full flex flex-col items-center bg-grey-F4F4F4 min-h-screen">
+      <app-image [src]="'https://metaticket.com.vn/assets/neu/concert-2026/concert2026-vote-banner.jpg'"
+        class="w-full h-auto block overflow-hidden" sx="w-full h-full object-cover" />
+
+      <div class="w-full laptop:w-3/4 px-4 py-8 flex flex-col gap-5">
+        <div class="w-full max-w-lg mx-auto">
+          <app-button [title]="'BÌNH CHỌN NGAY'" [fontSize]="'lg'" (handlerOnPressed)="goToVoting()" />
+        </div>
+
+        <div class="flex flex-col gap-3">
+          <p class="text-lg md:text-xl font-bold text-black text-center">
+            KHỞI ĐẦU HÀNH TRÌNH RỰC RỠ CỦA CÁC TÂN SINH VIÊN! 🔥
+          </p>
+          <p class="text-sm text-gray-700">
+            Chào mừng K68 chính thức gia nhập ngôi nhà chung NEU! 🎓✨ Bạn đã sẵn sàng mở khóa trải nghiệm đầu tiên
+            bùng nổ nhất thời sinh viên chưa?
+          </p>
+          <p class="text-sm text-gray-700">
+            Không chỉ là một buổi lễ đón khóa mới thông thường, NEU Concert từ lâu đã trở thành "thương hiệu", một lễ
+            hội âm nhạc có quy mô và sức lan tỏa bậc nhất giới sinh viên Thủ đô. Nơi đây chính là trạm sạc năng lượng
+            khổng lồ, đưa bạn từ bất ngờ này đến vỡ òa cảm xúc khác! ⚡️💥
+          </p>
+        </div>
+
+        <div class="flex flex-col gap-3">
+          <p class="text-base font-bold text-black">🌟 ĐIỀU GÌ ĐANG CHỜ ĐÓN BẠN TẠI ĐẠI NHẠC HỘI?</p>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <div class="bg-white rounded-2xl shadow-sm p-4 flex flex-col gap-1">
+              <p class="text-sm font-semibold text-black">🎤 Dàn Line-up "đỉnh nóc kịch trần"</p>
+              <p class="text-xs text-gray-600">
+                Quy tụ những nghệ sĩ, ca sĩ và ban nhạc hàng đầu V-Pop sẵn sàng đốt cháy sân khấu cùng hàng vạn khán
+                giả.
+              </p>
+            </div>
+            <div class="bg-white rounded-2xl shadow-sm p-4 flex flex-col gap-1">
+              <p class="text-sm font-semibold text-black">🎪 Không gian lễ hội đa sắc màu</p>
+              <p class="text-xs text-gray-600">
+                Chuỗi gian hàng tương tác, hội trại Câu lạc bộ và vô vàn hoạt động check-in rực rỡ kéo dài từ sáng tới
+                đêm.
+              </p>
+            </div>
+            <div class="bg-white rounded-2xl shadow-sm p-4 flex flex-col gap-1">
+              <p class="text-sm font-semibold text-black">🔊 Sân khấu chuẩn Concert chuyên nghiệp</p>
+              <p class="text-xs text-gray-600">
+                Hệ thống âm thanh, ánh sáng và visual đỉnh cao, mang lại trải nghiệm thị giác – thính giác mãn nhãn.
+              </p>
+            </div>
+            <div class="bg-white rounded-2xl shadow-sm p-4 flex flex-col gap-1">
+              <p class="text-sm font-semibold text-black">❤️ Khoảnh khắc hòa nhịp 10.000 trái tim</p>
+              <p class="text-xs text-gray-600">
+                Cùng những người bạn mới hát vang, quẩy hết mình và lưu giữ kỷ niệm ngày đầu đại học đẹp nhất.
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <p class="text-sm text-gray-700">
+          Tuổi trẻ chỉ có một lần, và thanh xuân tại NEU sẽ bắt đầu bằng những thanh âm rực rỡ nhất! Hãy cùng chuẩn bị
+          một tinh thần rực lửa để cháy hết mình tại đêm nhạc hội năm nay nhé! 🚀✨
+        </p>
+
+        <div class="flex flex-col gap-1 text-sm text-black font-medium">
+          <p>📍 Địa điểm: Sân Ký túc xá – Đại học Kinh tế Quốc dân</p>
+          <p>⏰ Thời gian: Dự kiến Tháng 10/2026</p>
+        </div>
+      </div>
+    </div>
+
+    <div *ngIf="!showLanding" class="w-full px-4 pt-10 pb-32 bg-grey-F4F4F4 min-h-screen flex flex-col items-center">
+      <div class="laptop:w-3/4 w-full flex flex-col gap-5">
+        <p class="text-2xl leading-120pct text-black font-semibold text-center uppercase">
+          {{ hasVoted ? 'Chân thành cảm ơn!' : 'Hãy bình chọn cho nghệ sĩ bạn yêu thích nhất!' }}
+        </p>
+
+        <ng-container *ngIf="loading">
+          <div class="flex flex-col gap-3">
+            <div *ngFor="let i of [1, 2, 3, 4]" class="h-20 rounded-2xl bg-white animate-pulse"></div>
+          </div>
+        </ng-container>
+
+        <ng-container *ngIf="!loading">
+          <div class="text-center text-black" *ngIf="!hasVoted">
+            <p class="text-md text-gray-500" *ngIf="multi">(Bình chọn tối đa {{ maxChoicePerVote }} Nghệ sĩ)</p>
+          </div>
+          <div class="text-center text-black" *ngIf="hasVoted">
+            <p class="text-md font-medium">Chúng tôi trân trọng những lượt bình chọn của các bạn ❤</p>
+            <p class="text-md font-medium">
+              Dưới đây là <span class="font-bold">XẾP HẠNG NGHỆ SĨ ĐƯỢC YÊU THÍCH NHẤT</span> của các NEUer!
+            </p>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-3">
+            <div *ngFor="let option of options; let i = index"
+              class="flex flex-col gap-2 bg-white rounded-2xl shadow-sm px-3 py-3 border-2 transition-colors"
+              [class.cursor-pointer]="multi && !hasVoted" [class.border-blue-4867FC]="isSelected(option.id)"
+              [class.bg-blue-4867FC]="isSelected(option.id)" [class.bg-opacity-5]="isSelected(option.id)"
+              [class.border-transparent]="!isSelected(option.id)" [attr.tabindex]="multi && !hasVoted ? 0 : null"
+              [attr.role]="multi && !hasVoted ? 'button' : null"
+              (click)="multi && !hasVoted ? toggleOption(option.id) : null"
+              (keyup.enter)="multi && !hasVoted ? toggleOption(option.id) : null">
+              <div class="flex items-center gap-3">
+                <!-- Rank badge -->
+                <div class="shrink-0 w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold" [ngClass]="{
+                    'bg-yellow-FED80B text-black': i === 0,
+                    'bg-gray-C9C9C9 text-black': i === 1,
+                    'bg-[#CD7F32] text-white': i === 2,
+                    'bg-grey-F4F4F4 text-gray-500': i > 2
+                  }">
+                  {{ i + 1 }}
+                </div>
+
+                <!-- Thumbnail -->
+                <app-image *ngIf="option.thumbnailUrl" [src]="option.thumbnailUrl"
+                  class="shrink-0 w-12 h-12 rounded-full overflow-hidden" sx="w-full h-full object-cover" />
+                <div *ngIf="!option.thumbnailUrl"
+                  class="shrink-0 w-12 h-12 rounded-full bg-blue-4867FC bg-opacity-10 text-blue-4867FC font-semibold flex items-center justify-center">
+                  {{ option.label.charAt(0) }}
+                </div>
+
+                <!-- Label -->
+                <div class="flex-1 min-w-0 flex flex-col">
+                  <p class="text-base font-medium text-black line-clamp-2">{{ option.label }}</p>
+                  <p class="text-xs text-gray-500 truncate" *ngIf="option.description">{{ option.description }}</p>
+                </div>
+
+                <!-- Action: nút Vote (chọn 1, chưa vote) hoặc dấu tích (chọn nhiều) -->
+                <div class="shrink-0 w-20" *ngIf="!multi && !hasVoted">
+                  <app-button title="Vote" color="primary" fontSize="sm" py="py-2"
+                    [isLoading]="submittingOptionId === option.id" [disabled]="submittingOptionId !== null"
+                    (handlerOnPressed)="voteSingle(option.id)" />
+                </div>
+                <div *ngIf="multi || (hasVoted && isSelected(option.id))"
+                  class="shrink-0 w-7 h-7 rounded-full border-2 flex items-center justify-center"
+                  [class.bg-blue-4867FC]="isSelected(option.id)" [class.border-blue-4867FC]="isSelected(option.id)"
+                  [class.border-gray-C9C9C9]="!isSelected(option.id)">
+                  <svg *ngIf="isSelected(option.id)" class="w-4 h-4 text-white" viewBox="0 0 20 20" fill="currentColor">
+                    <path fill-rule="evenodd"
+                      d="M16.704 5.29a1 1 0 010 1.415l-7.5 7.5a1 1 0 01-1.414 0l-3.5-3.5a1 1 0 111.414-1.414l2.793 2.793 6.793-6.793a1 1 0 011.414 0z"
+                      clip-rule="evenodd" />
+                  </svg>
+                </div>
+              </div>
+
+
+            </div>
+          </div>
+
+          <!-- Nút Vote tổng (chế độ chọn nhiều, chưa vote) — sticky cuối khu vực vote, full width trên mobile -->
+          <div *ngIf="multi && !hasVoted"
+            class="sticky bottom-0 z-10 -mx-4 w-[calc(100%+2rem)] p-4 bg-white shadow-[0_-2px_8px_rgba(0,0,0,0.08)] lg:mx-0 lg:w-full lg:p-0 lg:shadow-none lg:bg-transparent lg:pb-10">
+            <app-button [title]="'Vote (' + selectedOptionIds.length + '/' + maxChoicePerVote + ')'"
+              [disabled]="selectedOptionIds.length === 0" [isLoading]="submitting"
+              (handlerOnPressed)="submitSelected()" />
+          </div>
+        </ng-container>
+      </div>
+    </div>
+  </div>
+</app-layout>

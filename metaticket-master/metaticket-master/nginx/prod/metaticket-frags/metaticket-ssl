@@ -1,0 +1,7 @@
+# SSL Configuration - Hardened
+ssl_certificate     /etc/letsencrypt/live/metaticket.com.vn/fullchain.crt;
+ssl_certificate_key /etc/letsencrypt/live/metaticket.com.vn/private.key;
+ssl_trusted_certificate     /etc/letsencrypt/live/metaticket.com.vn/chain.crt;
+ssl_protocols       TLSv1 TLSv1.1 TLSv1.2 TLSv1.3;
+ssl_ciphers         EECDH+AESGCM:EDH+AESGCM; # Modern ciphers, consider using Mozilla SSL Config Generator
+ssl_prefer_server_ciphers off;

@@ -1,0 +1,14 @@
+location /planner {
+    add_header Access-Control-Allow-Origin *;
+    alias /staging/metaticket/static/portal/portal.seatplanner;
+}
+location /admin {
+    add_header Access-Control-Allow-Origin *;
+    try_files $uri $uri/ /admin/index.html;
+    alias /staging/metaticket/static/portal/portal.admin;
+}
+location /odcapp {
+    add_header Access-Control-Allow-Origin *;
+    try_files $uri $uri/ /odcapp/index.html;
+    alias /staging/metaticket/static/portal/portal.order.datacollector;
+}

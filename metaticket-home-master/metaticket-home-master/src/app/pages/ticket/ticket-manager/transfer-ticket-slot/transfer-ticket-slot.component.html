@@ -1,0 +1,117 @@
+<!-- Overlay -->
+<div class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-[12000]">
+  <app-popup-error #popupError ></app-popup-error>
+  <!-- Modal box -->
+  <div class="bg-white rounded-2xl shadow-lg w-full max-w-[32rem] p-5 relative">
+    <button class="absolute top-3 right-3 text-gray-400 hover:text-gray-600" (click)="closePopup()">
+      ✕
+    </button>
+
+    <ng-container [ngSwitch]="step">
+      <!-- Confirm -->
+      <div *ngSwitchCase="'confirm'" class="text-center">
+        <h2 class="text-lg font-semibold mb-2">Xác nhận gửi vé</h2>
+        <p class="text-gray-600 mb-4">Bạn có chắc chắn muốn gửi vé không?</p>
+        <div class="flex justify-end gap-2">
+          <button class="px-4 py-2 text-gray-500" (click)="closePopup()">Huỷ</button>
+          <button class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700" (click)="confirmAction()">Xác nhận</button>
+        </div>
+      </div>
+
+      <!-- Form -->
+      <div *ngSwitchCase="'form'" class="space-y-4">
+
+        <form *ngIf="formGroup" class="w-full" nz-form [formGroup]="formGroup" nzLayout="vertical">
+          <div class="w-full flex flex-col space-y-6 mt-6 mb-8">
+            <h2 class="text-lg font-semibold">Tặng vé</h2>
+            <app-form-input
+              [label]="'Tên người nhận vé'"
+              [placeholder]="'Nhập tên người nhận'"
+              [formControl]="formGroup.controls.newOwnerName"
+            />
+            <app-form-input
+              [label]="'Số điện thoại tài khoản nhận vé'"
+              [placeholder]="'(+84)'"
+              [formControl]="formGroup.controls.newOwnerPhone"
+            />
+            <app-form-input
+              [label]="'Nhập lại số điện thoại'"
+              [placeholder]="'(+84)'"
+              [type]="'text'"
+              [formControl]="formGroup.controls.confirmationNewOwnerPhone"
+            />
+            <div *ngIf="captchaSetting.enable" class="flex flex-col justify-center items-center w-full">
+              <re-captcha *ngIf="captchaSetting.captchaGateway === 'recaptcha'" #recaptchaRef
+                          [siteKey]="captchaSetting.siteKey" size="normal" theme="light"
+                          (resolved)="resolvedCaptcha($event)">
+              </re-captcha>
+              <ng-hcaptcha *ngIf="captchaSetting.captchaGateway === 'hcaptcha'" #hcaptchaRef
+                           [siteKey]="captchaSetting.siteKey"
+                           [languageCode]="'vi'"
+                           (verify)="resolvedCaptcha($event)"
+                           (expired)="onHcaptchaExpired($event)"
+                           (error)="onHcaptchaError($event)">
+              </ng-hcaptcha>
+            </div>
+            <app-button
+              class="w-full"
+              [title]="'Gửi vé'"
+              [fontSize]="'lg'"
+              [disabled]="formGroup.invalid"
+              [isLoading]="loading"
+              (handlerOnPressed)="submit()"
+            />
+          </div>
+        </form>
+      </div>
+
+      <!-- Success -->
+      <div *ngSwitchCase="'otp'" class="w-full flex flex-col px-5 pt-10 pb-20 bg-white items-center">
+        <div class="w-full max-w-[27rem]">
+          <app-otp title="Xác thực tặng vé"
+                   [loading]="loading"
+                   [error]="otpError"
+                   (resenOtp)="onResendOtp()"
+                   (callback)="onInputOtp($event)">
+          </app-otp>
+        </div>
+      </div>
+
+      <!-- Success -->
+      <div *ngSwitchCase="'success'" class="text-center text-green-600 text-xl font-semibold">
+        ✔ Vé của bạn đã được gửi thành công
+      </div>
+
+      <!-- Error -->
+      <div *ngSwitchCase="'error'" class="text-center text-red-600 text-xl font-semibold">
+        <!-- Icon -->
+        <div class="flex justify-center mb-4">
+          <div class="bg-orange-100 text-orange-600 rounded-full p-2">
+            <svg width="51" height="50" viewBox="0 0 51 50" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M25.5 37.4922C26.2083 37.4922 26.8025 37.2522 27.2825 36.7722C27.7625 36.2922 28.0017 35.6989 28 34.9922C28 34.2839 27.76 33.6897 27.28 33.2097C26.8 32.7297 26.2067 32.4905 25.5 32.4922C24.7917 32.4922 24.1975 32.7322 23.7175 33.2122C23.2375 33.6922 22.9983 34.2855 23 34.9922C23 35.7005 23.24 36.2947 23.72 36.7747C24.2 37.2547 24.7933 37.4939 25.5 37.4922ZM25.5 49.9922C22.0417 49.9922 18.7917 49.3355 15.75 48.0222C12.7083 46.7089 10.0625 44.928 7.8125 42.6797C5.5625 40.4297 3.78167 37.7839 2.47 34.7422C1.15833 31.7005 0.501667 28.4505 0.5 24.9922C0.5 21.5339 1.15667 18.2839 2.47 15.2422C3.78333 12.2005 5.56417 9.55469 7.8125 7.30469C10.0625 5.05469 12.7083 3.27385 15.75 1.96219C18.7917 0.650521 22.0417 -0.00614583 25.5 -0.0078125C28.9583 -0.0078125 32.2083 0.648854 35.25 1.96219C38.2917 3.27552 40.9375 5.05635 43.1875 7.30469C45.4375 9.55469 47.2192 12.2005 48.5325 15.2422C49.8458 18.2839 50.5017 21.5339 50.5 24.9922C50.5 28.4505 49.8433 31.7005 48.53 34.7422C47.2167 37.7839 45.4358 40.4297 43.1875 42.6797C40.9375 44.9297 38.2917 46.7114 35.25 48.0247C32.2083 49.338 28.9583 49.9939 25.5 49.9922ZM25.5 27.4922C26.2083 27.4922 26.8025 27.2522 27.2825 26.7722C27.7625 26.2922 28.0017 25.6989 28 24.9922V14.9922C28 14.2839 27.76 13.6897 27.28 13.2097C26.8 12.7297 26.2067 12.4905 25.5 12.4922C24.7917 12.4922 24.1975 12.7322 23.7175 13.2122C23.2375 13.6922 22.9983 14.2855 23 14.9922V24.9922C23 25.7005 23.24 26.2947 23.72 26.7747C24.2 27.2547 24.7933 27.4939 25.5 27.4922Z" fill="#FF5A2E"/>
+            </svg>
+          </div>
+        </div>
+
+        <!-- Title -->
+        <h2 class="text-lg font-semibold mb-2">
+          Vé được gửi không thành công!
+        </h2>
+
+        <!-- Description -->
+        <p class="text-sm text-gray-500">
+          {{ errorMessage }}
+        </p>
+        <p class="text-sm text-gray-500">
+          Bạn sẽ được đưa lại về trang Quản lý vé.
+        </p>
+
+        <!-- Countdown -->
+        <p *ngIf="countdown > 0"
+           class="text-xs text-gray-500 mt-6">
+          Thông báo sẽ tự động tắt sau {{ countdown }} giây.
+        </p>
+      </div>
+    </ng-container>
+  </div>
+</div>

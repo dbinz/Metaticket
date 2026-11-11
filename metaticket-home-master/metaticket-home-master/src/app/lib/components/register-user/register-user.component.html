@@ -1,0 +1,47 @@
+<div class="w-full flex flex-col">
+  <div class="w-full bg-white flex flex-col items-center">
+    <p
+      nz-typography
+      class="text-2xl leading-120pct text-black font-medium"
+    >
+      Đăng ký
+    </p>
+    <form
+      class="w-full"
+      nz-form
+      [formGroup]="formGroup"
+    >
+      <div class="w-full flex flex-col space-y-6 mt-6 mb-2">
+        <app-form-input
+          [label]="'Số điện thoại'"
+          [placeholder]="'VD: 012345678'"
+          [formControl]="formGroup.controls.phoneNumber"
+        />
+        <app-form-input
+          [label]="'Mật khẩu'"
+          [placeholder]="'Nhập mật khẩu của bạn'"
+          [type]="'password'"
+          [formControl]="formGroup.controls.password"
+        />
+        <app-form-input
+          [label]="'Nhập lại mật khẩu'"
+          [placeholder]="'Nhập lại mật khẩu của bạn'"
+          [type]="'password'"
+          [formControl]="formGroup.controls.password"
+        />
+      </div>
+      <app-form-input-checkbox
+        [label]="'Tôi đồng ý với các Chính sách và Điều khoản sử dụng của Meta Ticket'"
+        [formControl]="formGroup.controls.checked"
+      />
+      <div class="mt-8">
+        <app-button
+          class="w-full"
+          [title]="'Đăng ký'"
+          [fontSize]="'lg'"
+          (handlerOnPressed)="register()"
+        />
+      </div>
+    </form>
+  </div>
+</div>

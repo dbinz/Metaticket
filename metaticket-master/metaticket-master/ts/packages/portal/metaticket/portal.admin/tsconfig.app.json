@@ -1,0 +1,39 @@
+/* To learn more about this file see: https://angular.io/config/tsconfig. */
+{
+    "extends": "../../../../tsconfig.json",
+    "compilerOptions": {
+        "outDir": "../../../../out-tsc/app",
+        "baseUrl": "../../../../",
+        "types": [],
+        "strict": false,
+        "noImplicitAny": false,
+        "strictPropertyInitialization": false,
+        "strictNullChecks": false,
+        "noPropertyAccessFromIndexSignature": false,
+        "noImplicitOverride": false,
+        "useDefineForClassFields": false,
+        "skipLibCheck": true,
+        "noImplicitReturns": false,
+        "paths": {
+            "@metaticket/editor.common": ["packages/lib/metaticket/editor.common/src/public-api.ts"],
+            "@metaticket/editor.policydesc": ["packages/lib/metaticket/editor.policydesc/src/public-api.ts"],
+            "@metaticket/editor.seatplanner": ["packages/lib/metaticket/editor.seatplanner/src/public-api.ts"],
+            "@metaticket/editor.seatplanner.ui": ["packages/lib/metaticket/editor.seatplanner.ui/src/public-api.ts"],
+            "@viclass/editorui.commontools": ["local_modules/viclass/editor.commontools"],
+            "@viclass/editor.coordinator": ["local_modules/viclass/editor.coordinator"],
+            "@viclass/editor.core": ["local_modules/viclass/editor.core"],
+            "@viclass/editorui.loader": ["local_modules/viclass/editorui.loader"],
+            "@viclass/ww": ["local_modules/viclass/ww"],
+            "@viclass/ww/*": ["local_modules/viclass/ww/*"],
+            "@admin.portal/*": ["packages/portal/metaticket/portal.admin/src/app/*"],
+            "app/*": ["packages/portal/metaticket/portal.admin/src/app/*"]
+        }
+    },
+    "angularCompilerOptions": {
+        "strictInjectionParameters": false,
+        "strictInputAccessModifiers": false,
+        "strictTemplates": false
+    },
+    "files": ["src/main.ts", "src/polyfills.ts"],
+    "include": ["src/**/*.d.ts"]
+}

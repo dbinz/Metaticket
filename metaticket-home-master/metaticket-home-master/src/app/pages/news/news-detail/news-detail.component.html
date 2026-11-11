@@ -1,0 +1,104 @@
+<app-layout>
+  <div class="flex flex-col">
+    <app-navbar />
+
+    <div class="news-detail-page bg-blue-072591 flex flex-col px-4 laptop:px-0 pt-6 pb-16">
+      @if (loading) {
+        <div class="w-full laptop:w-3/4 mx-auto flex flex-col animate-pulse" aria-hidden="true">
+          <div class="flex gap-2 mb-6">
+            <div class="h-3 w-16 rounded bg-white/10"></div>
+            <div class="h-3 w-2 rounded bg-white/10"></div>
+            <div class="h-3 w-20 rounded bg-white/10"></div>
+          </div>
+
+          <div class="h-8 md:h-10 w-11/12 rounded bg-white/10 mb-3"></div>
+          <div class="h-8 md:h-10 w-2/3 rounded bg-white/10 mb-4"></div>
+
+          <div class="h-4 w-1/2 rounded bg-white/10 mb-5"></div>
+
+          <div class="news-detail-hero mb-8 rounded-xl overflow-hidden">
+            <div class="w-full aspect-video bg-white/10"></div>
+          </div>
+
+          <div class="flex flex-col gap-3">
+            @for (l of skeletonLines; track l) {
+              <div class="h-4 rounded bg-white/10" [style.width]="l"></div>
+            }
+          </div>
+        </div>
+      } @else if (newsDetail) {
+        <div class="w-full laptop:w-3/4 mx-auto flex flex-col">
+          <nav class="flex gap-2 text-[11px] uppercase tracking-[0.12em] text-blue-9CA8D3 mb-6" aria-label="breadcrumb">
+            <a class="text-white no-underline font-semibold hover:text-yellow-FED80B" [routerLink]="['/', routeName.news]">
+              Tin tức
+            </a>
+            <span>/</span>
+            <span>{{ newsDetail.categoryName }}</span>
+          </nav>
+
+          <h1 class="text-white font-extrabold leading-tight m-0 mb-3 text-[1.75rem] md:text-[2.5rem]">
+            {{ newsDetail.title }}
+          </h1>
+          @if (newsDetail.subdesc) {
+            <p class="m-0 mb-3 text-12-20 md:text-14-24 text-blue-9CA8D3">{{ newsDetail.subdesc }}</p>
+          }
+          <p class="text-sm text-blue-9CA8D3 m-0 mb-5">
+            {{ newsDetail.categoryName }} · {{ newsDetail.author || 'META Ticket' }} · {{ newsDetail.displayDate }}
+          </p>
+
+          @if (newsDetail.show; as show) {
+            <a class="news-detail-cta self-start mb-6" [routerLink]="show.url">
+              {{ ctaLabel(show.type) }}
+              <span class="news-detail-cta-name">{{ show.showName }}</span>
+            </a>
+          }
+
+          <div class="news-detail-hero mb-8 overflow-hidden rounded-xl">
+            <img [src]="newsDetail.thumbnail" [alt]="newsDetail.title" class="w-full h-auto block" />
+          </div>
+
+          <article class="news-detail-body" [innerHTML]="newsDetail.content"></article>
+          @if (newsDetail.tags?.length) {
+            <p class="news-detail-tags">{{ tagLine(newsDetail.tags) }}</p>
+          }
+        </div>
+
+        @if (relatedNews.length) {
+          <section class="w-full laptop:w-3/4 mx-auto mt-12 pt-10 border-t border-white/10">
+            <h2 class="text-white text-xl font-extrabold m-0 mb-5">Bài viết liên quan</h2>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
+              @for (item of relatedNews; track item.slug) {
+                <a class="news-related-card" [href]="newsArticleHref(item.slug)">
+                  <img [src]="item.thumbnail" [alt]="item.title" />
+                  <span>{{ item.categoryName }}</span>
+                  <p>{{ item.title }}</p>
+                  @if (item.subdesc) {
+                    <p class="m-0 mt-1 text-12-20 md:text-14-24 text-blue-9CA8D3 line-clamp-2">{{ item.subdesc }}</p>
+                  }
+                </a>
+              }
+            </div>
+          </section>
+        }
+
+        @if (recommendedNews.length) {
+          <section class="w-full laptop:w-3/4 mx-auto mt-10">
+            <h2 class="text-white text-xl font-extrabold m-0 mb-5">Có thể bạn quan tâm</h2>
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+              @for (item of recommendedNews; track item.slug) {
+                <a class="news-related-card" [href]="newsArticleHref(item.slug)">
+                  <img [src]="item.thumbnail" [alt]="item.title" />
+                  <span>{{ item.categoryName }}</span>
+                  <p>{{ item.title }}</p>
+                  @if (item.subdesc) {
+                    <p class="m-0 mt-1 text-12-20 md:text-14-24 text-blue-9CA8D3 line-clamp-2">{{ item.subdesc }}</p>
+                  }
+                </a>
+              }
+            </div>
+          </section>
+        }
+      }
+    </div>
+  </div>
+</app-layout>

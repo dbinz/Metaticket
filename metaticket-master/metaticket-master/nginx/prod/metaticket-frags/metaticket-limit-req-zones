@@ -1,0 +1,4 @@
+# Include once inside the http { } block of prod nginx.conf, e.g.:
+#   include /etc/nginx/metaticket-frags/metaticket-limit-req-zones;
+
+limit_req_zone $binary_remote_addr zone=wp_login:10m rate=5r/m;

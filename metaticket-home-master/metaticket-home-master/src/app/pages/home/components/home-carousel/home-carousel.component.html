@@ -1,0 +1,27 @@
+<div class="flex flex-col my-6 space-y-5 laptop:my-12">
+  <nz-carousel
+    [nzEffect]="'scrollx'"
+    [nzDots]="false"
+    [nzLoop]="true"
+    (nzAfterChange)="onChange($event)"
+  >
+    <div nz-carousel-content *ngFor="let index of array" class="flex justify-center px-3">
+      <app-image
+        [sx]="'rounded-2xl'"
+        [src]="index"
+      />
+    </div>
+  </nz-carousel>
+  <div class="flex flex-row justify-center space-x-4">
+    <ng-container
+      *ngFor="let index of array; index as idx"
+      [ngTemplateOutlet]="dot"
+      [ngTemplateOutletContext]="{isSelected: idx === currentIndex}"
+    />
+  </div>
+</div>
+
+<ng-template #dot let-isSelected="isSelected">
+  <div class="w-5 h-1 bg-white rounded-full {{isSelected ? '': 'opacity-30'}} laptop:w-8">
+  </div>
+</ng-template>

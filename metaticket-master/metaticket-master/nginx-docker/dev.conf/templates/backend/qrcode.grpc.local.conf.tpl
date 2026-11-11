@@ -1,0 +1,4 @@
+server {
+    listen $QRCODE_GRPC_CONNECT_PORT;
+    proxy_pass $METATICKET_LOCAL:$QRCODE_GRPC_LISTEN_PORT;
+}

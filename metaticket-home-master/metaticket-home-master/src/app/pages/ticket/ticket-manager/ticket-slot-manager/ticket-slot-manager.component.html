@@ -1,0 +1,151 @@
+<app-layout [isDarkMode]="false">
+  <div class="w-full flex flex-col">
+    <div class="bg-blue-163AEA">
+      <app-navbar></app-navbar>
+    </div>
+
+    <div class="flex flex-col md:flex-row bg-gray-100 min-h-screen">
+      <!-- Sidebar -->
+      <aside class="md:w-1/4 w-full p-4 border-b md:border-b-0 md:border-r border-gray-200">
+        <div class="text-sm text-gray-600 mb-4">
+          <span class="cursor-pointer hover:underline"
+                role="button"
+                tabindex="0"
+                (click)="goBack()"
+                (keydown.enter)="goBack()">Trang chủ</span> /
+          <span class="cursor-pointer font-semibold text-black hover:underline"
+                role="button"
+                tabindex="0"
+                (click)="goBack()"
+                (keydown.enter)="goBack()">Quản lý vé</span> /
+          <span class="font-semibold text-black">Quản lý slots</span>
+        </div>
+
+        <!-- Tabs -->
+        <div class="flex md:flex-col gap-2">
+          <button class="py-2 px-4 text-sm rounded-full bg-white text-black font-semibold border border-blue-500"
+                  (click)="goBack()">
+            Quản lý vé
+          </button>
+          <button
+            class="py-2 px-4 text-sm rounded-full bg-transparent text-gray-600 hover:text-black border border-transparent hover:border-gray-300"
+            [routerLink]="['/quan-ly-don-hang']">
+            Quản lý đơn hàng
+          </button>
+          <button
+            class="py-2 px-4 text-sm rounded-full bg-transparent text-gray-600 hover:text-black border border-transparent hover:border-gray-300"
+            [routerLink]="['/thong-tin-tai-khoan']">
+            Thông tin tài khoản
+          </button>
+        </div>
+      </aside>
+
+      <!-- Ticket slots Content -->
+      <main class="flex-1 p-4">
+        <div class="p-4 lg:p-6 max-w-5xl mx-auto space-y-4">
+
+          <ng-container *ngIf="ticketSlotsByOrderData as order; else loadingOrder">
+            <div class="mb-4">
+              <h2 class="text-lg md:text-xl font-semibold">{{ order.evenName }}</h2>
+              <p class="text-sm text-gray-500">{{ order.city }} - {{ order.visitDate ? visitDateLabel(order.visitDate, order.calendar) : formatDate(order.eventTime) }}</p>
+              <p class="text-sm text-gray-500">{{ order.venus }}</p>
+            </div>
+            <ng-container *ngFor="let ticketSlot of order.ticketSlots">
+              <div *ngFor="let state of ticketSlot.states"
+                   class="bg-white border rounded-xl p-4 flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+                <div class="flex items-start gap-4">
+                  <div
+                    class="w-24 h-24 border rounded-xl flex items-center justify-center bg-gray-50 relative shrink-0">
+                    <img
+                      role="button"
+                      tabindex="0"
+                      (click)="openQrCode(ticketSlot, state)"
+                      (keydown.enter)="openQrCode(ticketSlot, state)"
+                      src="assets/homepage/images/qrcode_metaticket.com.vn.svg"
+                      alt="QR Code"
+                      class="w-20 h-20 cursor-pointer"
+                      [ngClass]="{'opacity-30': state.reason === 'TRANSFERRED_AWAY' || state.status !== 'QR_GENERATED' || ticketSlot.optStatus !== 'OPENED'}">
+                    <div *ngIf="state.reason === 'TRANSFERRED_AWAY'"
+                         class="absolute inset-0 flex items-center justify-center">
+                      <div class="text-xs text-blue-600 font-semibold bg-white px-4 py-1 rounded-[20%]">Sent</div>
+                    </div>
+                  </div>
+
+                  <div>
+                    <p class="font-semibold">Hạng ghế: {{ ticketSlot.priceCat }}</p>
+                    <p class="text-sm text-gray-500">Số ghế: {{ ticketSlot.sid }}</p>
+                    <p class="text-sm text-gray-500">Vé thứ: {{ ticketSlot.ticketIdx }} - Slot
+                      thứ: {{ ticketSlot.slotIdx }}</p>
+                    <p class="text-sm text-gray-500">{{ ticketSlot.visitDate ? 'Ngày tham quan: ' + visitDateLabel(ticketSlot.visitDate, order.calendar) : 'Thời gian: ' + formatDate(order.eventTime) }}</p>
+                  </div>
+                </div>
+
+                <div class="flex flex-col sm:flex-row gap-2 w-full md:w-auto">
+                  <button (click)="openQrCode(ticketSlot, state)"
+                          class="w-full sm:w-auto border border-gray-300 px-4 py-2 rounded text-sm hover:bg-gray-100 disabled:opacity-70 disabled:cursor-not-allowed"
+                          [disabled]="state.reason === 'TRANSFERRED_AWAY' || state.status !== 'QR_GENERATED' || ticketSlot.optStatus !== 'OPENED'">
+                    {{ state.status === 'CHECKED_IN' ? 'Đã check-in' : 'Xem QR' }}
+                  </button>
+                  <button (click)="openPopupTransferTicketSlot(ticketSlot, state)"
+                          class="w-full sm:w-auto border border-gray-300 px-4 py-2 rounded text-sm hover:bg-gray-100 disabled:opacity-70 disabled:cursor-not-allowed"
+                          [disabled]="state.status === 'CHECKED_IN' || ticketSlot.optStatus === 'CLOSED' || state.reason === 'TRANSFERRED_AWAY'">
+                    Tặng vé
+                  </button>
+                </div>
+              </div>
+            </ng-container>
+          </ng-container>
+
+          <ng-template #loadingOrder>
+            <div class="w-full flex items-center justify-center h-[300px]">
+              <app-loading />
+            </div>
+          </ng-template>
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <app-transfer-ticket-slot *ngIf="transferTicketSlot | async as a"
+                            [ticketSlot]="a.slot" [state]="a.state"
+                            (closed)="transferTicketSlot.next(undefined)"
+                            (transferSuccess)="onTransferSuccess()"
+  ></app-transfer-ticket-slot>
+
+  <div *ngIf="showQrCodeModal | async"
+       class="modal-overlay"
+       (click)="closeQrCodeModal()"
+       (keydown.enter)="closeQrCodeModal()"
+       (keydown.space)="closeQrCodeModal()"
+       (keydown.escape)="closeQrCodeModal()"
+       tabindex="0"
+       role="dialog"
+       aria-modal="true"
+       aria-labelledby="qrCodeModalTitle">
+    <div class="modal-content"
+         (click)="$event.stopPropagation()"
+         (keydown.enter)="$event.stopPropagation()"
+         (keydown.space)="$event.stopPropagation()"
+         tabindex="-1">
+      <button class="modal-close-button" (click)="closeQrCodeModal()" aria-label="Đóng">&times;</button>
+      <h3
+        id="qrCodeModalTitle"
+        class="qr-modal-title"
+        *ngIf="currentQrCodeTicketSlot | async as slot; else qrTitleFallback"
+      >
+        <span class="block">Hạng ghế: {{ slot.priceCat }}</span>
+        <span class="block">Số ghế: {{ slot.sid }}</span>
+      </h3>
+      <ng-template #qrTitleFallback>
+        <h3 id="qrCodeModalTitle" class="sr-only">Mã QR của vé</h3>
+      </ng-template>
+      <div *ngIf="currentQrCodeImage | async as qrImage; else noQrImage" class="qr-code-container">
+        <img [src]="qrImage" alt="Mã QR của vé" />
+      </div>
+      <ng-template #noQrImage>
+        <p>Đang tải mã QR hoặc mã QR không có sẵn.</p>
+      </ng-template>
+    </div>
+  </div>
+  <app-popup-error #popupError></app-popup-error>
+</app-layout>

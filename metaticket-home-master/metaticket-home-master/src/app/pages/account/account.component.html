@@ -1,0 +1,127 @@
+<app-layout [isDarkMode]="false">
+  <div class="w-full flex flex-col">
+    <div class="bg-blue-163AEA">
+      <app-navbar></app-navbar>
+    </div>
+    <div class="flex flex-col md:flex-row bg-gray-100 min-h-screen">
+      <app-basic-popup #popupBasic></app-basic-popup>
+      <app-popup-error #popupError></app-popup-error>
+
+      <!-- Sidebar -->
+      <aside class="md:w-1/4 p-4">
+        <div class="text-sm text-gray-600 mb-4">
+          <span>Trang chủ</span> / <span class="font-semibold text-black">Thông tin tài khoản</span>
+        </div>
+
+        <!-- Tabs -->
+        <div class="flex md:flex-col border-b md:border-none">
+          <button class="py-2 px-4 text-gray-400 hover:text-black md:text-left md:rounded-full md:bg-transparent"
+                  [routerLink]="['/quan-ly-ve']">
+            Quản lý vé
+          </button>
+          <button class="py-2 px-4 text-gray-400 hover:text-black md:text-left md:rounded-full md:bg-transparent"
+                  [routerLink]="['/quan-ly-don-hang']">
+            Quản lý đơn hàng
+          </button>
+          <button
+            class="py-2 px-4 text-gray-400 hover:text-black md:text-left md:rounded-full md:bg-transparent text-black font-semibold border-b-2 border-blue-500 md:bg-white">
+            Thông tin tài khoản
+          </button>
+        </div>
+      </aside>
+
+      <!-- Content -->
+      <main class="flex-1 p-4">
+        <div *ngIf="account | async as account" class="flex-1 bg-white rounded-xl shadow p-8">
+          <h2 class="text-base font-semibold mb-6">THÔNG TIN TÀI KHOẢN</h2>
+
+          <form *ngIf="formGroup" [formGroup]="formGroup">
+            <!-- Tên tài khoản -->
+            <div class="mb-4">
+              <app-form-input
+                [readOnly]="!isEditing"
+                [label]="'Tên tài khoản'"
+                [formControl]="formGroup.controls.name"
+              />
+            </div>
+
+            <!-- Số điện thoại -->
+            <div class="mb-4">
+              <label for="phoneNumber" class="block text-sm font-medium mb-1">Số điện thoại</label>
+              <div class="flex gap-2">
+                <input
+                  id="phoneNumber"
+                  type="text"
+                  class="w-20 rounded-full border border-gray-300 px-3 py-2 text-sm bg-gray-50 text-gray-500"
+                  [value]="'+'+splitNormalizedPhoneNumber(account.phone)?.countryCode"
+                  readonly
+                />
+                <input
+                  type="text"
+                  class="flex-1 rounded-full border border-gray-300 px-4 py-2 text-sm bg-gray-50 text-gray-500"
+                  [value]="splitNormalizedPhoneNumber(account.phone)?.nationalNumber"
+                  readonly
+                />
+              </div>
+            </div>
+
+            <!-- Email -->
+            <div class="mb-6">
+              <div class="flex items-center justify-between mb-1">
+                <span *ngIf="!isEditing" class="text-xs text-green-600 font-medium">Đã xác thực</span>
+              </div>
+              <app-form-input
+                [readOnly]="!isEditing"
+                [formControl]="formGroup.controls.email"
+                [label]="'Email'" />
+            </div>
+
+            <!-- Buttons -->
+            <div class="flex gap-4">
+              <ng-container *ngIf="!isEditing">
+                <app-button
+                  [color]="'primary'"
+                  [title]="'Thay đổi thông tin'"
+                  [isLoading]="loading"
+                  (handlerOnPressed)="editInfo()"
+                >
+                  Thay đổi thông tin
+                  <span class="ml-2">✎</span>
+                </app-button>
+              </ng-container>
+              <ng-container *ngIf="isEditing">
+                <app-button
+                  [color]="'primary'"
+                  [title]="'Lưu thay đổi'"
+                  [isLoading]="loading"
+                  (handlerOnPressed)="submit()"
+                />
+                <app-button
+                  [color]="'white'"
+                  [title]="'Hủy thay đổi'"
+                  [isLoading]="loading"
+                  (handlerOnPressed)="cancelEdit()"
+                />
+              </ng-container>
+            </div>
+          </form>
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <!-- OTP Modal -->
+  <div *ngIf="showOtpModal" class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+    <div class="bg-white rounded-lg p-6 w-full max-w-md relative">
+      <button (click)="closeOtpModal()" class="absolute top-4 right-4 text-gray-500 hover:text-black">✕</button>
+      <app-otp
+        title="Xác thực Email mới"
+        description="Vui lòng nhập mã OTP đã được META Ticket gửi đến email của bạn"
+        [loading]="otpLoading"
+        [error]="otpError"
+        (resenOtp)="onResendOtp()"
+        (callback)="onVerifyOtp($event)">
+      </app-otp>
+    </div>
+  </div>
+</app-layout>

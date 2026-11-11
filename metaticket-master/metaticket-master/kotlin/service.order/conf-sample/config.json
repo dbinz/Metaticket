@@ -1,0 +1,6 @@
+{
+    "orderConfig": {
+        "expireInMinute": 5,
+        "scanExpireInMinute": 1
+    }
+}

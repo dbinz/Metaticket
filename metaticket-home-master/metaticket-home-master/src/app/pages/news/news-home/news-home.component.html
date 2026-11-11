@@ -1,0 +1,146 @@
+<app-layout>
+  <div class="flex flex-col">
+    <app-navbar />
+
+    <div class="news-page bg-blue-072591 flex flex-col px-4 laptop:px-0 pt-6 pb-16">
+      <div class="w-full laptop:w-3/4 mx-auto flex flex-col">
+        @if (loading) {
+        <section class="mb-10 animate-pulse" aria-hidden="true">
+          <div
+            class="news-hero w-full flex flex-col md:flex-row bg-[#122448] border border-white/10 rounded-xl overflow-hidden">
+            <div class="md:w-1/3 aspect-video bg-white/10"></div>
+            <div class="p-4 md:p-5 flex flex-col md:w-2/3 gap-3">
+              <div class="h-5 w-3/4 rounded bg-white/10"></div>
+              <div class="h-5 w-1/2 rounded bg-white/10"></div>
+              <div class="h-3 w-1/3 rounded bg-white/10 mt-2"></div>
+              <div class="h-8 w-32 rounded bg-white/10 mt-auto"></div>
+            </div>
+          </div>
+        </section>
+
+        <div class="flex flex-col gap-10" aria-hidden="true">
+          @for (s of skeletonSections; track s) {
+          <section class="animate-pulse">
+            <div class="flex items-center gap-3 mb-4">
+              <span class="w-1 h-5 rounded-sm bg-white/10 shrink-0"></span>
+              <div class="h-4 w-32 rounded bg-white/10"></div>
+            </div>
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+              @for (t of skeletonTiles; track t) {
+              <div class="flex flex-col bg-[#122448] border border-white/10 rounded-xl overflow-hidden">
+                <div class="aspect-video bg-white/10"></div>
+                <div class="px-3 mt-3 h-4 w-5/6 rounded bg-white/10"></div>
+                <div class="px-3 mt-2 h-3 w-4/6 rounded bg-white/10"></div>
+                <div class="px-3 mt-2 mb-3 h-3 w-1/3 rounded bg-white/10"></div>
+              </div>
+              }
+            </div>
+          </section>
+          }
+        </div>
+        } @else {
+        @if (featured.length > 0) {
+        <section class="mb-10" aria-label="Nổi bật">
+
+          <nz-carousel [nzEffect]="'scrollx'" [nzDots]="false" [nzLoop]="featured.length > 1"
+            (nzAfterChange)="onFeaturedChange($event)">
+            @for (item of featured; track item.slug) {
+            <div nz-carousel-content class="flex justify-center">
+              <article
+                class="news-hero w-full flex flex-col md:flex-row bg-[#122448] border border-white/10 rounded-xl overflow-hidden">
+                <a class="md:w-1/3 aspect-video block overflow-hidden" [href]="newsArticleHref(item.slug)">
+                  <img [src]="item.thumbnail" [alt]="item.title" class="w-full h-full object-cover" />
+                </a>
+                <div class="p-4 md:p-5 flex flex-col md:w-2/3 gap-2">
+                  <h3 class="m-0 text-lg font-medium leading-snug text-white line-clamp-3">
+                    <a class="text-white no-underline hover:text-gray-500" [href]="newsArticleHref(item.slug)">
+                      {{ item.title }}
+                    </a>
+                  </h3>
+                  @if (item.subdesc || item.summary) {
+                  <p class="m-0 text-12-20 md:text-14-24 text-blue-9CA8D3 line-clamp-3">
+                    {{ item.subdesc || item.summary }}
+                  </p>
+                  }
+                  <p class="m-0 text-xs text-blue-9CA8D3/80">{{ item.displayDate }}</p>
+                  @if (item.show) {
+                  <a class="news-cta mt-auto md:mt-4" [routerLink]="item.show.url">
+                    {{ ctaLabel(item.show.type) }}
+                  </a>
+                  }
+                </div>
+              </article>
+            </div>
+            }
+          </nz-carousel>
+
+          @if (featured.length > 1) {
+          <div class="flex flex-row justify-center space-x-4 mt-4">
+            @for (item of featured; track item.slug; let i = $index) {
+            <span class="w-5 h-1 rounded-full bg-white transition-opacity"
+              [class.opacity-30]="i !== currentFeaturedIndex" [class.opacity-100]="i === currentFeaturedIndex"></span>
+            }
+          </div>
+          }
+        </section>
+        }
+
+        <div class="flex flex-col gap-10">
+          @for (section of sections; track section.code) {
+          <section class="scroll-mt-20">
+            <div class="flex items-center gap-3 mb-4">
+              <span class="w-1 h-5 rounded-sm shrink-0" [style.background]="section.bar"></span>
+              <h2 class="text-base font-medium text-white m-0">{{ section.name }}</h2>
+              <span class="flex-1"></span>
+              <a class="text-xs text-blue-9CA8D3 hover:text-white no-underline"
+                [routerLink]="['/', routeName.news, categoryPath, section.slug]">
+                Xem tất cả →
+              </a>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+              @for (item of visibleArticles(section); track item.slug) {
+              <article
+                class="news-tile flex flex-col bg-[#122448] border border-white/10 rounded-xl overflow-hidden hover:border-white/25 transition">
+                <a class="aspect-video block overflow-hidden" [href]="newsArticleHref(item.slug)">
+                  <img [src]="item.thumbnail" [alt]="item.title" class="w-full h-full object-cover" />
+                </a>
+                <h3 class="px-3 mt-3 mb-0 text-[13px] font-medium leading-snug line-clamp-2">
+                  <a class="text-white no-underline hover:text-gray-500" [href]="newsArticleHref(item.slug)">
+                    {{ item.title }}
+                  </a>
+                </h3>
+                @if (item.subdesc || item.summary) {
+                <p class="px-3 mt-1 mb-0 text-12-20 md:text-14-24 text-blue-9CA8D3 line-clamp-2">
+                  {{ item.subdesc || item.summary }}
+                </p>
+                }
+                <p class="px-3 mt-1 mb-0 text-[11px] text-blue-9CA8D3">
+                  {{ item.displayDate }}
+                </p>
+                @if (item.show) {
+                <a class="news-cta m-3" [routerLink]="item.show.url">
+                  {{ ctaLabel(item.show.type) }}
+                </a>
+                } @else {
+                <div class="mb-3"></div>
+                }
+              </article>
+              }
+            </div>
+
+            <div class="text-center">
+              @if (articlesOf(section.code).length > previewCount) {
+              <button type="button" class="news-more mt-4" (click)="toggleExpand(section.code)">
+                {{ isExpanded(section.code) ? 'Thu gọn' : 'Xem thêm' }}
+              </button>
+              }
+            </div>
+          </section>
+          }
+        </div>
+        }
+      </div>
+    </div>
+  </div>
+</app-layout>

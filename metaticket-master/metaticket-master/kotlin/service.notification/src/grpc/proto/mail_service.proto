@@ -1,0 +1,13 @@
+syntax = "proto3";
+
+package metaticket.notification.mail.grpc;
+
+import "google/protobuf/empty.proto";
+import "mail_message.proto";
+
+service MailNotificationService {
+  rpc SendMailOrder(SendMailOrderRequest) returns (google.protobuf.Empty);
+  rpc SendMailOTP(SendMailOTPRequest) returns (google.protobuf.Empty);
+  // NEW, dedicated accessory-order mail RPC (additive; ticket SendMailOrder above is unchanged).
+  rpc SendMailAccessoryOrder(SendMailAccessoryOrderRequest) returns (google.protobuf.Empty);
+}

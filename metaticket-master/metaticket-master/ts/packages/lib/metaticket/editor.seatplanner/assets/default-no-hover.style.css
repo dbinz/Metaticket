@@ -1,0 +1,49 @@
+.c-path { z-index: 1; opacity: 0.3; stroke: red; stroke-width: 4; fill: none; cursor: pointer; pointer-events: stroke; } 
+.c-point { z-index: 2; opacity:0.3; stroke: red; fill: blue; cursor: pointer; }
+
+text {
+    text-anchor: middle;
+    dominant-baseline: central;
+    font-size: 10px;
+    font-weight: bold;
+    font-family: montserrat;
+    text-rendering: optimizeSpeed;
+
+}
+
+.seat {
+    z-index: 5;
+    cursor: pointer;
+}
+
+.s-default {
+    --seat-color: violet;
+    --seat-outline-color: blue;
+    opacity: 0.7;
+}
+
+.s-gold {
+    --seat-color: rgb(255, 215, 0, 0.9);
+    --seat-outline-color: rgb(150, 30, 30, 0.9);
+}
+
+.s-silver {
+    --seat-color: 	rgb(211, 211, 211, 0.9);
+    --seat-outline-color: rgb(0, 0, 0, 1.0);
+}
+
+.s-bronze {
+    --seat-color: rgb(200, 255, 120, 0.9);
+    --seat-outline-color: rgb(150, 30, 30, 0.9);
+}
+
+.highlight {
+    --seat-color: rgb(255, 0, 0, 0.9) !important;
+    --seat-outline-color: rgb(100, 100, 0, 0.9) !important;
+}
+
+.disable {
+    --seat-color: gray !important;
+    --seat-outline-color: black !important;
+    opacity: 0.4;
+}

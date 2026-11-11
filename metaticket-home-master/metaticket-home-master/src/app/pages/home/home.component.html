@@ -1,0 +1,12 @@
+<app-layout>
+  <div class="flex flex-col relative">
+    <home-header />
+    <home-content class="relative" />
+    <div class="hidden laptop:block absolute right-[50px] top-[100px] z-1">
+      <app-image [sx]="'h-[40px] h-[40px]'" [src]="appIcons.icStar"/>
+    </div>
+    <div class="hidden absolute top-[60px] tablet:top-[100px] right-0 -z-0 image-grid">
+      <app-image sx="w-full" [src]="appIcons.icGrid"></app-image>
+    </div>
+  </div>
+</app-layout>

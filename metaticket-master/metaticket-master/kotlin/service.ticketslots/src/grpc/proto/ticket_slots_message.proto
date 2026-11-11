@@ -1,0 +1,41 @@
+syntax = "proto3";
+
+package metaticket.ticketslots.grpc;
+
+message ScanTicketSlotRequest {
+    string sessionId = 1;
+    string verify_code = 2;
+}
+
+message ScanTicketSlotResponse {
+    string order_code = 1;
+    string cat = 2;
+    string sid = 3;
+    int32 ticket_idx = 4;
+    int32 slot_idx = 5;
+}
+
+message GetQRCodeRequest {
+    string order_id = 1;
+    string order_code = 2;
+    int32 required_qrcode = 3;
+    optional int64 timeout_full = 4;
+}
+
+message TicketSlotQRCodeProto {
+    string ticket_id = 1;
+    string price_cat = 2;
+    string sid = 3;
+    string ticket_idx = 4;
+    string slot_id = 5;
+    string slot_idx = 6;
+    string slot_state_idx = 7;
+    string slot_status = 8;
+    optional bytes qr_code = 9;
+}
+
+message GetQRCodeResponse {
+    string order_id = 1;
+    string order_code = 2;
+    repeated TicketSlotQRCodeProto ticket_slots = 3;
+}

@@ -1,0 +1,77 @@
+location /private/ {
+    auth_request /internal/authenticate;
+
+    auth_request_set $userId $upstream_http_x_op_user_id;
+    proxy_set_header X-OP-User-Id $userId;
+    proxy_set_header Host $host;
+    proxy_set_header X-Real-IP $remote_addr;
+    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+
+    location /private/accessory {
+        proxy_pass http://accessory_service;
+    }
+    location /private/show {
+        proxy_pass http://show_service;
+    }
+    location /private/show/upload/image {
+        client_max_body_size 3M;
+        proxy_pass http://show_service;
+    }
+    location /private/ticket {
+        proxy_pass http://ticket_service;
+    }
+    location /private/order {
+        proxy_pass http://order_service;
+    }
+    location /private/payment {
+        proxy_pass http://payment_service;
+    }
+    location /private/jobrunr {
+        proxy_pass http://jobrunr_service;
+    }
+    location /private/notification {
+        proxy_pass http://notification_service;
+    }
+    location /private/ticket-slots {
+        proxy_pass http://ticket_slots_service;
+    }
+    location /private/qrcode {
+        proxy_pass http://qrcode_service;
+    }
+    location /private/authentication {
+        proxy_pass http://authentication_service;
+    }
+    location /private/authorization {
+        proxy_pass http://authorization_service;
+    }
+    location /private/odc {
+        proxy_pass http://odc_service;
+    }
+    location /private/admin {
+        proxy_pass http://admin_service;
+    }
+    location /private/customer-user {
+        proxy_pass http://customer_user_service;
+    }
+    location /private/customer-auth {
+        proxy_pass http://customer_auth_service;
+    }
+    location /private/editor/policydesc {
+        proxy_pass http://editor_policydesc_service;
+    }
+    location /private/editor/policydesc/uploadImage {
+        client_max_body_size 5M;
+        proxy_pass http://editor_policydesc_service;
+    }
+    location /private/editor/seatplanner {
+        proxy_pass http://editor_seatplanner_service;
+    }
+    location /private/editor/seatplanner/uploadImage {
+        client_max_body_size 5M;
+        proxy_pass http://editor_seatplanner_service;
+    }
+    # Nested under /private/ → inherits auth_request
+    location /private/news {
+        proxy_pass http://news_service;
+    }
+}

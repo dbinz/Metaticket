@@ -1,0 +1,217 @@
+<app-layout>
+  <app-navbar />
+  <section class="flex flex-1 flex-col laptop:w-3/4 w-full mx-auto px-5 laptop:px-0 py-10 gap-8">
+    <!-- Loading state -->
+    <div *ngIf="isLoading" class="flex flex-1 items-center justify-center py-20">
+      <app-loading [isSpinning]="true" [size]="'lg'" />
+    </div>
+
+    <!-- Error state (Req 2.5) -->
+    <div *ngIf="!isLoading && error" class="flex flex-1 flex-col items-center justify-center gap-4 py-20">
+      <p nz-typography class="text-base text-grey-757575">Sản phẩm hiện không khả dụng.</p>
+      <div class="w-[180px]">
+        <app-button
+          [title]="'Về danh sách sản phẩm'"
+          [color]="'primary'"
+          [fontSize]="'sm'"
+          (handlerOnPressed)="onBackToList()"
+        />
+      </div>
+    </div>
+
+    <!-- Detail -->
+    <ng-container *ngIf="!isLoading && !error && show">
+      <div *ngIf="isWaiting" class="pd-sale-banner pd-sale-banner--wait">
+        <p class="pd-sale-kicker">Sắp mở bán</p>
+        <p class="pd-sale-title">Sự kiện chưa mở bán — chưa thể đặt hàng</p>
+        <p *ngIf="saleOpenAtLabel" class="pd-sale-sub">Mở bán lúc {{ saleOpenAtLabel }}</p>
+        <p *ngIf="!hasSaleCountdown" class="pd-sale-sub">Vui lòng quay lại khi sự kiện mở bán.</p>
+        <div *ngIf="hasSaleCountdown" class="pd-count" aria-label="Đếm ngược đến giờ mở bán">
+          <div class="pd-count__cell">
+            <span>{{ pad2(saleRemain.days) }}</span>
+            <small>Ngày</small>
+          </div>
+          <div class="pd-count__cell">
+            <span>{{ pad2(saleRemain.hours) }}</span>
+            <small>Giờ</small>
+          </div>
+          <div class="pd-count__cell">
+            <span>{{ pad2(saleRemain.minutes) }}</span>
+            <small>Phút</small>
+          </div>
+          <div class="pd-count__cell">
+            <span>{{ pad2(saleRemain.seconds) }}</span>
+            <small>Giây</small>
+          </div>
+        </div>
+      </div>
+
+      <div *ngIf="isClosed" class="pd-sale-banner pd-sale-banner--closed">
+        <p class="pd-sale-kicker">Đã đóng</p>
+        <p class="pd-sale-title">Sự kiện đã ngừng bán hàng</p>
+        <p class="pd-sale-sub">Bạn vẫn có thể xem sản phẩm, nhưng không thể thêm vào giỏ hay thanh toán.</p>
+      </div>
+
+      <!-- Show info banner -->
+      <div class="flex flex-col gap-6 rounded-3xl bg-blue-163AEA px-6 py-6 laptop:px-10 laptop:py-8 text-white">
+        <div class="flex flex-col gap-6 tablet:flex-row tablet:items-start tablet:justify-between">
+          <div class="flex min-w-0 flex-col gap-1 tablet:flex-1">
+            <p nz-typography class="text-14-24 text-white/70">Merch chính thức</p>
+            <h1 nz-typography class="break-words text-xl tablet:text-2xl laptop:text-32-40 font-semibold text-white leading-tight">
+              {{ show.name }}
+            </h1>
+            <p nz-typography class="break-words text-14-24 text-white/80 line-clamp-3">{{ subtitleLine }}</p>
+          </div>
+
+          <!-- Cart button + product thumbnails (icons) -->
+          <div class="flex flex-row items-center gap-4 tablet:shrink-0 tablet:flex-col tablet:items-end">
+            <button
+              *ngIf="canPurchase"
+              type="button"
+              class="relative flex shrink-0 items-center gap-2 rounded-full border border-white/40 px-4 py-4 tablet:py-2 text-14-24 font-medium text-white hover:bg-white/10"
+              (click)="onOpenCart()"
+            >
+              <span class="flex items-center gap-2">
+                <svg class="h-5 w-5 inline-block"  fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"/>
+                </svg>
+                <span class="hidden tablet:inline-block text-base">Giỏ hàng</span>
+              </span>
+              <span
+                *ngIf="(cartCount$ | async) as count"
+                class="flex min-w-[20px] h-5 items-center justify-center rounded-full bg-white px-1 text-xs font-semibold text-blue-163AEA"
+                [class.hidden]="count === 0"
+              >
+                {{ count }}
+              </span>
+            </button>
+
+            <div class="hidden tablet:grid grid-cols-3 gap-3">
+              <div
+                *ngFor="let thumb of bannerThumbs; trackBy: trackByProductId"
+                class="flex h-16 w-16 items-center justify-center rounded-2xl bg-white/15 p-2"
+              >
+                <app-image [src]="productImage(thumb)" [sx]="'w-full h-full object-contain rounded-lg'" />
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Product list -->
+      <div class="flex flex-col gap-4">
+        <p nz-typography class="text-lg font-medium text-black">Danh sách sản phẩm</p>
+
+        <!-- Empty catalog -->
+        <div *ngIf="accessories.length === 0" class="flex flex-1 items-center justify-center py-16">
+          <p nz-typography class="text-base text-grey-757575">Chưa có sản phẩm nào cho show này.</p>
+        </div>
+
+        <!-- Grid: up to 5 per row -->
+        <div
+          *ngIf="accessories.length > 0"
+          class="w-full grid grid-cols-1 gap-3 sm:grid-cols-2 tablet:grid-cols-3 laptop:grid-cols-4 laptop:gap-4"
+        >
+          <button
+            *ngFor="let product of accessories; trackBy: trackByProductId"
+            type="button"
+            class="flex h-full flex-col gap-2 rounded-2xl border border-gray-C9C9C9 p-3 text-left transition-shadow"
+            [class.hover:shadow-md]="canPurchase"
+            [class.cursor-not-allowed]="!canPurchase"
+            [class.opacity-70]="!canPurchase"
+            (click)="onOpenProduct(product)"
+          >
+            <div class="pb-[100%] relative w-full rounded-xl bg-blue-50 overflow-hidden">
+              <app-image
+                [src]="productImage(product)"
+                [sx]="'w-full h-full absolute left-0 top-0 object-contain p-3'"
+              />
+            </div>
+            <div class="flex flex-1 flex-col gap-0.5 px-1">
+              <p nz-typography class="text-14-16 font-light text-stroke-1 text-black">{{ product.name }}</p>
+              <p nz-typography class="mt-auto text-16-24 font-semibold text-stroke-2 text-[#e56f1a]">{{ product.price | formatPrice }}</p>
+            </div>
+          </button>
+        </div>
+      </div>
+
+      <!-- Order info -->
+      <div class="flex flex-col gap-4">
+        <p nz-typography class="text-lg font-medium text-black">Thông tin đặt hàng</p>
+        <div class="grid grid-cols-1 gap-x-10 gap-y-5 rounded-2xl border border-gray-C9C9C9 p-6 laptop:grid-cols-2">
+          <div class="flex items-start gap-3">
+            <span class="text-xl leading-none">📦</span>
+            <div class="flex flex-col">
+              <p nz-typography class="text-14-16 font-medium text-black">Hình thức nhận</p>
+              <p nz-typography class="text-14-24 text-grey-757575">{{ pickupLabel }}</p>
+            </div>
+          </div>
+
+          <div class="flex items-start gap-3">
+            <span class="text-xl leading-none">💳</span>
+            <div class="flex flex-col">
+              <p nz-typography class="text-14-16 font-medium text-black">Thanh toán</p>
+              <p nz-typography class="text-14-24 text-grey-757575">{{ paymentLabel }}</p>
+            </div>
+          </div>
+
+          <div class="flex items-start gap-3">
+            <span class="text-xl leading-none">🏷️</span>
+            <div class="flex flex-col">
+              <p nz-typography class="text-14-16 font-medium text-black">Ưu đãi</p>
+              <p nz-typography class="text-14-24 text-grey-757575">Nhập mã ở bước giỏ hàng</p>
+            </div>
+          </div>
+
+          <div class="flex items-start gap-3">
+            <span class="text-xl leading-none">✅</span>
+            <div class="flex flex-col">
+              <p nz-typography class="text-14-16 font-medium text-black">Chính hãng</p>
+              <p nz-typography class="text-14-24 text-grey-757575">Merch chính thức từ {{ show.name }}</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </ng-container>
+  </section>
+
+  <!-- Product picker popup -->
+  <app-product-modal
+    *ngIf="canPurchase && selectedProduct && show"
+    [show]="show"
+    [product]="selectedProduct"
+    [pickupLabel]="pickupLabel"
+    (closed)="onCloseProductModal()"
+    (viewCart)="onOpenCart()"
+  />
+
+  <!-- Cart review + discount popup -->
+  <div
+    *ngIf="canPurchase && isCartModalOpen"
+    class="fixed inset-0 z-[12000] flex items-end laptop:items-center justify-center bg-black/50 p-0 laptop:p-5"
+    (click)="onCloseCartModal()"
+    (keydown.escape)="onCloseCartModal()"
+    tabindex="0"
+    role="dialog"
+    aria-modal="true"
+    aria-label="Giỏ hàng"
+  >
+    <div
+      class="relative flex max-h-[92vh] w-full flex-col overflow-hidden rounded-t-2xl bg-white laptop:w-[640px] laptop:rounded-2xl"
+      (click)="$event.stopPropagation()"
+      (keydown.enter)="$event.stopPropagation()"
+      (keydown.space)="$event.stopPropagation()"
+      tabindex="-1"
+    >
+      <accessory-cart
+        class="flex min-h-0 flex-1 flex-col"
+        [show]="show"
+        [pickupLabel]="pickupLabel"
+        (continue)="onCartContinue()"
+        (addMore)="onCloseCartModal()"
+        (closed)="onCloseCartModal()"
+      />
+    </div>
+  </div>
+</app-layout>
+<app-accessory-pending-order-modal />

@@ -1,0 +1,146 @@
+<accessory-order-countdown [expiresAt]="expiresAt" [encodedOrderId]="encodedOrderId" />
+
+<div class="w-full flex flex-col max-w-2xl mx-auto">
+  <p nz-typography class="text-xl font-semibold text-black mb-1">Phương thức thanh toán</p>
+  <p nz-typography class="text-sm text-gray-A4A4A4 mb-6">Đơn hàng {{ orderCode }}</p>
+
+  <div class="w-full flex flex-col space-y-4">
+    <ng-container
+      *ngFor="let method of paymentMethods"
+      [ngTemplateOutlet]="paymentMethodItem"
+      [ngTemplateOutletContext]="{ name: method.name, icon: method.icon, code: method.code }"
+    />
+  </div>
+
+  <nz-divider class="my-6"></nz-divider>
+
+  <div class="w-full flex flex-row items-center justify-between mb-6">
+    <span class="text-lg font-semibold text-black">Tổng cộng</span>
+    <span class="text-lg font-semibold text-black">{{ total | formatPrice }}</span>
+  </div>
+
+  <!-- Thay cho nút "Quay lại": tới bước này đơn đã được tạo (reserve-on-create). Nút "Hủy đơn" gọi
+       backend huỷ đơn (nhả kho + mã giảm giá) rồi mới xoá đơn ở frontend, tránh sinh đơn rác/giữ kho
+       trùng như khi lùi bước rồi đặt lại. -->
+  <div class="w-full flex flex-col-reverse gap-3 laptop:flex-row laptop:justify-between">
+    <div class="w-full laptop:w-48">
+      <app-button
+        [title]="'Hủy đơn'"
+        [color]="'gray'"
+        [isLoading]="cancelLoading"
+        (handlerOnPressed)="onRequestCancel()"
+      />
+    </div>
+    <div class="w-full laptop:w-64">
+      <app-button
+        [title]="'Thanh toán'"
+        [disabled]="paymentMethod === null"
+        [isLoading]="createPaymentLoading"
+        (handlerOnPressed)="startPayment()"
+      />
+    </div>
+  </div>
+</div>
+
+<ng-template #paymentMethodItem let-name="name" let-icon="icon" let-code="code">
+  <button
+    (click)="onSelectPayment(code)"
+    class="w-full flex flex-row items-center px-6 py-4 border-2 rounded-full space-x-3 bg-grey-F4F4F4 {{
+      paymentMethod === code ? 'border-blue-4867FC' : 'border-grey-F4F4F4'
+    }}"
+  >
+    <app-image
+      [src]="icon"
+      [sx]="code === paymentType.InternationalCard ? 'h-3' : code === paymentType.VietQr ? 'h-4' : 'h-5'"
+    />
+    <p nz-typography class="text-sm text-black leading-normal laptop:text-base text-stroke-2">{{ name }}</p>
+  </button>
+</ng-template>
+
+
+<!-- "Hủy đơn" confirmation: cancelling is irreversible (releases the reserved stock + discount). -->
+<div
+  *ngIf="cancelConfirmOpen"
+  class="fixed inset-0 z-[1100] flex items-center justify-center bg-black/50 px-4"
+  (click)="onDismissCancel()"
+  (keydown.escape)="onDismissCancel()"
+  role="dialog"
+  aria-modal="true"
+  tabindex="-1"
+>
+  <div
+    class="w-full max-w-md rounded-2xl bg-white p-6 text-left"
+    (click)="$event.stopPropagation()"
+    (keydown.enter)="$event.stopPropagation()"
+    (keydown.space)="$event.stopPropagation()"
+    tabindex="-1"
+  >
+    <div class="flex items-center gap-3">
+      <div class="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-red-50 text-2xl text-red-500">
+        !
+      </div>
+      <p nz-typography class="text-lg font-semibold text-black">Hủy đơn hàng?</p>
+    </div>
+
+    <div class="mt-4 flex flex-col gap-3">
+      <p nz-typography class="text-14-24 text-black">
+        Đơn hàng <span class="font-semibold text-blue-4867FC">#{{ orderCode }}</span> sẽ bị hủy và không thể khôi phục.
+        Sản phẩm đang giữ sẽ được trả lại. Bạn có chắc chắn muốn hủy?
+      </p>
+    </div>
+
+    <div class="mt-6 flex flex-col-reverse gap-3 laptop:flex-row laptop:justify-end">
+      <button
+        type="button"
+        class="rounded-xl border border-gray-C9C9C9 px-5 py-2.5 text-14-24 font-medium text-black hover:bg-gray-50"
+        (click)="onDismissCancel()"
+      >
+        Không, giữ đơn
+      </button>
+      <button
+        type="button"
+        class="rounded-xl bg-red-500 px-5 py-2.5 text-14-24 font-semibold text-white hover:brightness-95 disabled:opacity-60"
+        [disabled]="cancelLoading"
+        (click)="onConfirmCancel()"
+      >
+        Có, hủy đơn
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- Trình duyệt chặn tab thanh toán: chưa gọi payment/start nên đơn vẫn có thể thanh toán lại. -->
+<div
+  *ngIf="popupBlockedOpen"
+  class="fixed inset-0 z-[1100] flex items-center justify-center bg-black/50 px-4"
+  role="dialog"
+  aria-modal="true"
+  tabindex="-1"
+>
+  <div class="w-full max-w-md rounded-2xl bg-white p-6 text-left" tabindex="-1">
+    <p nz-typography class="text-lg font-semibold text-black">Trình duyệt của bạn đang khóa pop-ups</p>
+
+    <p nz-typography class="mt-4 text-14-24 text-black">
+      Chúng tôi chưa mở được cửa sổ thanh toán. Bạn có thể cho phép pop-up cho trang này, hoặc bấm nút
+      bên dưới để thanh toán ngay trên tab hiện tại.
+    </p>
+
+    <div class="mt-6 flex flex-col-reverse gap-3 laptop:flex-row laptop:justify-end">
+      <button
+        type="button"
+        class="rounded-xl border border-gray-C9C9C9 px-5 py-2.5 text-14-24 font-medium text-black hover:bg-gray-50"
+        (click)="closePopupBlocked()"
+      >
+        Quay lại
+      </button>
+      <button
+        type="button"
+        class="rounded-xl bg-blue-4867FC px-5 py-2.5 text-14-24 font-semibold text-white hover:brightness-95 disabled:opacity-60"
+        [disabled]="createPaymentLoading"
+        (click)="continuePaymentSameTab()"
+      >
+        Tiếp tục thanh toán
+      </button>
+    </div>
+  </div>
+</div>

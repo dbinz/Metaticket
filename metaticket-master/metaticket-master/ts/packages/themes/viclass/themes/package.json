@@ -1,0 +1,24 @@
+{
+    "name": "@viclass/themes",
+    "version": "1.0.0",
+    "peerDependencies": {
+      "bootstrap": "*"
+    },
+    "dependencies": {
+      "tslib": "^2.3.0"
+    },
+    "scripts": {
+      "build": "cd ../../../.. && npx webpack --config ./packages/themes/viclass/themes/webpack.js"
+    },
+    "exports": {
+      "./common" : {
+        "default" : "./src/common.scss"
+      },
+      "./button": {
+        "default" : "./src/button.scss"
+      },
+      "./form": {
+        "default" : "./src/form.scss"
+      }
+    }
+  }

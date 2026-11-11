@@ -1,0 +1,15 @@
+:host /deep/ angular2-smart-table thead {
+    .ng2-smart-sort-link {
+        font-weight: 800 !important;
+    }
+}
+
+:host /deep/ .calendar-badge {
+    display: inline-block;
+    padding: 0 0.5rem;
+    border-radius: 0.75rem;
+    background-color: #eef3ff;
+    color: #3366ff;
+    font-size: 0.7rem;
+    font-weight: 600;
+}

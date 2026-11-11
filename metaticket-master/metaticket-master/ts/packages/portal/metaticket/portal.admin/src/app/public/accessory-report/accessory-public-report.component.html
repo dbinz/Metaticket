@@ -1,0 +1,92 @@
+<nb-card [nbSpinner]="loading > 0">
+    <nb-card-header>
+        <div class="header-row">
+            <div>
+                <div class="title">BÁO CÁO BÁN HÀNG</div>
+                <div class="subtitle" *ngIf="report">{{ report.reportName }}</div>
+            </div>
+            <button
+                nbButton
+                status="primary"
+                size="small"
+                *ngIf="report"
+                (click)="downloadExcel()"
+                title="Tải Excel"
+            >
+                <nb-icon icon="download-outline"></nb-icon>
+                Excel
+            </button>
+        </div>
+    </nb-card-header>
+
+    <nb-card-body>
+        <div *ngIf="errorMessage" class="error">{{ errorMessage }}</div>
+
+        <ng-container *ngIf="report as r">
+            <div class="meta">
+                <div>
+                    <span class="label">Sự kiện</span>
+                    <strong>{{ r.showCode }} — {{ r.showName }}</strong>
+                </div>
+                <div>
+                    <span class="label">Khoảng ngày</span>
+                    <strong>{{ windowLabel() }}</strong>
+                </div>
+            </div>
+
+            <div class="stats-row">
+                <div class="stat-card">
+                    <div class="stat-label">Tổng đơn</div>
+                    <div class="stat-value">{{ r.summary.totalOrders }}</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Đã thanh toán</div>
+                    <div class="stat-value">{{ r.summary.paidOrders }}</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">SL sản phẩm</div>
+                    <div class="stat-value">{{ r.summary.unitsSold }}</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Doanh số</div>
+                    <div class="stat-value">{{ formatVnd(r.summary.grossSales) }}</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Giảm giá</div>
+                    <div class="stat-value">{{ formatVnd(r.summary.discountTotal) }}</div>
+                </div>
+                <div class="stat-card accent">
+                    <div class="stat-label">Doanh thu</div>
+                    <div class="stat-value">{{ formatVnd(r.summary.revenue) }}</div>
+                </div>
+            </div>
+
+            <p class="hint">Doanh số / SL / Doanh thu chỉ tính đơn đã thanh toán.</p>
+
+            <h6>Theo sản phẩm</h6>
+            <table class="product-table" *ngIf="r.byProduct?.length; else emptyProducts">
+                <thead>
+                    <tr>
+                        <th>Sản phẩm</th>
+                        <th>SKU</th>
+                        <th>Đơn giá</th>
+                        <th>SL bán</th>
+                        <th>Doanh số</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let p of r.byProduct">
+                        <td>{{ p.name }}</td>
+                        <td>{{ p.sku }}</td>
+                        <td>{{ formatVnd(p.unitPrice) }}</td>
+                        <td>{{ p.quantity }}</td>
+                        <td>{{ formatVnd(p.grossSales) }}</td>
+                    </tr>
+                </tbody>
+            </table>
+            <ng-template #emptyProducts>
+                <div class="hint">Chưa có sản phẩm đã bán trong khoảng lọc.</div>
+            </ng-template>
+        </ng-container>
+    </nb-card-body>
+</nb-card>

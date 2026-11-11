@@ -1,0 +1,455 @@
+<nb-card class="acc-show-page" [nbSpinner]="loading > 0">
+    <nb-card-header>
+        <div class="page-head">
+            <div class="page-head__left">
+                <a class="back-link" routerLink="/portal/accessory/shows">← Sự kiện bán hàng</a>
+                <h4 class="page-title">{{ headerTitle }}</h4>
+                <div class="page-meta">
+                    <span
+                        class="badge"
+                        *ngIf="isEdit"
+                        [class.badge--open]="form.get('status')?.value === 'Open'"
+                        [class.badge--waiting]="form.get('status')?.value === 'Waiting'"
+                        [class.badge--closed]="form.get('status')?.value === 'Closed'">
+                        {{ form.get('status')?.value === 'Waiting' ? 'Chờ mở bán' : form.get('status')?.value }}
+                    </span>
+                    <span class="meta-code" *ngIf="isEdit && show">{{ show.code }}</span>
+                </div>
+            </div>
+            <div class="page-head__actions">
+                <button nbButton type="button" ghost status="basic" routerLink="/portal/accessory/shows">Hủy</button>
+                <button nbButton type="button" status="primary" (click)="onSubmit()">
+                    {{ isEdit ? 'Lưu' : 'Tạo' }}
+                </button>
+            </div>
+        </div>
+    </nb-card-header>
+
+    <nb-card-body>
+        <form [formGroup]="form" (ngSubmit)="onSubmit()">
+            <nb-tabset fullWidth (changeTab)="onTabChange($event)">
+                <nb-tab tabTitle="Thông tin" [active]="activeTabIndex === 0">
+                    <div class="tab-pane">
+                        <div class="grid-2">
+                            <div class="field">
+                                <label [class.is-error]="codeCtrl.invalid && (codeCtrl.dirty || submitPressed)"
+                                    >Mã show *</label
+                                >
+                                <input
+                                    nbInput
+                                    fullWidth
+                                    fieldSize="medium"
+                                    formControlName="code"
+                                    placeholder="FLOBBAND-MERCH" />
+                            </div>
+                            <div class="field">
+                                <label>Tiền tố mã đơn *</label>
+                                <input
+                                    nbInput
+                                    fullWidth
+                                    fieldSize="medium"
+                                    formControlName="codePrefix"
+                                    placeholder="AC" />
+                            </div>
+                            <div class="field field--span2">
+                                <label>Tên show *</label>
+                                <input
+                                    nbInput
+                                    fullWidth
+                                    fieldSize="medium"
+                                    formControlName="name"
+                                    placeholder="Tên hiển thị trên storefront" />
+                            </div>
+                            <div class="field field--span2">
+                                <label [class.is-error]="slugCtrl.invalid && (slugCtrl.dirty || submitPressed)"
+                                    >Slug link công khai</label
+                                >
+                                <input
+                                    nbInput
+                                    fullWidth
+                                    fieldSize="medium"
+                                    formControlName="slug"
+                                    placeholder="flob-band-merch" />
+                                <small class="hint">URL: /san-pham/{{ slugCtrl.value || '…' }} · a-z, 0-9, dấu -</small>
+                            </div>
+                            <div class="field">
+                                <label>Trạng thái</label>
+                                <nb-select fullWidth size="medium" formControlName="status">
+                                    <nb-option value="Open">Open</nb-option>
+                                    <nb-option value="Waiting">Chờ mở bán</nb-option>
+                                    <nb-option value="Closed">Closed</nb-option>
+                                </nb-select>
+                            </div>
+                            <div class="field" *ngIf="isWaitingStatus">
+                                <label [class.is-error]="form.hasError('saleOpenAtNotFuture') && submitPressed"
+                                    >Ngày giờ mở bán</label
+                                >
+                                <input
+                                    nbInput
+                                    fullWidth
+                                    fieldSize="medium"
+                                    formControlName="saleOpenAt"
+                                    [nbDatepicker]="saleOpenPicker"
+                                    placeholder="Tuỳ chọn" />
+                                <nb-date-timepicker #saleOpenPicker [hideOnSelect]="false"></nb-date-timepicker>
+                                <small class="hint">Không bắt buộc — nếu chọn phải sau thời điểm hiện tại</small>
+                            </div>
+                            <div class="field">
+                                <label>Banner URL</label>
+                                <input
+                                    nbInput
+                                    fullWidth
+                                    fieldSize="medium"
+                                    formControlName="bannerImageUrl"
+                                    placeholder="https://…" />
+                            </div>
+                            <div class="field field--span2">
+                                <label>Mô tả</label>
+                                <textarea
+                                    nbInput
+                                    fullWidth
+                                    formControlName="description"
+                                    rows="2"
+                                    placeholder="Mô tả ngắn (tuỳ chọn)"></textarea>
+                            </div>
+                        </div>
+
+                        <button
+                            nbButton
+                            type="button"
+                            ghost
+                            status="basic"
+                            size="small"
+                            class="advanced-toggle"
+                            (click)="showAdvanced = !showAdvanced">
+                            {{ showAdvanced ? '▾' : '▸' }} Thanh toán &amp; email
+                            <span class="advanced-toggle__hint">PG · phương thức · mail</span>
+                        </button>
+
+                        <div class="advanced-panel" *ngIf="showAdvanced">
+                            <div class="pay-email-block">
+                                <div class="block-title">Thanh toán</div>
+                                <nb-checkbox formControlName="usePGAccountDefault">
+                                    Sử dụng tài khoản mặc định
+                                </nb-checkbox>
+
+                                <div class="pg-row" *ngIf="!usePGAccountDefault">
+                                    <div class="field">
+                                        <label>Cổng thanh toán</label>
+                                        <input
+                                            #autoPaymentGateway
+                                            nbInput
+                                            fullWidth
+                                            fieldSize="medium"
+                                            type="text"
+                                            placeholder="NinePay / VNPay / OnePay"
+                                            [formControl]="paymentGatewayCtrl"
+                                            (input)="onInputPaymentGatewayChange(autoPaymentGateway.value)"
+                                            (click)="onInputPaymentGatewayChange('')"
+                                            [nbAutocomplete]="autoCompletePaymentGateway" />
+                                        <nb-autocomplete
+                                            #autoCompletePaymentGateway
+                                            (selectedChange)="onSelectionPGChange($event)">
+                                            <nb-option *ngFor="let gateway of filteredPGList$ | async" [value]="gateway">
+                                                {{ gateway }}
+                                            </nb-option>
+                                        </nb-autocomplete>
+                                    </div>
+                                    <div class="field">
+                                        <label>Tài khoản thanh toán</label>
+                                        <input
+                                            #autoPGAccountCode
+                                            nbInput
+                                            fullWidth
+                                            fieldSize="medium"
+                                            type="text"
+                                            placeholder="Chọn tài khoản"
+                                            [formControl]="pgAccountCodeCtrl"
+                                            (input)="onInputPaymentAccountChange(autoPGAccountCode.value)"
+                                            (click)="onInputPaymentAccountChange('')"
+                                            [nbAutocomplete]="autoCompletePGAccountCode" />
+                                        <nb-autocomplete
+                                            #autoCompletePGAccountCode
+                                            (selectedChange)="onSelectionPGAccountChange($event)">
+                                            <nb-option
+                                                *ngFor="let pgAccount of filteredPGAccountList$ | async"
+                                                [value]="pgAccount.code">
+                                                {{ pgAccount.name }}
+                                            </nb-option>
+                                        </nb-autocomplete>
+                                    </div>
+                                </div>
+
+                                <div class="field field--mt">
+                                    <label>Phương thức thanh toán</label>
+                                    <span class="muted">Để trống = tất cả phương thức mặc định</span>
+                                    <nb-button-group
+                                        multiple
+                                        class="pay-methods gap-1"
+                                        outline
+                                        (valueChange)="updatePaymentMethodsValue($event)">
+                                        <button
+                                            *ngFor="let paymentMethod of paymentMethodList | keyvalue"
+                                            type="button"
+                                            nbButtonToggle
+                                            appearance="outline"
+                                            class="text-transform-none"
+                                            [pressed]="isPaymentMethodPressed($any(paymentMethod.key))"
+                                            [value]="paymentMethod.key">
+                                            {{ paymentMethod.value }}
+                                        </button>
+                                    </nb-button-group>
+                                </div>
+                            </div>
+
+                            <div class="pay-email-block">
+                                <div class="block-title">Email xác nhận đơn</div>
+                                <div class="grid-2">
+                                    <div class="field">
+                                        <label>Mail plugin</label>
+                                        <nb-select fullWidth size="medium" formControlName="mailPlugin" placeholder="Chọn plugin">
+                                            <nb-option *ngFor="let plugin of mailPlugins" [value]="plugin">
+                                                {{ plugin }}
+                                            </nb-option>
+                                        </nb-select>
+                                    </div>
+                                    <div class="field">
+                                        <label>Mail template</label>
+                                        <nb-select
+                                            fullWidth
+                                            size="medium"
+                                            formControlName="mailTemplateId"
+                                            placeholder="Chọn template (tuỳ chọn)">
+                                            <nb-option value="">— Không chọn —</nb-option>
+                                            <nb-option *ngFor="let tpl of mailTemplates" [value]="tpl.id">
+                                                {{ tpl.id }}
+                                            </nb-option>
+                                        </nb-select>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </nb-tab>
+
+                <nb-tab tabTitle="Nhận hàng" [active]="activeTabIndex === 1">
+                    <div class="tab-pane">
+                        <p class="pane-lead">Chọn ít nhất một hình thức. Chi tiết chỉ hiện khi bật.</p>
+
+                        <div class="mode-grid">
+                            <button
+                                type="button"
+                                class="mode-card"
+                                [class.mode-card--on]="enablePickupAtShow"
+                                (click)="toggleFulfillmentMode('enablePickupAtShow')">
+                                <span class="mode-card__check">{{ enablePickupAtShow ? '✓' : '' }}</span>
+                                <span class="mode-card__title">Nhận tại show</span>
+                                <span class="mode-card__desc">Khách chọn session</span>
+                            </button>
+                            <button
+                                type="button"
+                                class="mode-card"
+                                [class.mode-card--on]="enableMetaTicketPickup"
+                                (click)="toggleFulfillmentMode('enableMetaTicketPickup')">
+                                <span class="mode-card__check">{{ enableMetaTicketPickup ? '✓' : '' }}</span>
+                                <span class="mode-card__title">Điểm pickup</span>
+                                <span class="mode-card__desc">META Ticket / offline</span>
+                            </button>
+                            <button
+                                type="button"
+                                class="mode-card"
+                                [class.mode-card--on]="enableDelivery"
+                                (click)="toggleFulfillmentMode('enableDelivery')">
+                                <span class="mode-card__check">{{ enableDelivery ? '✓' : '' }}</span>
+                                <span class="mode-card__title">Giao tận nơi</span>
+                                <span class="mode-card__desc">Nhập địa chỉ lúc checkout</span>
+                            </button>
+                        </div>
+
+                        <div class="error" *ngIf="form.hasError('fulfillmentRequired') && submitPressed">
+                            Chọn ít nhất 1 hình thức nhận hàng.
+                        </div>
+
+                        <div class="detail-block" *ngIf="enablePickupAtShow">
+                            <div class="detail-block__head">
+                                <strong>Session nhận tại show</strong>
+                                <span class="muted">≥ 1</span>
+                            </div>
+                            <div class="error" *ngIf="form.hasError('pickupSessionsRequired') && submitPressed">
+                                Chọn ít nhất 1 session.
+                            </div>
+                            <div *ngIf="sessions.length === 0" class="empty-inline">
+                                Chưa có session.
+                                <button nbButton type="button" size="tiny" status="info" ghost (click)="activeTabIndex = 2">
+                                    Thêm session →
+                                </button>
+                            </div>
+                            <div class="chip-list" *ngIf="sessions.length > 0">
+                                <label
+                                    class="chip"
+                                    *ngFor="let s of sessions"
+                                    [class.chip--on]="isPickupSessionChecked(s.id)">
+                                    <input
+                                        type="checkbox"
+                                        [checked]="isPickupSessionChecked(s.id)"
+                                        (change)="togglePickupSession(s.id, $any($event.target).checked)" />
+                                    <span class="chip__text">
+                                        <b>{{ s.city?.name }}</b> · {{ s.venue }}
+                                        <small>{{ s.datetime | date: 'dd/MM HH:mm' }}</small>
+                                    </span>
+                                </label>
+                            </div>
+                            <div class="field field--tight">
+                                <label>Ghi chú nhận hàng</label>
+                                <input
+                                    nbInput
+                                    fullWidth
+                                    fieldSize="medium"
+                                    formControlName="pickupNote"
+                                    placeholder="VD: Quầy trong venue" />
+                            </div>
+                        </div>
+
+                        <div class="detail-block" *ngIf="enableMetaTicketPickup" formArrayName="pickupPoints">
+                            <div class="detail-block__head">
+                                <strong>Điểm pickup</strong>
+                                <button nbButton type="button" size="small" status="info" (click)="addPickupPoint()">
+                                    + Thêm
+                                </button>
+                            </div>
+                            <div class="error" *ngIf="form.hasError('pickupPointsRequired') && submitPressed">
+                                Thêm ít nhất 1 điểm.
+                            </div>
+                            <div class="pickup-row pickup-row--head" *ngIf="pickupPoints.length > 0">
+                                <span>Tên *</span>
+                                <span>Địa chỉ *</span>
+                                <span>Giờ mở cửa</span>
+                                <span class="pickup-row__action-head"></span>
+                            </div>
+                            <div
+                                class="pickup-row"
+                                *ngFor="let g of pickupPoints.controls; let i = index"
+                                [formGroupName]="i">
+                                <input nbInput fullWidth fieldSize="medium" formControlName="name" placeholder="Tên điểm" />
+                                <input
+                                    nbInput
+                                    fullWidth
+                                    fieldSize="medium"
+                                    formControlName="address"
+                                    placeholder="Địa chỉ" />
+                                <input
+                                    nbInput
+                                    fullWidth
+                                    fieldSize="medium"
+                                    formControlName="note"
+                                    placeholder="VD: 9:00 – 18:00, T2–T6" />
+                                <button
+                                    nbButton
+                                    type="button"
+                                    ghost
+                                    status="danger"
+                                    size="small"
+                                    class="pickup-row__remove"
+                                    (click)="removePickupPoint(i)">
+                                    ✕
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="detail-block detail-block--soft" *ngIf="enableDelivery">
+                            <strong>Giao hàng tận nơi</strong>
+                            <p class="muted mb-0">
+                                Checkout hỏi địa chỉ theo địa giới sau sáp nhập (tỉnh/thành + phường/xã).
+                            </p>
+                            <div class="field field--tight">
+                                <label>Ghi chú giao hàng</label>
+                                <input
+                                    nbInput
+                                    fullWidth
+                                    fieldSize="medium"
+                                    formControlName="deliveryNote"
+                                    placeholder="VD: Giao trong 3–5 ngày làm việc; chỉ nội thành HN/HCM" />
+                            </div>
+                        </div>
+                    </div>
+                </nb-tab>
+
+                <nb-tab [tabTitle]="'Session (' + sessions.length + ')'" [active]="activeTabIndex === 2">
+                    <div class="tab-pane">
+                        <div class="session-list" *ngIf="sessions.length > 0">
+                            <div class="session-item" *ngFor="let s of sessions">
+                                <div class="session-item__main">
+                                    <span class="session-item__city">{{ s.city?.name }}</span>
+                                    <span class="session-item__venue">{{ s.venue }}</span>
+                                    <span class="session-item__time">{{
+                                        s.datetime | date: 'EEE, dd/MM/yyyy · HH:mm'
+                                    }}</span>
+                                </div>
+                                <button
+                                    nbButton
+                                    type="button"
+                                    ghost
+                                    status="danger"
+                                    size="small"
+                                    (click)="removeSession(s.id)">
+                                    Xóa
+                                </button>
+                            </div>
+                        </div>
+                        <div class="empty-state" *ngIf="sessions.length === 0">
+                            Chưa có buổi diễn / điểm nhận. Thêm bên dưới.
+                        </div>
+
+                        <div class="add-bar">
+                            <div class="add-bar__title">Thêm session</div>
+                            <div class="add-bar__row">
+                                <div class="field field--tight">
+                                    <input
+                                        #autoInputCity
+                                        nbInput
+                                        fullWidth
+                                        fieldSize="medium"
+                                        type="text"
+                                        placeholder="Thành phố *"
+                                        (input)="onInputCityChange(autoInputCity.value)"
+                                        [nbAutocomplete]="autoCompleteCity" />
+                                    <nb-autocomplete #autoCompleteCity (selectedChange)="onSelectionCityChange($event)">
+                                        <nb-option *ngFor="let city of filteredCityList$ | async" [value]="city.id">
+                                            {{ city.name }} ({{ city.code }})
+                                        </nb-option>
+                                    </nb-autocomplete>
+                                </div>
+                                <div class="field field--tight">
+                                    <input
+                                        nbInput
+                                        fullWidth
+                                        fieldSize="medium"
+                                        formControlName="sessionVenue"
+                                        placeholder="Venue *" />
+                                </div>
+                                <div class="field field--tight">
+                                    <input
+                                        nbInput
+                                        fullWidth
+                                        fieldSize="medium"
+                                        formControlName="sessionDatetime"
+                                        [nbDatepicker]="sessionDtPicker"
+                                        placeholder="Ngày giờ *" />
+                                    <nb-date-timepicker #sessionDtPicker></nb-date-timepicker>
+                                </div>
+                                <button nbButton type="button" status="primary" (click)="addSession()">Thêm</button>
+                            </div>
+                        </div>
+                    </div>
+                </nb-tab>
+            </nb-tabset>
+
+            <div class="footer-actions">
+                <button nbButton type="button" ghost status="basic" routerLink="/portal/accessory/shows">Hủy</button>
+                <button nbButton type="submit" status="primary">
+                    {{ isEdit ? 'Lưu' : 'Tạo' }}
+                </button>
+            </div>
+        </form>
+    </nb-card-body>
+</nb-card>

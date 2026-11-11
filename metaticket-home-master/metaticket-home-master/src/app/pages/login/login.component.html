@@ -1,0 +1,53 @@
+<app-layout [isDarkMode]="false">
+  <div class="w-full flex flex-col">
+    <app-popup-error #popupError ></app-popup-error>
+    <div class="w-full flex flex-col px-5 pt-10 pb-20 bg-white items-center">
+      <div class="w-full max-w-[27rem]">
+        <p nz-typography class="text-2xl leading-120pct text-black font-medium">Đăng nhập</p>
+        <form *ngIf="formGroup" class="w-full" nz-form [formGroup]="formGroup" nzLayout="vertical">
+          <div class="w-full flex flex-col space-y-6 mt-6 mb-8">
+            <app-form-input
+              [label]="'Số điện thoại'"
+              [placeholder]="'(+84)'"
+              [formControl]="formGroup.controls.phoneNumber"
+            />
+            <app-form-input
+              [label]="'Mật khẩu'"
+              [placeholder]="'Nhập mật khẩu của bạn'"
+              [type]="'password'"
+              [formControl]="formGroup.controls.password"
+            />
+            <div class="flex w-full" style="margin-top: 0 !important;">
+              <a class="ml-auto text-blue-4867FC" [routerLink]="'/' + routeName.resetPassword">Quên mật khẩu</a>
+            </div>
+            <div *ngIf="captchaSetting.enable" class="flex flex-col justify-center items-center w-full">
+              <re-captcha *ngIf="captchaSetting.captchaGateway === 'recaptcha'" #recaptchaRef
+                          [siteKey]="captchaSetting.siteKey" size="normal" theme="light"
+                          (resolved)="resolvedCaptcha($event)">
+              </re-captcha>
+              <ng-hcaptcha *ngIf="captchaSetting.captchaGateway === 'hcaptcha'" #hcaptchaRef
+                           [siteKey]="captchaSetting.siteKey"
+                           [languageCode]="'vi'"
+                           (verify)="resolvedCaptcha($event)"
+                           (expired)="onHcaptchaExpired($event)"
+                           (error)="onHcaptchaError($event)">
+              </ng-hcaptcha>
+            </div>
+          </div>
+          <app-button
+            class="w-full"
+            [title]="'Đăng nhập'"
+            [fontSize]="'lg'"
+            [disabled]="formGroup.invalid"
+            [isLoading]="loading"
+            (handlerOnPressed)="submit()"
+          />
+        </form>
+        <div nz-typography class="text-sm pt-5">
+          <span>Chưa có tài khoản đăng nhập?</span>
+          <a class="pl-1 text-blue-4867FC" [routerLink]="'/' + routeName.register">Đăng ký ngay</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</app-layout>

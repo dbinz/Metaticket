@@ -1,0 +1,58 @@
+<div #content class="relative">
+  <nz-input-group
+    class="w-full rounded-full px-4 py-2 {{ inputBorder }}"
+    [nzSuffix]="value === '' ? suffixIcon : deleteIcon"
+  >
+    <input
+      nz-input
+      class="border-0 p-0 {{ textSize }} bg-transparent focus:border-0 focus:shadow-none placeholder-black-40"
+      [type]="type"
+      [placeholder]="placeholder"
+      [(ngModel)]="value"
+      [attr.aria-expanded]="showResults"
+      (ngModelChange)="onInputChange()"
+      (focus)="onFocus()"
+      (blur)="onBlur()"
+      (keydown.enter)="onEnter()"
+      (keydown.arrowDown)="onArrowDown($event)"
+      (keydown.arrowUp)="onArrowUp($event)"
+      (keydown.escape)="onEscape()"
+    />
+  </nz-input-group>
+  <div
+    *ngIf="showResults && (value.trim() === '' || value.trim().length < 2 || showSuggestPanel)"
+    class="px-4 py-3 bg-white absolute left-0 z-50 w-full rounded-[20px] my-2 flex flex-col gap-5 max-h-[70vh] overflow-y-auto overscroll-contain"
+  >
+    <ng-container *ngIf="value.trim() === ''; else searchState">
+      <p class="text-12-14 font-medium">
+        Top sự kiện nổi bật
+      </p>
+      <button
+        class="flex gap-2 items-center hover:bg-[#EDEDED] p-2 rounded-2xl"
+        *ngFor="let item of highlightResults"
+        (click)="goToDetail(item)"
+      >
+        <app-image [src]="item.thumbnailUrl" [sx]="'w-24 h-13 rounded-lg'"/>
+        <p class="flex-1 text-start one-line-text text-sm leading-6 font-medium">{{ item.showName }}</p>
+      </button>
+      <div *ngIf="!highlightResults.length" class="px-4 py-3">
+        <span class="text-[#858585]">Chưa có sự kiện nổi bật</span>
+      </div>
+    </ng-container>
+
+    <ng-template #searchState>
+      <p *ngIf="value.trim().length < 2" class="px-2 py-3 text-center text-sm text-[#858585]">
+        Nhập tối thiểu 2 ký tự để tìm kiếm
+      </p>
+      <app-search-suggest-panel
+        *ngIf="value.trim().length >= 2 && showSuggestPanel"
+        [groups]="suggestGroups"
+        [keyword]="value.trim()"
+        [activeIndex]="activeIndex"
+        (pickEvent)="goToDetail($event)"
+        (pickProduct)="goToProduct($event)"
+        (viewAll)="onViewAll()"
+      />
+    </ng-template>
+  </div>
+</div>

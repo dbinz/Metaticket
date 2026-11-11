@@ -1,0 +1,154 @@
+<div class="hs">
+  <section class="hs-section" *ngIf="shows.length">
+    <header class="hs-head">
+      <div>
+        <p class="hs-kicker">Show</p>
+        <h2 class="hs-title">Sự kiện nổi bật</h2>
+        <p class="hs-sub">Các sự kiện đặc sắc — concert, sân khấu &amp; nghệ thuật</p>
+      </div>
+    </header>
+
+    <div class="hs-shows" *ngIf="firstBatch as batch">
+      <a *ngIf="batch.hero" class="hs-card hs-card--hero" [routerLink]="batch.hero.path">
+        <div class="hs-media">
+          <!-- Art direction: logo on desktop + phone; banner on tablet. srcset w is the file width, not a breakpoint. -->
+          <picture>
+            <source media="(min-width: 1024px)" [srcset]="batch.hero.logoShowUrl || batch.hero.imageUrl" />
+            <source media="(min-width: 640px)" [srcset]="batch.hero.imageUrl" />
+            <img
+              [src]="batch.hero.logoShowUrl || batch.hero.imageUrl"
+              [alt]="batch.hero.title"
+              loading="eager"
+            />
+          </picture>
+          <span class="hs-chip" class="hs-chip bg-red-700">Sự kiện đặc biệt</span>
+          <span class="hs-cat" *ngIf="batch.hero.category">{{ batch.hero.category }}</span>
+        </div>
+        <div class="hs-hero-body">
+          <h3 class="hs-name hs-name--hero">{{ batch.hero.title }}</h3>
+          <p class="hs-meta" *ngIf="batch.hero.dateLabel">{{ batch.hero.dateLabel }}</p>
+          <p class="hs-meta" *ngIf="batch.hero.venue">{{ batch.hero.venue }}</p>
+          <p class="hs-price" *ngIf="batch.hero.priceLabel">{{ batch.hero.priceLabel }}</p>
+        </div>
+      </a>
+
+      <a
+        class="hs-card hs-card--side"
+        *ngFor="let show of batch.side; trackBy: trackById"
+        [routerLink]="show.path"
+      >
+        <div class="hs-media hs-media--tile">
+          <img [src]="show.imageUrl" [alt]="show.title" loading="lazy" />
+          <span *ngIf="show.status" class="hs-chip" [ngClass]="chipClass(show.status)">{{ show.statusLabel }}</span>
+          <span class="hs-cat" *ngIf="show.category">{{ show.category }}</span>
+        </div>
+        <div class="hs-body">
+          <h3 class="hs-name">{{ show.title }}</h3>
+          <p class="hs-meta" *ngIf="show.dateLabel">{{ show.dateLabel }}</p>
+          <p class="hs-meta" *ngIf="show.venue">{{ show.venue }}</p>
+          <p class="hs-price" *ngIf="show.priceLabel">{{ show.priceLabel }}</p>
+        </div>
+      </a>
+
+      <a class="hs-card" *ngFor="let show of batch.bottom; trackBy: trackById" [routerLink]="show.path">
+        <div class="hs-media hs-media--tile">
+          <img [src]="show.imageUrl" [alt]="show.title" loading="lazy" />
+          <span *ngIf="show.status" class="hs-chip" [ngClass]="chipClass(show.status)">{{ show.statusLabel }}</span>
+          <span class="hs-cat" *ngIf="show.category">{{ show.category }}</span>
+        </div>
+        <div class="hs-body">
+          <h3 class="hs-name">{{ show.title }}</h3>
+          <p class="hs-meta" *ngIf="show.dateLabel">{{ show.dateLabel }}</p>
+          <p class="hs-meta" *ngIf="show.venue">{{ show.venue }}</p>
+          <p class="hs-price" *ngIf="show.priceLabel">{{ show.priceLabel }}</p>
+        </div>
+      </a>
+    </div>
+
+    <div class="hs-grid" *ngIf="moreShows.length">
+      <a class="hs-card" *ngFor="let show of moreShows; trackBy: trackById" [routerLink]="show.path">
+        <div class="hs-media hs-media--tile">
+          <img [src]="show.imageUrl" [alt]="show.title" loading="lazy" />
+          <span *ngIf="show.status" class="hs-chip" [ngClass]="chipClass(show.status)">{{ show.statusLabel }}</span>
+          <span class="hs-cat" *ngIf="show.category">{{ show.category }}</span>
+        </div>
+        <div class="hs-body">
+          <h3 class="hs-name">{{ show.title }}</h3>
+          <p class="hs-meta" *ngIf="show.dateLabel">{{ show.dateLabel }}</p>
+          <p class="hs-meta" *ngIf="show.venue">{{ show.venue }}</p>
+          <p class="hs-price" *ngIf="show.priceLabel">{{ show.priceLabel }}</p>
+        </div>
+      </a>
+    </div>
+
+    <div class="hs-more" *ngIf="!showsLast">
+      <button type="button" class="hs-more-btn" [disabled]="showsLoading" (click)="loadMoreShows()">
+        {{ showsLoading ? 'Đang tải…' : 'Xem thêm Show nổi bật' }}
+      </button>
+    </div>
+  </section>
+
+  <section class="hs-section" *ngIf="merch.length">
+    <header class="hs-head">
+      <div>
+        <p class="hs-kicker">Store</p>
+        <h2 class="hs-title">Merchandise &amp; Sản phẩm</h2>
+        <p class="hs-sub">Bộ sưu tập các sản phẩm đặc sắc — áo, ấn phẩm &amp; quà lưu niệm</p>
+      </div>
+      <a class="hs-seeall" [routerLink]="['/', routeName.product]">Xem thêm →</a>
+    </header>
+
+    <div class="hs-grid">
+      <a
+        class="hs-card"
+        *ngFor="let item of merch; trackBy: trackById"
+        [routerLink]="item.path"
+      >
+        <div class="hs-media hs-media--tile">
+          <img [src]="item.imageUrl" [alt]="item.title" loading="lazy" />
+          <span *ngIf="item.status" class="hs-chip" [ngClass]="chipClass(item.status)">{{ item.statusLabel }}</span>
+          <span class="hs-cat" *ngIf="item.category">{{ item.category }}</span>
+        </div>
+        <div class="hs-body">
+          <h3 class="hs-name">{{ item.title }}</h3>
+          <p class="hs-meta" *ngIf="item.meta">{{ item.meta }}</p>
+          <div class="hs-foot" [class.hs-foot--end]="!item.priceLabel">
+            <span class="hs-price" *ngIf="item.priceLabel">{{ item.priceLabel }}</span>
+            <span class="hs-cta">{{ item.ctaLabel }}</span>
+          </div>
+        </div>
+      </a>
+    </div>
+  </section>
+
+  <section class="hs-section" *ngIf="articles.length">
+    <header class="hs-head">
+      <div>
+        <p class="hs-kicker">Blog</p>
+        <h2 class="hs-title">“Giải mã” Nghệ thuật &amp; Show</h2>
+        <p class="hs-sub">Hậu trường, kiến thức sân khấu &amp; câu chuyện văn hoá</p>
+      </div>
+      <a class="hs-seeall" [routerLink]="['/', routeName.news]">Xem thêm →</a>
+    </header>
+
+    <div class="hs-grid">
+      <a
+        class="hs-card"
+        *ngFor="let article of articles; trackBy: trackById"
+        [href]="newsArticleHref(article.slug)"
+      >
+        <div class="aspect-video hs-media hs-media--tile">
+          <img [src]="article.imageUrl" [alt]="article.title" loading="lazy" />
+          <span class="hs-cat" *ngIf="article.category">{{ article.category }}</span>
+        </div>
+        <div class="hs-body">
+          <h3 class="hs-name">{{ article.title }}</h3>
+          <p *ngIf="article.subdesc" class="m-0 text-12-20 md:text-14-24 text-blue-9CA8D3 line-clamp-2">
+            {{ article.subdesc }}
+          </p>
+          <p class="hs-meta" *ngIf="article.meta">{{ article.meta }}</p>
+        </div>
+      </a>
+    </div>
+  </section>
+</div>

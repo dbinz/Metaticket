@@ -1,0 +1,40 @@
+<div
+  *ngIf="visible"
+  class="w-full flex flex-row items-start gap-3 bg-yellow-FED80B rounded-lg px-4 py-3 mb-4"
+>
+  <span class="text-xl leading-none shrink-0 mt-0.5" aria-hidden="true">⚠️</span>
+
+  <div class="flex-1 flex flex-col gap-2">
+    <p nz-typography class="text-sm leading-normal text-black font-semibold m-0">
+      <ng-container *ngIf="!isInAppWebView">Bạn đang bật tiện ích chặn quảng cáo</ng-container>
+      <ng-container *ngIf="isInAppWebView">Bạn đang mở trang trong ứng dụng khác</ng-container>
+    </p>
+    <p nz-typography class="text-sm leading-normal text-black m-0">
+      <ng-container *ngIf="!isInAppWebView">
+        Tiện ích này có thể chặn cửa sổ thanh toán. Vui lòng tắt để có trải nghiệm thanh toán tốt nhất.
+      </ng-container>
+      <ng-container *ngIf="isInAppWebView">
+        Trình duyệt trong ứng dụng (Facebook, Zalo...) có thể chặn cửa sổ thanh toán. Vui lòng mở trang
+        này bằng Chrome hoặc Safari để có trải nghiệm thanh toán tốt nhất.
+      </ng-container>
+    </p>
+
+    <button
+      type="button"
+      class="self-start text-sm font-semibold text-black underline disabled:opacity-60"
+      [disabled]="isChecking"
+      (click)="recheck()"
+    >
+      {{ isChecking ? 'Đang kiểm tra...' : 'Tôi đã tắt — Kiểm tra lại' }}
+    </button>
+  </div>
+
+  <button
+    type="button"
+    class="shrink-0 text-xl leading-none text-black opacity-60 hover:opacity-100"
+    aria-label="Đóng cảnh báo"
+    (click)="onDismiss()"
+  >
+    &times;
+  </button>
+</div>

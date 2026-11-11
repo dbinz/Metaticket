@@ -1,0 +1,16 @@
+#qrcode {
+    display: flex;
+    color: #fff;
+    width: 100%;
+    border: solid 1px lightgray;
+}
+
+.hide {
+    visibility: hidden;
+}
+
+.scan-toggle-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}

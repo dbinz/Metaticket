@@ -1,0 +1,8 @@
+{
+  "name": "metaticket-local",
+  "private": true,
+  "scripts": {
+    "dev": "powershell.exe -NoProfile -ExecutionPolicy Bypass -File ./start-local.ps1",
+    "start": "npm.cmd run dev"
+  }
+}

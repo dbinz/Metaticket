@@ -1,0 +1,127 @@
+<div class="w-full h-full min-h-[500px] relative">
+  <div
+    id="seat-plan-viewport"
+    data-zoom="3"
+    class="w-full h-full min-h-[500px] relative rounded-[20px] border border-grey-F4F4F4 bg-grey-F4F4F4"
+  >
+  </div>
+  <ng-container *ngIf="type === edType.SeatPlanner" [ngTemplateOutlet]="ledgendButton"/>
+  <div
+    *ngIf="type === edType.SeatPlanner"
+    class="absolute bottom-4 right-4 flex flex-col gap-y-2 laptop:right-5 laptop:flex-row-reverse laptop:gap-y-0 laptop:gap-x-2"
+    [style.z-index]="zIndex"
+  >
+    <ng-container [ngTemplateOutlet]="zoomInButton"/>
+    <ng-container [ngTemplateOutlet]="zoomOutButton"/>
+    <ng-container [ngTemplateOutlet]="panButton"/>
+  </div>
+</div>
+<ng-container *ngIf="triggerEvent" [ngTemplateOutlet]="popup"/>
+
+<ng-template #popup>
+  <div
+    class="absolute rounded-[20px] p-4 flex flex-col gap-y-3.5 bg-white shadow-[0_3px_8px_rgba(0,0,0,0.24)]"
+    [style.top.px]="top"
+    [style.left.px]="left"
+    [style.z-index]="zIndex"
+  >
+    <div class="flex flex-col gap-y-1">
+      <p nz-typography class="text-base text-black font-medium uppercase">
+        {{triggerEvent!.triggerItem!.displayName}}
+      </p>
+      <div *ngIf="triggerEvent!.triggerItem!.remCap > 1" class="flex flex-row items-center gap-x-2">
+        <p nz-typography class="text-sm text-black-60 leading-normal font-medium">
+          Số lượng:
+        </p>
+        <div class="flex flex-row items-center gap-x-2">
+          <button
+            class="w-6 h-6 rounded-md bg-blue-4867FC text-sm font-medium text-white"
+            [style.opacity]="triggerEvent!.triggerItem!.quantity <= 1 ? 0.5 : 1"
+            [disabled]="triggerEvent!.triggerItem!.quantity <= 1"
+            (click)="onDecreaseQuantity()"
+          >
+            -
+          </button>
+          <p nz-typography class="text-sm text-black leading-normal font-bold">
+            {{ triggerEvent!.triggerItem!.quantity }}
+          </p>
+          <button
+            class="w-6 h-6 rounded-md bg-blue-4867FC text-sm font-medium text-white"
+            [style.opacity]="triggerEvent!.triggerItem!.quantity >= triggerEvent!.triggerItem!.remCap ? 0.5 : 1"
+            [disabled]="triggerEvent!.triggerItem!.quantity >= triggerEvent!.triggerItem!.remCap"
+            (click)="onIncreaseQuantity()"
+          >
+            +
+          </button>
+        </div>
+      </div>
+      <p nz-typography class="text-sm text-black-60 leading-normal font-medium">
+        Giá: {{triggerEvent!.triggerItem!.basePrice | formatPrice}}
+      </p>
+    </div>
+    <div class="flex flex-row items-center justify-between gap-x-2">
+      <button
+        class="flex-1 px-4 py-2 rounded-2xl bg-white hover:bg-[#686868] text-sm text-black hover:text-white leading-6 font-medium border border-black hover:border-white"
+        (click)="onClosePopup()"
+      >
+        Đóng
+      </button>
+      <button
+        class="flex-1 px-4 py-2 rounded-2xl bg-blue-4867FC hover:bg-[#686868] text-sm text-white leading-6 font-medium border border-blue-4867FC hover:border-[#686868]"
+        (click)="onSelectTicket()"
+      >
+        Chọn
+      </button>
+    </div>
+  </div>
+</ng-template>
+
+<ng-template #ledgendButton>
+  <div
+    *ngIf="ledgendImageUrl"
+    class="absolute top-2.5 left-3 flex flex-col gap-y-2"
+    [style.z-index]="zIndex"
+  >
+    <button
+      (click)="onLedgendVisible()"
+      class="w-10 h-10 flex items-center justify-center rounded-[10px] bg-white shadow-[0_3px_8px_rgba(0,0,0,0.24)]"
+    >
+      <app-image *ngIf="ledgendVisible" [src]="appIcons.icArrowCross" [sx]="'w-6 h-6 rotate-180'"/>
+      <app-image *ngIf="!ledgendVisible" [src]="appIcons.icArrowCross" [sx]="'w-6 h-6'"/>
+    </button>
+    <app-image
+      *ngIf="ledgendVisible"
+      [src]="ledgendImageUrl"
+      [sx]="'w-52 rounded-2xl shadow-[0_3px_8px_rgba(0,0,0,0.24)]'"
+    />
+  </div>
+</ng-template>
+
+<ng-template #zoomInButton>
+  <button
+    (click)="zoomIn()"
+    class="w-8 h-8 flex items-center justify-center rounded-[10px] shadow-[0_3px_8px_rgba(0,0,0,0.24)] {{isZoomIn ? 'bg-blue-4867FC': 'bg-white'}}"
+  >
+    <app-image [src]="isZoomIn ? appIcons.icZoomInWhite: appIcons.icZoomInBlack" [sx]="'w-8 h-8'"/>
+  </button>
+</ng-template>
+
+<ng-template #zoomOutButton>
+  <button
+    (click)="zoomOut()"
+    class="w-8 h-8 flex items-center justify-center rounded-[10px] shadow-[0_3px_8px_rgba(0,0,0,0.24)] {{isZoomOut ? 'bg-blue-4867FC': 'bg-white'}}"
+  >
+    <app-image [src]="isZoomOut ? appIcons.icZoomOutWhite: appIcons.icZoomOutBlack" [sx]="'w-8 h-8'"/>
+  </button>
+</ng-template>
+
+<ng-template #panButton>
+  <button
+    (click)="pan()"
+    class="w-8 h-8 flex items-center justify-center rounded-[10px] shadow-[0_3px_8px_rgba(0,0,0,0.24)] {{isPan ? 'bg-blue-4867FC': 'bg-white'}}"
+  >
+    <app-image [src]="isPan ? appIcons.icPanWhite: appIcons.icPanBlack" [sx]="'w-4 h-4'"/>
+  </button>
+</ng-template>
+
+

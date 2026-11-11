@@ -1,0 +1,59 @@
+<div class="div-inline">
+    <div class="row">
+        <label class="w-25" [ngClass]="{ error: nameFormControl.invalid }">Tên code (*)</label>
+        <input
+            class="w-75"
+            status="{{ nameFormControl.invalid ? 'danger' : 'basic' }}"
+            [formControl]="nameFormControl"
+            required
+            fullWidth
+            nbInput
+            type="text" />
+    </div>
+    <div class="row">
+        <label class="w-25" [ngClass]="{ error: codesFormControl.invalid }">Danh sách mã code (*)</label>
+        <nb-tag-list (tagRemove)="onTagRemove($event)">
+            <nb-tag *ngFor="let tag of tags" [text]="tag" removable></nb-tag>
+            <input
+                nbTagInput
+                (tagAdd)="onTagAdd($event)"
+                class="w-75"
+                placeholder="Nhập code tối đa 7 ký tự gồm chữ cái (A-Z) và số (0-9) ấn ENTER để thêm mã code"
+                status="{{ codesFormControl.invalid ? 'danger' : 'basic' }}"
+                required
+                fullWidth
+                nbInput
+                type="text" />
+        </nb-tag-list>
+    </div>
+    <div class="row">
+        <div class="w-25">
+            <label>Phương thức giảm(*)</label>
+            <nb-radio-group [formControl]="discountOptionFormControl" name="radio-{{ index }}">
+                <nb-radio name="radio-{{ index }}" *ngFor="let option of discountOptions" value="{{ option.value }}">
+                    {{ option.label }}
+                </nb-radio>
+            </nb-radio-group>
+        </div>
+        <div class="w-75">
+            <label>Giá giảm (*)</label>
+            <nb-form-field>
+                <input [formControl]="discountValueFormControl" required fullWidth nbInput type="number" />
+                <label nbSuffix>{{ discountOptionFormControl.value === 'DiscountPercent' ? '%' : 'đ' }}</label>
+            </nb-form-field>
+        </div>
+    </div>
+    <div class="row">
+        <nb-checkbox [formControl]="needCheckQuantityFormControl">Có giới hạn số lượng</nb-checkbox>
+    </div>
+    <div *ngIf="needCheckQuantityFormControl.value">
+        <label [ngClass]="{ error: originalQuantityFormControl.invalid }">Số lượng promotion (*)</label>
+        <input
+            status="{{ originalQuantityFormControl.invalid ? 'danger' : 'basic' }}"
+            [formControl]="originalQuantityFormControl"
+            required
+            fullWidth
+            nbInput
+            type="number" />
+    </div>
+</div>

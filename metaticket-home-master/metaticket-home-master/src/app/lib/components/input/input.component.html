@@ -1,0 +1,38 @@
+<ng-template [ngIf]="fontSize === 'sm' || fontSize === 'default'">
+  <nz-input-group
+    class="w-full rounded-full px-4 py-2 {{inputBorder}} text-stroke-2"
+    [nzSuffix]="suffixIcon"
+  >
+    <input
+      nz-input
+      class="border-0 p-0 {{textSize}} bg-transparent focus:border-0 focus:shadow-none placeholder-black-40"
+      [id]="id"
+      [type]="type"
+      [placeholder]="placeholder"
+      [(ngModel)]="value"
+      (ngModelChange)="onInputChange()"
+      (input)="onInputChange($event)"
+      autocomplete="off"
+    />
+  </nz-input-group>
+</ng-template>
+
+<ng-template [ngIf]="fontSize === 'lg'">
+  <nz-input-group
+    class="w-full rounded-full px-4 py-3 {{inputBorder}}"
+    [nzSuffix]="suffixIcon"
+  >
+    <input
+      nz-input
+      class="border-0 p-0 {{textSize}} bg-transparent focus:border-0 focus:shadow-none placeholder-black-40"
+      [id]="id"
+      [type]="type"
+      [placeholder]="placeholder"
+      [(ngModel)]="value"
+      (ngModelChange)="onInputChange()"
+      (input)="onInputChange($event)"
+      autocomplete="off"
+    />
+  </nz-input-group>
+
+</ng-template>

@@ -1,0 +1,125 @@
+﻿<div class="bg-blue-072591 flex flex-col laptop:py-15 pt-5 pb-21 laptop:gap-15 gap-3 px-3 py-3 laptop:px-0 relative">
+  <div class="lg:hidden flex justify-end pb-2"><app-image [src]="appIcons.icSun" /></div>
+  <div class="lg:flex hidden absolute top-1/2 right-3 -translate-y-1/2">
+    <app-image
+      [sx]="'h-[82px] w-[86px]'"
+      [src]="appIcons.icSun"
+    />
+  </div>
+  <div class="flex flex-row gap-3 pb-2 md:pb-0 md:justify-center overflow-x-auto">
+    <app-dropdown-button
+      [title]="'Địa điểm'"
+      [iconLeft]="choseCity.length ? appIcons.icLocationBlack : appIcons.icLocation"
+      [iconRight]="choseCity.length ? appIcons.icArrowBottomBlackThin : appIcons.icArrowBottomWhiteThin"
+      [data]="listCityData"
+      (handlerOnSelected)="selectItemEvent($event)"
+    />
+    <app-date-picker
+      (handlerOnPressed)="selectDatepicker($event)"
+      [iconLeft]="choseDate ? appIcons.icCalendarBlack : appIcons.icCalendar"
+      [iconRight]="choseDate ? appIcons.icArrowBottomBlackThin : appIcons.icArrowBottomWhiteThin"
+    />
+    <app-single-dropdown
+      [title]="'Giá vé'"
+      [iconLeft]="chosePriceType ? appIcons.icMoneyBlack : appIcons.icMoney"
+      [iconRight]="chosePriceType ? appIcons.icArrowBottomBlackThin : appIcons.icArrowBottomWhiteThin"
+      [data]="priceTypeTicket"
+      (handlerOnSelected)="selectItemPriceTicket($event)"
+    />
+  </div>
+  <div
+    class="w-full laptop:w-3/4 mx-auto relative z-10"
+    aria-live="polite"
+    [attr.aria-busy]="loading"
+  >
+    @if (loading) {
+      <p class="text-white text-center py-10">Đang tải sự kiện...</p>
+    } @else if (error) {
+      <div class="text-white text-center py-10">
+        <p>Không thể tải danh sách sự kiện.</p>
+        <button
+          class="mt-3 underline"
+          (click)="reload()"
+        >
+          Thử lại
+        </button>
+      </div>
+    } @else {
+      <section
+        class="upcoming-spotlight"
+        aria-labelledby="upcoming-events-title"
+      >
+        <div class="spotlight-header">
+          <div class="spotlight-copy">
+            <p class="spotlight-eyebrow"><span aria-hidden="true"></span> HẸN BẠN TẠI SỰ KIỆN</p>
+            <h2
+              id="upcoming-events-title"
+              class="spotlight-title"
+            >
+              Sắp &amp; đang <span>diễn ra</span
+              ><span
+                class="spotlight-title-dot"
+                aria-hidden="true"
+                >.</span
+              >
+            </h2>
+            <p class="spotlight-description">Những cuộc hẹn đáng mong chờ. Chọn trải nghiệm tiếp theo của bạn.</p>
+          </div>
+          <div
+            class="spotlight-ticket"
+            aria-label="Số sự kiện sắp và đang diễn ra"
+          >
+            <span
+              class="spotlight-ticket-icon"
+              aria-hidden="true"
+              >↗</span
+            >
+            <strong>{{ upcoming.length < 10 ? '0' + upcoming.length : upcoming.length }}</strong>
+            <span>sự kiện chờ bạn</span>
+          </div>
+        </div>
+        <div
+          class="spotlight-divider"
+          aria-hidden="true"
+        >
+          <span></span><span>KHÁM PHÁ NGAY</span><span></span>
+        </div>
+        @if (upcoming.length) {
+          <grid-event-ticket
+            [featured]="true"
+            buttonColor="transparent-orange"
+            [data]="upcoming.slice(0, upcomingLimit)"
+            [isLast]="upcomingLimit >= upcoming.length"
+            (handlerOnViewMore)="upcomingLimit = upcomingLimit + pageSize"
+          />
+        } @else {
+          <p class="text-blue-9CA8D3 py-6">Chưa có sự kiện sắp hoặc đang diễn ra phù hợp với bộ lọc.</p>
+        }
+      </section>
+      @if (past.length) {
+        <section
+          class="mt-10 laptop:mt-16 border-t border-white/20 pt-8"
+          aria-labelledby="past-events-title"
+        >
+          <h2
+            id="past-events-title"
+            class="text-blue-9CA8D3 text-xl laptop:text-2xl font-medium mb-2"
+          >
+            Đã diễn ra ({{ past.length }})
+          </h2>
+          <p class="text-blue-9CA8D3 mb-6">Nhìn lại những sự kiện đã kết thúc</p>
+          <grid-event-ticket
+            buttonColor="transparent-orange"
+            [data]="past.slice(0, pastLimit)"
+            [isLast]="pastLimit >= past.length"
+            (handlerOnViewMore)="pastLimit = pastLimit + pageSize"
+          />
+        </section>
+      }
+    }
+  </div>
+  <app-image
+    [sx]="'absolute bottom-[-60px] right-0 w-[130px] laptop:w-[200px] laptop:bottom-[-110px]'"
+    [src]="appIcons.icDoughnut"
+  />
+</div>

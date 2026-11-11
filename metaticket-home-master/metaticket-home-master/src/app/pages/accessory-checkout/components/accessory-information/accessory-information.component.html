@@ -1,0 +1,42 @@
+<div class="w-full flex flex-col max-w-2xl mx-auto">
+  <p nz-typography class="text-xl font-semibold text-black mb-1">Thông tin người nhận</p>
+  <p nz-typography class="text-sm text-gray-A4A4A4 mb-6">
+    Nhập thông tin liên hệ của người nhận hàng.
+  </p>
+
+  <div class="w-full flex flex-col space-y-5 laptop:space-y-4">
+    <div class="w-full flex flex-col space-y-5 laptop:flex-row laptop:space-y-0 laptop:space-x-6">
+      <app-form-input
+        class="flex-1"
+        [label]="'Họ và tên'"
+        [placeholder]="'VD: Nguyễn Văn A'"
+        [fontSize]="'sm'"
+        [formControl]="purchaseFormGroup.controls.name"
+      />
+      <app-form-input
+        class="flex-1"
+        [label]="'Số điện thoại'"
+        [placeholder]="'VD: 0123456789'"
+        [fontSize]="'sm'"
+        [formControl]="purchaseFormGroup.controls.phone"
+      />
+    </div>
+    <app-form-input
+      [label]="'Email'"
+      [placeholder]="'VD: abcdef@gmail.com'"
+      [fontSize]="'sm'"
+      [formControl]="purchaseFormGroup.controls.email"
+    />
+  </div>
+
+  <nz-divider class="my-6"></nz-divider>
+
+  <div class="w-full flex flex-col-reverse gap-3 laptop:flex-row laptop:justify-between">
+    <div class="w-full laptop:w-48">
+      <app-button [title]="'Quay lại'" [color]="'gray'" (handlerOnPressed)="onGoBack()" />
+    </div>
+    <div class="w-full laptop:w-64">
+      <app-button [title]="'Tiếp tục'" (handlerOnPressed)="onSubmit()" />
+    </div>
+  </div>
+</div>

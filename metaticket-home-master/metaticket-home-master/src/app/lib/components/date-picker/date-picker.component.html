@@ -1,0 +1,64 @@
+<button
+  class="flex items-center justify-between px-3 md:px-4 py-1 md:py-5 rounded-full bg-transparent border-[1px] lg:border-2 border-white h-[32px] desktop:gap-1 cursor-pointer lg:max-w-[260px] lg:w-[260px] max-w-[185px] min-w-[117px]"
+  [ngClass]="{'bg-white': displayTitle !== '' }"
+  nz-button nzType="primary" nz-popover [(nzPopoverVisible)]="visible" nzPopoverTrigger="click"
+  [nzPopoverContent]="contentTemplate" nzPopoverPlacement="bottomLeft">
+  <div class="flex gap-1 lg:gap-2 items-center overflow-hidden">
+    <div class="flex-shrink-0">
+      <app-image [sx]="'w-4 h-4'" [src]="iconLeft"></app-image>
+    </div>
+    <p
+      nz-typography
+      class="text-12-20 md:text-16-24 font-medium one-line-text overflow-hidden text-left"
+       [ngClass]="displayTitle==='' ? 'text-white' : 'text-black'"
+    >
+      {{ displayTitle === '' ? 'Thời gian' : displayTitle }}
+    </p>
+  </div>
+  <div class="flex-shrink-0">
+    <app-image [sx]="'w-5 h-5'" [src]="iconRight || appIcons.icArrowBottomWhiteThin" />
+  </div>
+</button>
+<ng-template #contentTemplate>
+  <div class="flex md:p-4 p-2 flex-col">
+    <div class="flex flex-row gap-3">
+      <app-button (handlerOnPressed)="pickDateToday()" title="Hôm nay" color="transparent-gray"
+        borderRadius="rounded-xl" py="py-2" [isSelected]="selectedButton === 'today'" />
+      <app-button (handlerOnPressed)="pickThisWeek()" title="Tuần này" color="transparent-gray"
+        borderRadius="rounded-xl" py="py-2" [isSelected]="selectedButton === 'this-week'" />
+      <app-button (handlerOnPressed)="pickOption()" title="Tùy chọn" color="transparent-gray" borderRadius="rounded-xl"
+        py="py-2" [isSelected]="selectedButton === 'option'" />
+    </div>
+    <nz-divider class="my-3"></nz-divider>
+    <div class="flex flex-row justify-between items-center">
+      <span tabindex="0" (keydown)="prevMonth()" (click)="prevMonth()" style="color:#797B86" nz-icon nzType="left"
+        nzTheme="outline"></span>
+      <div>
+        <p class="font-semibold text-16-24">
+          {{labelMonth[getMonth(currentDay)]}} {{getYear(currentDay)}}
+        </p>
+      </div>
+      <span tabindex="0" (keydown)="nextMonth()" (click)="nextMonth()" style="color:#797B86" nz-icon nzType="right"
+        nzTheme="outline"></span>
+    </div>
+    <div class="grid grid-cols-7">
+      <p class="font-semibold text-[11px] leading-[48px] text-center text-[#797B86] h-[48px]"
+        *ngFor="let item of labelDays">
+        {{item}}
+      </p>
+      <p tabindex="0" [ngClass]="{
+        'blue-selected': (selectedDay.fromDate !==null && isSameDay(item,selectedDay.fromDate)) || (selectedDay.toDate !==null && isSameDay(item,selectedDay.toDate)),
+        'blue-gray-selected': selectedDay.fromDate!==null && selectedDay.toDate !==null && isAfterDay(item,selectedDay.fromDate) && isBeforeDay(item,selectedDay.toDate),
+        'text-[#D6D8E1]': getMonth(item) !== currentMonth,
+      'text-[#45454A]':getMonth(item) === currentMonth,
+      'rounded-first':selectedDay.fromDate!==null && selectedDay.toDate ===null && isSameDay(item,selectedDay.fromDate),
+      'rounded-l-lg': selectedDay.fromDate!==null && isSameDay(item,selectedDay.fromDate),
+      'rounded-r-lg': selectedDay.toDate !==null && isSameDay(item,selectedDay.toDate),
+      '!rounded-lg': selectedDay.fromDate!==null && selectedDay.toDate !==null && isSameDay(selectedDay.fromDate,selectedDay.toDate),
+    }" class="font-normal text-[15px] leading-[48px] text-center h-[48px] cursor-pointer"
+        *ngFor="let item of daysOfCalendar" (click)="choseDate(item)" (keydown)="choseDate(item)">
+        {{item.getDate()}}
+      </p>
+    </div>
+  </div>
+</ng-template>

@@ -1,0 +1,225 @@
+<div class="w-full flex flex-col items-center max-w-2xl mx-auto text-center">
+  <!-- Processing -->
+  <ng-container *ngIf="isProcessing">
+    <app-loading [isSpinning]="true" [size]="'lg'" />
+    <p nz-typography class="text-2xl font-semibold text-black mt-4">Đang xử lý đơn hàng</p>
+    <p *ngIf="orderCode" nz-typography class="text-lg text-blue-4867FC font-semibold mt-2">#{{ orderCode }}</p>
+    <p nz-typography class="text-base text-black mt-4">
+      Vui lòng hoàn tất thanh toán ở cửa sổ đã mở. Trang sẽ tự cập nhật khi có kết quả.
+    </p>
+
+    <!-- Lỡ đóng tab thanh toán thì mở lại được, không phải đặt đơn mới. -->
+    <button
+      *ngIf="paymentRedirectUrl"
+      type="button"
+      class="mt-4 w-full laptop:w-auto rounded-xl bg-blue-4867FC px-5 py-3 text-14-24 font-semibold text-white hover:brightness-95"
+      (click)="onReopenPaymentWindow()"
+    >
+      Mở lại trang thanh toán
+    </button>
+
+    <!-- Escape hatch: if the customer is stuck and cannot complete payment, let them leave back to
+         the cart. Warning-styled + guarded by a confirmation reminding them to keep the order code. -->
+    <button
+      type="button"
+      class="mt-6 w-full laptop:w-auto rounded-xl border border-yellow-FED80B bg-yellow-50 px-5 py-3 text-14-24 font-medium text-yellow-700 hover:bg-yellow-100"
+      (click)="onRequestLeaveWhileProcessing()"
+    >
+      ⚠️ Tôi gặp vấn đề khi thanh toán
+    </button>
+  </ng-container>
+
+  <!-- Success -->
+  <ng-container *ngIf="isSuccess">
+    <app-image [src]="appIcons.icSuccess" [sx]="'w-16 h-16 mb-4'" />
+    <p nz-typography class="text-2xl font-semibold text-black">Đặt hàng thành công!</p>
+    <p nz-typography class="text-lg text-blue-4867FC font-semibold mt-2">#{{ orderCode }}</p>
+    <div class="w-full flex flex-col items-center gap-1 mt-4">
+      <p nz-typography class="text-base text-black">Email xác nhận đã được gửi đến bạn.</p>
+      <p nz-typography class="text-base text-black">{{ fulfillmentSummary }}</p>
+    </div>
+  </ng-container>
+
+  <!-- Failed -->
+  <ng-container *ngIf="isFailed">
+    <div class="mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-red-50 text-3xl text-red-500">✕</div>
+    <p nz-typography class="text-2xl font-semibold text-black">Đặt hàng không thành công</p>
+    <p *ngIf="orderCode" nz-typography class="text-lg text-blue-4867FC font-semibold mt-2">#{{ orderCode }}</p>
+    <p nz-typography class="text-base text-black mt-4">
+      Đơn hàng chưa được thanh toán. Giỏ hàng vẫn được giữ nguyên để bạn đặt lại.
+    </p>
+  </ng-container>
+
+  <!-- Mismatch: payment and order disagree → contact MetaTicket -->
+  <ng-container *ngIf="isMismatch">
+    <div class="mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-yellow-50 text-3xl text-yellow-FED80B">
+      !
+    </div>
+    <p nz-typography class="text-2xl font-semibold text-black">Cần xác nhận thêm</p>
+    <p *ngIf="orderCode" nz-typography class="text-lg text-blue-4867FC font-semibold mt-2">#{{ orderCode }}</p>
+    <p nz-typography class="text-base text-black mt-4">
+      Trạng thái thanh toán và đơn hàng chưa khớp nhau. Vui lòng liên hệ MetaTicket để được hỗ trợ, kèm theo mã đơn
+      hàng của bạn.
+    </p>
+    <div class="w-full flex flex-col items-center gap-1 mt-3 rounded-2xl border border-gray-C9C9C9 p-4">
+      <p nz-typography class="text-14-16 font-medium text-black">Liên hệ MetaTicket</p>
+      <p nz-typography class="text-14-24 text-black">Hotline: {{ supportHotline }}</p>
+      <p nz-typography class="text-14-24 text-black">Email: {{ supportEmail }}</p>
+    </div>
+  </ng-container>
+
+  <!-- Per-status detail — shown live as each status updates (no need to wait for both). -->
+  <div class="w-full flex flex-col gap-2 mt-6">
+    <div
+      *ngIf="hasPayment"
+      class="flex flex-row items-center justify-between rounded-lg border border-gray-C9C9C9 px-4 py-3"
+    >
+      <span class="text-14-24 text-gray-A4A4A4">Trạng thái thanh toán</span>
+      <span
+        class="text-14-24 font-medium"
+        [class.text-green-600]="paymentStatusClass === 'success'"
+        [class.text-red-500]="paymentStatusClass === 'failed'"
+        [class.text-gray-A4A4A4]="paymentStatusClass === 'pending'"
+      >
+        {{ paymentStatusMessage }}
+      </span>
+    </div>
+    <div class="flex flex-row items-center justify-between rounded-lg border border-gray-C9C9C9 px-4 py-3">
+      <span class="text-14-24 text-gray-A4A4A4">Trạng thái đơn hàng</span>
+      <span
+        class="text-14-24 font-medium"
+        [class.text-green-600]="orderStatusClass === 'success'"
+        [class.text-red-500]="orderStatusClass === 'failed'"
+        [class.text-gray-A4A4A4]="orderStatusClass === 'pending'"
+      >
+        {{ orderStatusMessage }}
+      </span>
+    </div>
+  </div>
+
+  <!-- Order review (when the order is available and confirmed) -->
+  <ng-container *ngIf="isSuccess && order">
+    <nz-divider class="my-6"></nz-divider>
+    <div class="w-full flex flex-col text-left gap-3">
+      <p nz-typography class="text-base font-medium text-black uppercase">Chi tiết đơn hàng</p>
+      <div *ngFor="let line of order.lines" class="flex flex-row items-center justify-between">
+        <span class="text-base text-black">{{ line.display }}</span>
+        <span class="text-base text-black font-medium">{{ line.lineTotal | formatPrice }}</span>
+      </div>
+
+      <nz-divider class="my-2"></nz-divider>
+
+      <div class="flex flex-row justify-between">
+        <span class="text-base text-gray-A4A4A4">Tạm tính</span>
+        <span class="text-base text-black">{{ order.subtotal | formatPrice }}</span>
+      </div>
+      <ng-container *ngIf="order.discount as discount">
+        <div *ngIf="discount.amount" class="flex flex-row justify-between">
+          <span class="text-base text-gray-A4A4A4">
+            Giảm giá{{ discount.code ? ' (' + discount.code + ')' : '' }}
+          </span>
+          <span class="text-base text-green-600">- {{ discount.amount | formatPrice }}</span>
+        </div>
+      </ng-container>
+      <div class="flex flex-row justify-between">
+        <span class="text-lg font-semibold text-black">Tổng cộng</span>
+        <span class="text-lg font-semibold text-black">{{ order.total | formatPrice }}</span>
+      </div>
+    </div>
+  </ng-container>
+
+  <!-- Actions (once resolved) -->
+  <div *ngIf="!isProcessing" class="w-full flex flex-col-reverse gap-3 mt-8 laptop:flex-row laptop:justify-center">
+    <!-- Both success → home / orders / keep shopping -->
+    <ng-container *ngIf="isSuccess">
+      <div class="w-full laptop:w-56">
+        <app-button
+          [title]="'Về trang chủ'"
+          [color]="'transparent-gray'"
+          [border]="'gray'"
+          (handlerOnPressed)="onGoHome()"
+        />
+      </div>
+      <div class="w-full laptop:w-56">
+        <app-button
+          [title]="'Đơn hàng của bạn'"
+          [color]="'transparent-gray'"
+          [border]="'gray'"
+          (handlerOnPressed)="onGoOrderManager()"
+        />
+      </div>
+      <div class="w-full laptop:w-56">
+        <app-button [title]="'Tiếp tục mua'" (handlerOnPressed)="onContinueShopping()" />
+      </div>
+    </ng-container>
+
+    <!-- A status failed (no charge) → back to the cart to try again -->
+    <div *ngIf="isFailed" class="w-full laptop:w-56">
+      <app-button [title]="'Quay về giỏ hàng'" (handlerOnPressed)="onBackToCart()" />
+    </div>
+
+    <!-- Mismatch → payment/order disagree; needs MetaTicket support, just acknowledge -->
+    <div *ngIf="isMismatch" class="w-full laptop:w-56">
+      <app-button [title]="'Xác nhận hoàn tất'" (handlerOnPressed)="onConfirmComplete()" />
+    </div>
+  </div>
+</div>
+
+<!-- Leave-while-processing warning confirmation -->
+<div
+  *ngIf="leaveConfirmOpen"
+  class="fixed inset-0 z-[1100] flex items-center justify-center bg-black/50 p-5"
+  (click)="onCancelLeave()"
+  (keydown.escape)="onCancelLeave()"
+  tabindex="0"
+  role="dialog"
+  aria-modal="true"
+  aria-label="Xác nhận rời khỏi trang thanh toán"
+>
+  <div
+    class="w-full max-w-md rounded-2xl bg-white p-6 text-left"
+    (click)="$event.stopPropagation()"
+    (keydown.enter)="$event.stopPropagation()"
+    (keydown.space)="$event.stopPropagation()"
+    tabindex="-1"
+  >
+    <div class="flex items-center gap-3">
+      <div class="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-yellow-50 text-2xl text-yellow-FED80B">
+        !
+      </div>
+      <p nz-typography class="text-lg font-semibold text-black">Rời khỏi trang thanh toán?</p>
+    </div>
+
+    <div class="mt-4 flex flex-col gap-3">
+      <p nz-typography class="text-14-24 text-black">
+        Đơn hàng của bạn có thể vẫn đang được xử lý. Trước khi rời đi, vui lòng
+        <span class="font-semibold">chụp lại màn hình kèm mã đơn hàng</span> và liên hệ hỗ trợ để được đối soát.
+      </p>
+
+      <div class="flex flex-col gap-1 rounded-xl border border-gray-C9C9C9 p-3">
+        <p *ngIf="orderCode" nz-typography class="text-14-24 text-black">
+          Mã đơn hàng: <span class="font-semibold text-blue-4867FC">#{{ orderCode }}</span>
+        </p>
+        <p nz-typography class="text-14-24 text-black">Hotline: {{ supportHotline }}</p>
+        <p nz-typography class="text-14-24 text-black">Email: {{ supportEmail }}</p>
+      </div>
+    </div>
+
+    <div class="mt-6 flex flex-col-reverse gap-3 laptop:flex-row laptop:justify-end">
+      <button
+        type="button"
+        class="rounded-xl border border-gray-C9C9C9 px-5 py-2.5 text-14-24 font-medium text-black hover:bg-gray-50"
+        (click)="onCancelLeave()"
+      >
+        Ở lại chờ kết quả
+      </button>
+      <button
+        type="button"
+        class="rounded-xl bg-yellow-FED80B px-5 py-2.5 text-14-24 font-semibold text-black hover:brightness-95"
+        (click)="onConfirmLeave()"
+      >
+        Tôi đã lưu mã đơn, quay về giỏ hàng
+      </button>
+    </div>
+  </div>
+</div>

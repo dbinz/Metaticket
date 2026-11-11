@@ -1,0 +1,173 @@
+<div class="flex flex-col items-center gap-6 py-10 laptop:w-[768px] w-full">
+  <p class="text-32-40 font-medium">Mua và sử dụng vé</p>
+  <!-- question1 -->
+  <app-collapse [style.width]="'100%'" [question]="'Tôi phải làm sao để mua vé tham gia sự kiện?'">
+    <div class="pb-[10px] ">
+      <p class="text-gray-747474 laptop:text-16-20 text-14-28 font-normal">
+        Để mua vé, bạn vui lòng thực hiện các bước sau:
+      </p>
+      <ul class="list-disc pl-8 mt-[10px] text-gray-747474 text-14-28 laptop:text-16-20 font-normal">
+        <li class="p-1">
+          Bước 1. Chọn sự kiện bạn muốn tham gia trên META Ticket
+        </li>
+        <li class="p-1">
+          Bước 2. Chọn "MUA VÉ NGAY" góc phải màn hình. Chọn loại vé, vị trí chỗ ngồi phù hợp.
+        </li>
+        <li class="p-1">
+          Bước 3. Điền thông tin mua vé và thông tin nhận vé.
+        </li>
+        <li class="p-1">
+          Bước 4. Chọn hình thức thanh toán và tiến hành thanh toán
+        </li>
+      </ul>
+    </div>
+  </app-collapse>
+  <!-- question2 -->
+  <app-collapse [style.width]="'100%'" [question]="'Khi nào sẽ hết hạn đặt vé'">
+    <div class="pb-[10px] ">
+      <p class="text-gray-747474 laptop:text-16-20 text-14-28 font-normal">
+        Sự kiện có thể ngừng bán vé tùy thuộc vào số lượng vé bán ra, và quyết định từ Ban tổ chức.
+      </p>
+    </div>
+  </app-collapse>
+  <!-- question3 -->
+  <app-collapse [style.width]="'100%'"
+    [question]="'Tôi có thể mua vé của nhiều sự kiện trong cùng một đơn hàng không?'">
+    <div class="pb-[10px] ">
+      <p class="text-gray-747474 laptop:text-16-20 text-14-28 font-normal">
+        Hiện tại, META Ticket chưa hỗ trợ đặt vé của nhiều sự kiện trong cùng một đơn hàng. Vui lòng mua vé của một sự
+        kiện duy nhất trong một đơn hàng.
+      </p>
+    </div>
+  </app-collapse>
+  <!-- question4 -->
+  <app-collapse [style.width]="'100%'" [question]="'Tôi sẽ thanh toán đơn hàng như thế nào?'">
+    <div class="pb-[10px] ">
+      <p class="text-gray-747474 laptop:text-16-20 text-14-28 font-normal">
+        Sau khi nhập thông tin mua vé, bạn sẽ được chọn một trong các hình thức thanh toán dưới đây:
+      </p>
+      <ul class="list-disc pl-8 mt-[10px] text-gray-747474 text-14-28 laptop:text-16-20 font-normal">
+        <li class="p-1">
+          1. Thanh toán bằng thẻ ngân hàng nội địa ATM
+        </li>
+        <li class="p-1">
+          2. Thanh toán bằng thẻ quốc tế Visa, Mastercard
+        </li>
+        <li class="p-1">
+          3. Quét mã QR
+        </li>
+      </ul>
+      <p class="text-gray-747474 laptop:text-16-20 text-14-28 font-normal">
+        Vui lòng chọn hình thức thanh toán phù hợp và nhập thông tin theo hướng dẫn để thanh toán.
+      </p>
+    </div>
+  </app-collapse>
+  <!-- question5 -->
+  <app-collapse [style.width]="'100%'" [question]="'Thanh toán trực tuyến như vậy tôi có bị lộ thông tin không?'">
+    <div class="pb-[10px] ">
+      <p class="text-gray-747474 laptop:text-16-20 text-14-28 font-normal">
+        META Ticket không trực tiếp lưu trữ thông tin thẻ của khách hàng. Thông tin thẻ thanh toán sẽ do Đối tác Cổng
+        thanh toán, đã được cấp phép hoạt động hợp pháp tại Việt Nam, lưu trữ và bảo mật.
+      </p>
+      <p class="text-gray-747474 laptop:text-16-20 text-14-28 font-normal">
+        Mọi hoạt động thanh toán thực hiện trên nền tảng META Ticket, được cam kết đảm bảo thực hiện nghiêm túc các biện
+        pháp bảo mật cần thiết, bao gồm:
+      </p>
+      <ul class="list-disc pl-8 mt-[10px] text-gray-747474 text-14-28 laptop:text-16-20 font-normal">
+        <li class="p-1">
+          Chứng nhận tiêu chuẩn bảo mật dữ liệu thông tin thanh toán (PCI DSS).
+        </li>
+        <li class="p-1">
+          Các nguyên tắc và quy định bảo mật thông tin trong ngành tài chính ngân hàng theo quy định của Ngân hàng nhà
+          nước Việt Nam.
+        </li>
+        <li class="p-1">
+          Chương trình 3-D Secure (3DS) của Tổ chức Thẻ Quốc tế (Visa, MasterCard, ...) nhằm đảm bảo rằng chủ thẻ hợp
+          pháp đang sử dụng thẻ tín dụng/thẻ ghi nợ của các tổ chức này để thực hiện thanh toán tại thời điểm phát sinh
+          giao dịch
+        </li>
+        <li class="p-1">
+          Giao thức mật mã TLS cung cấp bảo mật đầu cuối cho dữ liệu được gửi giữa các ứng dụng qua Internet nhằm đảm
+          bảo dữ liệu được an toàn trong quá trình truyền qua Internet.
+        </li>
+      </ul>
+    </div>
+  </app-collapse>
+  <!-- question6 -->
+  <app-collapse [style.width]="'100%'" [question]="'Sau khi đặt vé, tôi sẽ nhận vé bằng cách nào?'">
+    <div class="pb-[10px] ">
+      <p class="text-gray-747474 laptop:text-16-20 text-14-28 font-normal">
+        Sau khi đặt vé thành công, bạn sẽ nhận được email xác nhận vé tham dự sự kiện từ META Ticket.
+      </p>
+      <p class="text-gray-747474 laptop:text-16-20 text-14-28 font-normal">
+        Tùy vào từng sự kiện, bạn sẽ nhận vé dưới hình thức (1) Vé điện tử được gửi qua địa chỉ email của bạn, hoặc (2)
+        Vé giấy vật lý được chuyển phát tới địa chỉ bạn đã đăng ký nhận vé, và bạn có thể phải thanh toán thêm một khoản
+        phí cho bên vận chuyển thứ ba.
+      </p>
+    </div>
+  </app-collapse>
+  <!-- question7 -->
+  <app-collapse [style.width]="'100%'" [question]="'Sau khi đặt vé, làm sao để tôi có thể tham dự sự kiện?'">
+    <div class="pb-[10px] ">
+      <p class="text-gray-747474 laptop:text-16-20 text-14-28 font-normal">
+        Vui lòng mang theo vé và các giấy tờ cần thiết (theo yêu cầu của từng sự kiện) để check-in tham gia tại địa điểm
+        tổ chức sự kiện.
+      </p>
+    </div>
+  </app-collapse>
+  <!-- question8 -->
+  <app-collapse [style.width]="'100%'" [question]="'Tôi có phải in vé điện tử ra không?'">
+    <div class="pb-[10px] ">
+      <p class="text-gray-747474 laptop:text-16-20 text-14-28 font-normal">
+        Không cần đâu! Vui lòng trình vé điện tử trên điện thoại khi check-in để tham gia sự kiện.
+      </p>
+    </div>
+  </app-collapse>
+  <!-- question9 -->
+  <app-collapse [style.width]="'100%'"
+    [question]="'Trường hợp bị ghi sai SĐT/email/nội dung chuyển khoản trong quá trình đặt vé phải làm thế nào?'">
+    <div class="pb-[10px] ">
+      <p class="text-gray-747474 laptop:text-16-20 text-14-28 font-normal">
+        Vui lòng liên hệ số hotline: <strong>1900 3392</strong> (8:30-18:30 thứ 2-6) hoặc gửi lại thông tin <strong>MÃ
+          ĐƠN HÀNG & THÔNG TIN CẦN ĐIỀU CHỈNH</strong> qua địa chỉ email:
+        <strong>{{'support@metaticket.com.vn'}}</strong> để được hỗ trợ.
+      </p>
+    </div>
+  </app-collapse>
+  <!-- question10 -->
+  <app-collapse [style.width]="'100%'" [question]="'Làm thế nào để tôi nhận được hóa đơn đỏ?'">
+    <div class="pb-[10px] ">
+      <p class="text-gray-747474 laptop:text-16-20 text-14-28 font-normal">
+        Vui lòng liên hệ số hotline: <strong>1900 3392</strong> (8:30-18:30 thứ 2-6) hoặc email:
+        <strong>{{'support@metaticket.com.vn'}}</strong> (24/7) để được hỗ trợ.
+      </p>
+    </div>
+  </app-collapse>
+  <!-- question11 -->
+  <app-collapse [style.width]="'100%'" [question]="'Tôi có được hoàn lại tiền khi hủy vé không?'">
+    <div class="pb-[10px] ">
+      <p class="text-gray-747474 laptop:text-16-20 text-14-28 font-normal">
+        Rất tiếc, vé đã thanh toán sẽ không được đổi, hoàn lại hoặc hủy.
+      </p>
+    </div>
+  </app-collapse>
+  <!-- question12 -->
+  <app-collapse [style.width]="'100%'" [question]="'Tôi có thể nhượng vé cho người khác được không?'">
+    <div class="pb-[10px] ">
+      <p class="text-gray-747474 laptop:text-16-20 text-14-28 font-normal">
+        Bạn hoàn toàn có thể nhượng vé cho người thân, bạn bè, đối tác... Người được nhượng vé cần trình vé hợp lệ và
+        các giấy tờ cần thiết (theo yêu cầu của từng sự kiện) khi tham gia sự kiện.
+      </p>
+    </div>
+  </app-collapse>
+  <!-- question13 -->
+  <app-collapse [style.width]="'100%'" [question]="'Tôi có thể nhượng vé cho người khác được không?'">
+    <div class="pb-[10px] ">
+      <p class="text-gray-747474 laptop:text-16-20 text-14-28 font-normal">
+        Trường hợp sự kiện gặp sự cố dời ngày tổ chức hoặc sự kiện bị hủy với lý do từ
+        Ban tổ chức, bạn có thể yêu cầu hoàn trả vé và hoàn tiền. Việc hoàn trả vé
+        và hoàn tiền sẽ do Ban tổ chức sự kiện quyết định.
+      </p>
+    </div>
+  </app-collapse>
+</div>

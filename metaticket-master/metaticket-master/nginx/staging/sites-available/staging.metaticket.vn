@@ -1,0 +1,73 @@
+include /etc/nginx/metaticket-frags/metaticket-upstream-server;
+include /etc/nginx/metaticket-maintenance/http.conf;
+
+# Check if we should go to homepage or goto the ticket frontend
+# A path containing showId and sessionId ONLY will be considered ticket selection frontend
+# else we are going to the homepage.
+# Note: The current regex "~*(showId=([^&]*)&sessionId=([^&]*))" matches if showId and sessionId are present,
+# not necessarily *only* them. If "ONLY" is a strict requirement, the regex may need adjustment.
+map $args $homepage_or_frontend_location {
+    "~*(showId=([^&]*)&sessionId=([^&]*))" frontend;
+    default homepage;
+}
+
+#server {
+#    listen 80 default_server;
+#    server_name staging.metaticket.vn;
+
+#    location / {
+#        return 301 https://$host$request_uri;
+#    }
+#}
+
+server {
+    listen 80;
+    listen 443 ssl;
+    listen [::]:443 ssl;
+    server_name www.staging.metaticket.vn;
+
+    location / {
+        return 301 https://staging.metaticket.vn$request_uri;
+    }
+
+    include /etc/nginx/metaticket-frags/ssl/www.staging.metaticket.vn;
+
+}
+server {
+    listen 80;
+    listen 443 ssl default_server;
+    listen [::]:443 ssl default_server;
+
+    #root /staging/metaticket/static;
+    #index index.html;
+
+    server_name staging.metaticket.vn 10.0.1.12;
+
+    include /etc/nginx/metaticket-maintenance/server.conf;
+
+    include /etc/nginx/metaticket-frags/ssl/staging.metaticket.vn;
+
+    # Gzip Configuration - Enhanced
+    gzip on;
+    gzip_types      text/plain application/xml application/javascript text/css application/json image/svg+xml;
+    gzip_proxied    no-cache no-store private expired auth;
+    gzip_min_length 1000;
+
+    # Internal location dùng để auth_request
+    location = /internal/customer-authenticate {
+        internal;
+        proxy_pass http://customer_auth_service/internal/customer-auth/authenticate;
+        proxy_pass_request_body off;
+        proxy_set_header Content-Length "";
+        proxy_set_header X-Original-URI $request_uri;
+        proxy_set_header Authorization $http_authorization;
+    }
+
+    include /etc/nginx/metaticket-frags/metaticket-public-api;
+    include /etc/nginx/metaticket-frags/metaticket-api;
+    include /etc/nginx/metaticket-frags/metaticket-payment-ipn;
+    include /etc/nginx/metaticket-frags/metaticket-modules;
+    include /etc/nginx/metaticket-frags/metaticket-assets;
+    include /etc/nginx/metaticket-frags/metaticket-portal;
+    include /etc/nginx/metaticket-frags/metaticket-root;
+}

@@ -1,0 +1,26 @@
+syntax = "proto3";
+
+package metaticket.notification.zns.grpc;
+
+message ZaloMessageMetadataProto {
+  string ref_id = 1;
+  string plugin = 2;
+  string template_id = 3;
+  string phone = 4;
+  string callback_url = 5;
+  optional string lang = 6;
+  optional bool failover = 7;
+  optional string sms_msg = 8;
+}
+
+message SendZaloMessageRequest {
+  ZaloMessageMetadataProto metadata = 1;
+  map<string, string> template_data = 2;
+}
+
+message ZaloMessageResponse {
+  string ref_id = 1;
+  int32 code = 2;
+  string message = 3;
+  string data = 4;
+}

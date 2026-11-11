@@ -1,0 +1,33 @@
+location /assets {
+    add_header Access-Control-Allow-Origin *;
+    alias /opt/metaticket/static/assets;
+}
+location /assets/frontend {
+    add_header Access-Control-Allow-Origin *;
+    proxy_pass http://frontend_service; # Using upstream
+    proxy_set_header Host $host;
+    proxy_set_header X-Real-IP $remote_addr;
+}
+location /show-image {
+    client_max_body_size 3M;
+    add_header Access-Control-Allow-Origin *;
+    alias /opt/metaticket/service/show/show-image;
+    add_header Cache-Control "public, max-age=3600";
+    add_header Last-Modified $date_gmt;
+}
+location /show-image-temp {
+    client_max_body_size 3M;
+    add_header Access-Control-Allow-Origin *;
+    alias /opt/metaticket/service/show/show-image-temp;
+}
+location /seatplanner-image {
+    client_max_body_size 3M;
+    add_header Access-Control-Allow-Origin *;
+    alias /opt/metaticket/service/editor.seatplanner/uploads;
+    add_header Cache-Control "public, max-age=3600";
+    add_header Last-Modified $date_gmt;
+}
+location /.well-known {
+    add_header Access-Control-Allow-Origin *; # If this is for Let's Encrypt, CORS might not be needed.
+    alias /opt/metaticket/static/.well-known;
+}

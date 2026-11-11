@@ -1,0 +1,44 @@
+<div
+  *ngIf="pending$ | async as order"
+  class="fixed inset-0 z-[1200] flex items-center justify-center bg-black/50 px-4"
+  role="dialog"
+  aria-modal="true"
+  tabindex="-1"
+>
+  <div class="w-full max-w-md rounded-2xl bg-white p-6 text-left" tabindex="-1">
+    <p nz-typography class="text-lg font-semibold text-black">Bạn còn đơn chưa thanh toán</p>
+    <p nz-typography class="mt-2 text-14-24 text-black">
+      Đơn <span class="font-semibold text-blue-4867FC">#{{ order.orderCode }}</span>
+      ({{ order.showName }}) — tổng
+      <span class="font-semibold">{{ order.total | formatPrice }}</span>
+      đang giữ hàng. Bạn muốn tiếp tục thanh toán hay hủy đơn?
+    </p>
+
+    <div class="mt-6 flex flex-col-reverse gap-3 laptop:flex-row laptop:justify-end">
+      <ng-container *ngIf="loadingAction$ | async as action; else actions">
+        <div class="text-14-24 text-gray-A4A4A4">
+          {{ action === 'cancel' ? 'Đang hủy đơn…' : 'Đang chuyển tới thanh toán…' }}
+        </div>
+      </ng-container>
+      <ng-template #actions>
+        <div class="w-full laptop:w-[140px]">
+          <app-button
+            [title]="'Hủy đơn'"
+            [color]="'transparent-gray'"
+            [fontSize]="'sm'"
+            [border]="'gray'"
+            (handlerOnPressed)="onCancel()"
+          />
+        </div>
+        <div class="w-full laptop:w-[180px]">
+          <app-button
+            [title]="'Tiếp tục thanh toán'"
+            [color]="'primary'"
+            [fontSize]="'sm'"
+            (handlerOnPressed)="onContinue()"
+          />
+        </div>
+      </ng-template>
+    </div>
+  </div>
+</div>

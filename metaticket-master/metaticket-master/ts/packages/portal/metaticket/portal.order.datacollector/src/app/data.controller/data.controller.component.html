@@ -1,0 +1,64 @@
+<div class="sm:w-full" [ngClass]="{'text-red-400': tmpl.error!=null}">
+    <div>
+        <label>{{tmpl.displayName}} <span *ngIf="tmpl.constraints?.require">(<span class="text-red-400">*</span>)</span></label>
+    </div>
+    <ng-container [ngSwitch]="tmpl.type">
+        <ng-container *ngSwitchCase="'String'" [ngTemplateOutlet]="stringInput"></ng-container>
+        <ng-container *ngSwitchCase="'Number'" [ngTemplateOutlet]="numberInput"></ng-container>
+        <ng-container *ngSwitchCase="'Boolean'" [ngTemplateOutlet]="booleanInput"></ng-container>
+        <ng-container *ngSwitchCase="'Date'" [ngTemplateOutlet]="datetimeInput"></ng-container>
+        <ng-container *ngSwitchCase="'List'" [ngTemplateOutlet]="selectionInput"></ng-container>
+    </ng-container>
+    <p *ngIf="tmpl.error" class="text-[12px] italic text-red-400">{{tmpl.error}}</p>
+    <p *ngIf="tmpl.note" class="text-[12px] italic text-blue-300" [innerHTML]="tmpl.note"></p>
+
+    <ng-template #stringInput>
+        <input type="text" class="h-10 border mt-1 rounded px-4 bg-gray-50 w-full"
+               [(ngModel)]="tmpl.value"
+               [ngClass]="{'text-red-400': tmpl.error}"
+               datatypeController [tmpl]="tmpl"
+        />
+    </ng-template>
+
+    <ng-template #numberInput>
+        <input type="number" class="h-10 border mt-1 rounded px-4 bg-gray-50 w-full"
+               [(ngModel)]="tmpl.value"
+               [ngClass]="{'text-red-400': tmpl.error}"
+               datatypeController [tmpl]="tmpl"
+        />
+    </ng-template>
+
+    <ng-template #booleanInput>
+        <div class="mb-[0.125rem] block min-h-[1.5rem] min-w-[1.5rem] pl-[1.5rem]">
+            <input type="checkbox" class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
+                   [(ngModel)]="tmpl.value"
+                   [ngClass]="{'text-red-400': tmpl.error}"
+                   datatypeBooleanController [tmpl]="tmpl"
+            />
+        </div>
+    </ng-template>
+
+    <ng-template #datetimeInput>
+        <input type="text" class="h-10 border mt-1 rounded px-4 bg-gray-50 w-full"
+                [(ngModel)]="tmpl.value"
+               [readonly]="true"
+               [ngClass]="{'text-red-400': tmpl.error}"
+               [matDatepicker]="picker"
+               placeholder="dd/mm/yyyy"
+               (click)="picker.open()"
+               datatypeDateTimeController [tmpl]="tmpl"
+        />
+
+        <mat-datepicker #picker></mat-datepicker>
+    </ng-template>
+
+    <ng-template #selectionInput>
+        <select class="h-10 border mt-1 rounded px-4 bg-gray-50 w-ful"
+                [(ngModel)]="tmpl.value"
+                [ngClass]="{'text-red-400': tmpl.error}"
+                datatypeController [tmpl]="tmpl"
+        >
+            <option *ngFor="let o of tmpl.constraints?.options" value="{{o.value}}">{{o.name}}</option>
+        </select>
+    </ng-template>
+</div>

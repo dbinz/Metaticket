@@ -1,0 +1,65 @@
+<div
+  *ngIf="isLinkVisible"
+  class="w-full min-w-0"
+>
+  <button
+    type="button"
+    class="text-12-16 font-medium text-blue-4867FC hover:underline disabled:cursor-wait disabled:opacity-60"
+    [attr.aria-expanded]="isOpen"
+    [disabled]="status === 'loading'"
+    (click)="toggle()"
+  >
+    {{ status === 'loading' ? 'Đang tải mã ưu đãi...' : 'Xem mã ưu đãi' }}
+  </button>
+
+  <div
+    *ngIf="isOpen && status === 'ready'"
+    class="mt-2 w-full min-w-0 max-h-80 laptop:max-h-96 overflow-y-auto overflow-x-hidden overscroll-contain rounded-xl border border-gray-E2E2E2 bg-white p-2 flex flex-col gap-2"
+  >
+    <p class="px-1 text-12-16 text-gray-747474">Mỗi đơn áp dụng một mã</p>
+    <ul class="flex flex-col gap-2">
+      <li
+        *ngFor="let view of views; trackBy: trackByKey"
+        class="w-full min-w-0 rounded-lg border border-gray-E2E2E2 p-3 flex flex-col gap-1"
+      >
+        <div class="flex flex-row items-start gap-2 min-w-0">
+          <div class="flex-1 min-w-0">
+            <p class="text-14-20 font-semibold text-black break-all">{{ view.code }}</p>
+            <p
+              *ngIf="view.title"
+              class="text-12-16 text-gray-747474 break-words"
+            >
+              {{ view.title }}
+            </p>
+          </div>
+          <span
+            *ngIf="view.description.discountText"
+            class="shrink-0 text-14-20 font-semibold text-blue-4867FC"
+          >
+            {{ view.description.discountText }}
+          </span>
+        </div>
+        <p
+          *ngFor="let condition of view.description.conditions"
+          class="text-12-16 text-black-60 break-words"
+        >
+          {{ condition }}
+        </p>
+        <p
+          *ngIf="view.description.validityText"
+          class="text-12-16 text-black-60 break-words"
+        >
+          {{ view.description.validityText }}
+        </p>
+        <button
+          type="button"
+          class="self-end mt-1 rounded-full border border-blue-4867FC px-3 py-1 text-12-16 font-medium text-blue-4867FC hover:bg-blue-4867FC hover:text-white disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:bg-transparent disabled:hover:text-blue-4867FC"
+          [disabled]="disabled || view.key === appliedKey"
+          (click)="pick(view)"
+        >
+          {{ view.key === appliedKey ? 'Đang áp dụng' : 'Dùng mã' }}
+        </button>
+      </li>
+    </ul>
+  </div>
+</div>

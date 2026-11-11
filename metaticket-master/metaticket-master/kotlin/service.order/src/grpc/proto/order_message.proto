@@ -1,0 +1,116 @@
+syntax = "proto3";
+
+package metaticket.order.notification.grpc;
+
+message NotifyPaymentStartedRequest {
+  string order_id = 1;
+}
+
+message NotifyPaymentStatusChangedRequest {
+  string order_id = 1;
+  string payment_status = 2;
+}
+
+message GetOrderByIdRequest {
+  string order_id = 1;
+}
+
+message GetOrderStatusResponse {
+  string status = 1;
+}
+
+message DeliveryProto {
+  string delivery_name = 1;
+  string delivery_phone = 2;
+  string province_name = 3;
+  string district_name = 4;
+  string ward_name = 5;
+  string address = 6;
+}
+
+message CustomFieldProto {
+  string id = 1;
+  string name = 2;
+  string value = 3;
+}
+
+message PromotionProto {
+  string name = 1;
+  int64 price_discount = 2;
+}
+
+message OrderProto {
+  string id = 1;
+  string reservation_id = 2;
+  optional string payment_id = 3;
+  string show_id = 4;
+  string session_id = 5;
+  string code = 6;
+  string status = 7;
+  string customer_name = 8;
+  string customer_phone = 9;
+  string customer_email = 10;
+  optional DeliveryProto delivery = 11;
+  repeated CustomFieldProto custom_fields = 12;
+  repeated PromotionProto promotion_details = 13;
+  repeated string tickets = 14;
+  int64 total = 15;
+  int64 created_at = 16;
+}
+
+message CreateOrderRequest {
+  string reservation_id = 1;
+  string name = 2;
+  string phone = 3;
+  string email = 4;
+  string op_user_id = 5;
+  string customer_user_id = 6;
+  optional DeliveryProto delivery = 7;
+  repeated CustomFieldProto custom_fields = 8;
+  optional string promotion_code = 9;
+}
+
+message GetReportRequest {
+  optional string show_id = 1;
+  optional string session_id = 2;
+  optional int64 start_date = 3;
+  optional int64 end_date = 4;
+  repeated string status = 5;
+}
+
+message GetReportResponse {
+  repeated OrderProto orders = 1;
+}
+
+message GetInvoiceStatisticsRequest {
+  optional string show_id = 1;
+  optional string session_id = 2;
+  repeated string status = 3;
+  optional int64 start_date = 4;
+  optional int64 end_date = 5;
+}
+
+message CustomFieldTmplProto {
+  string id = 1;
+  string type = 2;
+  string display_name = 3;
+  string constraints = 4;
+  string note = 5;
+}
+
+message CreateOrderCustomFieldsMappingRequest {
+  string show_id = 1;
+  string session_id = 2;
+  repeated CustomFieldTmplProto customFields = 3;
+}
+
+message CreateOrderCustomFieldsMappingResponse {
+  repeated CustomFieldTmplProto customFields = 1;
+}
+
+message CreateOrderPromotionRequest {
+  string show_id = 1;
+  string session_id = 2;
+  string data = 3;
+  string plugin_name = 4;
+}

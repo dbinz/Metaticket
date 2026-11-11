@@ -1,0 +1,76 @@
+<app-layout>
+  <app-navbar />
+
+  <!-- Hero: brand blue plane + 16:9 banner (navbar outside — fixed must not sit under isolation) -->
+  <div class="product-list-hero w-full relative bg-blue-163AEA">
+    <div class="product-list-hero__glow" aria-hidden="true"></div>
+
+    <div class="product-list-hero__body w-full flex flex-col items-center">
+      <div *ngIf="isLoading" class="flex items-center justify-center py-16 laptop:py-24">
+        <app-loading [isSpinning]="true" [size]="'lg'" />
+      </div>
+
+      <div *ngIf="!isLoading && error" class="flex flex-col items-center justify-center gap-4 px-5 py-16 laptop:py-24">
+        <p nz-typography class="text-base text-white text-center">
+          Không tải được danh sách sản phẩm. Vui lòng thử lại.
+        </p>
+        <div class="w-[155px]">
+          <app-button [title]="'Thử lại'" [color]="'white'" [fontSize]="'sm'" (handlerOnPressed)="fetchShows()" />
+        </div>
+      </div>
+
+      <app-accessory-show-slider *ngIf="hasBanner && !isLoading && !error" [shows]="bannerShows" (selected)="onOpenShow($event)" />
+    </div>
+  </div>
+
+  <!-- Content: grid of all accessory shows -->
+  <div class="w-full bg-blue-072591 flex flex-col items-center pt-12 pb-16 px-5 laptop:px-0">
+    <div class="laptop:w-3/4 w-full flex flex-col gap-8 laptop:gap-9">
+      <p nz-typography class="text-2xl laptop:text-32-40 text-white font-medium text-stroke-2 leading-120pct">
+        Sản phẩm
+      </p>
+
+      <!-- Empty state — only after browser fetch returns zero shows -->
+      <div *ngIf="showEmpty" class="flex flex-1 flex-col items-center justify-center py-16">
+        <p nz-typography class="text-base text-white opacity-80">Hiện chưa có sản phẩm nào.</p>
+      </div>
+
+      <!-- Grid -->
+      <div *ngIf="showList" class="w-full grid grid-cols-2 gap-x-3 gap-y-8 laptop:grid-cols-3 laptop:gap-9">
+        <div *ngFor="let show of shows; trackBy: trackByShowId" class="flex flex-col items-start gap-3">
+          <button (click)="onOpenShow(show)" class="pl-card-media pb-[56.25%] relative w-full">
+            <app-image [src]="showImage(show)" [sx]="'w-full rounded-xl absolute left-0 right-0 h-full object-cover'" />
+            <span *ngIf="statusLabel(show)" class="pl-chip" [ngClass]="statusChipClass(show)">
+              {{ statusLabel(show) }}
+            </span>
+          </button>
+          <button class="flex flex-col gap-1 text-left" (click)="onOpenShow(show)">
+            <p nz-typography class="line-clamp-2 text-14-16 md:text-18-22 font-medium text-stroke-2 text-white">
+              {{ show.name }}
+            </p>
+
+            <p *ngIf="show.description" nz-typography class="line-clamp-2 md:text-14-24 text-12-24 text-blue-9CA8D3">
+              {{ show.description }}
+            </p>
+
+            <p *ngIf="show.minPrice" nz-typography class="md:text-14-24 text-12-24 font-semibold text-yellow-FED80B">
+              {{ show.minPrice | minPriceLabel }}
+            </p>
+          </button>
+        </div>
+      </div>
+
+      <div *ngIf="showList && !last" class="flex justify-center">
+        <button
+          type="button"
+          class="pl-more-btn"
+          [disabled]="loadingMore"
+          (click)="loadMore()"
+        >
+          {{ loadingMore ? 'Đang tải…' : 'Xem thêm' }}
+        </button>
+      </div>
+    </div>
+  </div>
+</app-layout>
+<app-accessory-pending-order-modal />

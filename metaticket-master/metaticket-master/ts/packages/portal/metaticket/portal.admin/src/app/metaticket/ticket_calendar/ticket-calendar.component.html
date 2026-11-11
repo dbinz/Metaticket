@@ -1,0 +1,282 @@
+<nb-card [nbSpinner]="loading > 0">
+    <nb-card-header>
+        <div class="pb-3">LỊCH BÁN VÉ</div>
+        <div class="picker-row">
+            <div>
+                <label>Sự kiện</label>
+                <input
+                    #autoInputShow
+                    nbInput
+                    fullWidth
+                    placeholder="Nhập sự kiện"
+                    type="text"
+                    (input)="onInputShowChange(autoInputShow.value)"
+                    (click)="onInputShowChange('')"
+                    [nbAutocomplete]="autoCompleteShow" />
+                <nb-autocomplete #autoCompleteShow (selectedChange)="onSelectShow($event)">
+                    <nb-option *ngFor="let show of filteredShowList$ | async" [value]="show.id">
+                        {{ show.showName }}
+                    </nb-option>
+                </nb-autocomplete>
+            </div>
+            <div>
+                <label>Suất vé theo lịch</label>
+                <input
+                    #autoInputSession
+                    nbInput
+                    fullWidth
+                    placeholder="Chọn suất"
+                    type="text"
+                    [disabled]="!selectedShow"
+                    (input)="onInputSessionChange(autoInputSession.value)"
+                    (click)="onInputSessionChange('')"
+                    [nbAutocomplete]="autoCompleteSession" />
+                <nb-autocomplete #autoCompleteSession (selectedChange)="onSelectSession($event)">
+                    <nb-option
+                        *ngFor="let session of filteredSessionList$ | async"
+                        [value]="session.id"
+                        [disabled]="session.sessionType !== 'CALENDAR'">
+                        {{ getSessionName(session) }}
+                    </nb-option>
+                </nb-autocomplete>
+            </div>
+        </div>
+    </nb-card-header>
+
+    <nb-card-body>
+        <p class="notice" *ngIf="selectedShow && !hasCalendarSessions">
+            Sự kiện này chưa có suất vé theo lịch. Tạo suất với loại "Vé theo lịch" ở màn quản lý suất diễn.
+        </p>
+        <p class="notice" *ngIf="selectedSession && !isCalendar">
+            Suất đã chọn là suất thường; vé của suất này quản lý ở màn
+            <a [routerLink]="['/portal/ticket/create']">Tạo vé</a>.
+        </p>
+
+        <ng-container *ngIf="isCalendar && month">
+            <div class="calendar-toolbar">
+                <div class="session-info">
+                    Thời gian bán: <b>{{ displayYmd(sessionFrom) }} – {{ displayYmd(sessionTo) }}</b>
+                    <ng-container *ngIf="selectedSession.calendar as cal">
+                        · Mở cửa {{ cal.openTime }}–{{ cal.closeTime }} · Bán trước tối đa
+                        {{ cal.bookingWindowDays }} ngày ·
+                        {{
+                            cal.sameDayCutoffMinutes === null || cal.sameDayCutoffMinutes === undefined
+                                ? 'Không bán trong ngày'
+                                : 'Bán trong ngày, ngừng trước ' + cal.sameDayCutoffMinutes + ' phút'
+                        }}
+                    </ng-container>
+                    <span class="hint" *ngIf="!categories.length">
+                        Suất chưa có hạng vé — tạo ở màn <a [routerLink]="['/portal/ticket/category']">Hạng vé</a>.
+                    </span>
+                </div>
+                <div class="toolbar-actions">
+                    <button nbButton size="small" status="primary" (click)="openGenerateDialog()">
+                        Sinh lịch / Gia hạn
+                    </button>
+                    <button nbButton size="small" status="info" (click)="openBulkDialog('update')">
+                        Sửa hàng loạt
+                    </button>
+                    <button nbButton size="small" status="danger" outline (click)="openBulkDialog('delete')">
+                        Xóa ngày
+                    </button>
+                </div>
+            </div>
+
+            <div class="calendar-layout">
+                <div>
+                    <div class="month-nav">
+                        <button nbButton ghost size="small" [disabled]="!canPrevMonth" (click)="changeMonth(-1)">
+                            <nb-icon icon="chevron-left-outline"></nb-icon>
+                        </button>
+                        <span class="month-label">{{ monthLabel }}</span>
+                        <button nbButton ghost size="small" [disabled]="!canNextMonth" (click)="changeMonth(1)">
+                            <nb-icon icon="chevron-right-outline"></nb-icon>
+                        </button>
+                        <span class="hint">
+                            {{ monthDayCount }} ngày có lịch<ng-container *ngIf="monthClosedCount"
+                                >, {{ monthClosedCount }} ngày ngừng bán</ng-container
+                            >
+                        </span>
+                    </div>
+
+                    <div class="calendar-grid">
+                        <div class="calendar-head" *ngFor="let d of weekdays">{{ d.label }}</div>
+                        <ng-container *ngFor="let cell of cells">
+                            <div *ngIf="!cell" class="calendar-cell calendar-cell--blank"></div>
+                            <button
+                                *ngIf="cell"
+                                type="button"
+                                class="calendar-cell"
+                                [class.calendar-cell--empty]="!cell.day"
+                                [class.calendar-cell--closed]="cell.day?.status === 'CLOSED'"
+                                [class.calendar-cell--past]="cell.past"
+                                [class.calendar-cell--today]="cell.today"
+                                [class.calendar-cell--selected]="cell.date === selectedDate"
+                                (click)="selectDate(cell.date)">
+                                <span class="cell-top">
+                                    <span class="cell-day">{{ cell.dayNumber }}</span>
+                                    <nb-icon *ngIf="cell.locked" icon="lock-outline" title="Đã có vé bán/giữ"></nb-icon>
+                                </span>
+                                <ng-container *ngIf="cell.day">
+                                    <span class="cell-status" *ngIf="cell.day.status === 'CLOSED'">Ngừng bán</span>
+                                    <span class="cell-price" *ngIf="cell.minPrice !== null">
+                                        từ {{ cell.minPrice | number: '1.0-0' }}đ
+                                    </span>
+                                    <span class="cell-sold">{{ cell.reserved }}/{{ cell.quota }}</span>
+                                </ng-container>
+                            </button>
+                        </ng-container>
+                    </div>
+                    <div class="legend">
+                        <span><nb-icon icon="lock-outline"></nb-icon> có vé bán/giữ</span>
+                        <span>đã bán + đang giữ / tổng số lượng</span>
+                        <span class="legend-closed">ngừng bán</span>
+                        <span class="legend-empty">chưa có lịch</span>
+                    </div>
+                </div>
+
+                <div class="day-panel">
+                    <p class="hint" *ngIf="!selectedDate">Chọn một ngày để xem chi tiết.</p>
+                    <ng-container *ngIf="selectedDate">
+                        <h6>
+                            {{ dayOfWeekLabel(selectedDate) }}, {{ displayYmd(selectedDate) }}
+                            <span
+                                *ngIf="selectedDay"
+                                class="status-badge"
+                                [class.status-badge--closed]="selectedDay.status === 'CLOSED'"
+                                >{{ selectedDay.status === 'OPEN' ? 'Mở bán' : 'Ngừng bán' }}</span
+                            >
+                        </h6>
+                        <p class="hint" *ngIf="!selectedDay">
+                            Ngày này chưa có lịch bán. Dùng "Sinh lịch / Gia hạn" để tạo.
+                        </p>
+                        <ng-container *ngIf="selectedDay">
+                            <p class="hint" *ngIf="selectedDayIsPast">Ngày đã qua: không đổi được giá/số lượng.</p>
+
+                            <table class="ticket-table">
+                                <thead>
+                                    <tr>
+                                        <th>Loại vé</th>
+                                        <th>Giá (đ)</th>
+                                        <th>Số lượng</th>
+                                        <th>Còn lại</th>
+                                        <th>Bán/giữ</th>
+                                        <th></th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr *ngFor="let ticket of selectedDay.tickets">
+                                        <td>
+                                            {{ ticketName(ticket) }}
+                                            <nb-icon
+                                                *ngIf="ticket.locked"
+                                                icon="lock-outline"
+                                                title="Đã có vé bán/giữ: chỉ được tăng số lượng"></nb-icon>
+                                        </td>
+                                        <td>
+                                            <input
+                                                nbInput
+                                                fieldSize="small"
+                                                type="number"
+                                                min="0"
+                                                [disabled]="ticket.locked || selectedDayIsPast"
+                                                [(ngModel)]="ticketEdits[ticket.ticketId].price" />
+                                        </td>
+                                        <td>
+                                            <input
+                                                nbInput
+                                                fieldSize="small"
+                                                type="number"
+                                                [min]="ticket.locked ? ticket.quota : 1"
+                                                [disabled]="selectedDayIsPast"
+                                                [(ngModel)]="ticketEdits[ticket.ticketId].quota" />
+                                        </td>
+                                        <td>{{ ticket.remaining }}</td>
+                                        <td>{{ ticket.reserved }}</td>
+                                        <td>
+                                            <button
+                                                nbButton
+                                                size="tiny"
+                                                status="primary"
+                                                [disabled]="selectedDayIsPast"
+                                                (click)="saveTicket(ticket)">
+                                                Lưu
+                                            </button>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+
+                            <div class="capacity-edit">
+                                <label>Sức chứa chung cả ngày</label>
+                                <div *ngIf="selectedDay.capacity as cap" class="hint">
+                                    Tổng {{ cap.total }} · còn {{ cap.remaining }} · đã bán/giữ {{ cap.reserved }}
+                                </div>
+                                <div class="hint" *ngIf="!selectedDay.capacity">
+                                    Chưa giới hạn (chỉ theo từng loại vé).
+                                </div>
+                                <div class="inline-edit">
+                                    <input
+                                        nbInput
+                                        fieldSize="small"
+                                        type="number"
+                                        min="1"
+                                        placeholder="Sức chứa"
+                                        [disabled]="selectedDayIsPast"
+                                        [(ngModel)]="capacityEdit" />
+                                    <button
+                                        nbButton
+                                        size="tiny"
+                                        status="primary"
+                                        [disabled]="selectedDayIsPast"
+                                        (click)="saveCapacity()">
+                                        Lưu
+                                    </button>
+                                </div>
+                            </div>
+
+                            <div class="day-actions">
+                                <button
+                                    *ngIf="selectedDay.status === 'OPEN'"
+                                    nbButton
+                                    size="small"
+                                    status="warning"
+                                    (click)="setDayStatus('CLOSED')">
+                                    Ngừng bán ngày này
+                                </button>
+                                <button
+                                    *ngIf="selectedDay.status === 'CLOSED'"
+                                    nbButton
+                                    size="small"
+                                    status="success"
+                                    (click)="setDayStatus('OPEN')">
+                                    Mở bán lại
+                                </button>
+                                <button
+                                    nbButton
+                                    size="small"
+                                    outline
+                                    status="info"
+                                    (click)="openBulkDialog('update', selectedDate)">
+                                    Sửa ngày…
+                                </button>
+                                <button
+                                    nbButton
+                                    size="small"
+                                    outline
+                                    status="danger"
+                                    (click)="openBulkDialog('delete', selectedDate)">
+                                    Xóa ngày
+                                </button>
+                            </div>
+                            <p class="hint">
+                                Vé đã có người mua/giữ (biểu tượng khóa) không đổi giá, không giảm số lượng và không xóa
+                                được; chỉ tăng số lượng hoặc ngừng bán ngày.
+                            </p>
+                        </ng-container>
+                    </ng-container>
+                </div>
+            </div>
+        </ng-container>
+    </nb-card-body>
+</nb-card>

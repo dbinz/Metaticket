@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration scan="true" scanPeriod="30 seconds">
+
+    <appender name="APPLICATION" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>/app/logs/application.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+            <fileNamePattern>/app/logs/application.%d{yyyy-MM-dd}.%i.log.zip</fileNamePattern>
+            <maxFileSize>100MB</maxFileSize>
+            <maxHistory>15</maxHistory>
+            <totalSizeCap>10GB</totalSizeCap>
+        </rollingPolicy>
+        <encoder>
+            <pattern>%date [%thread] %logger{15} %-5level %msg%ex%n</pattern>
+        </encoder>
+    </appender>
+
+    <logger name="APPLICATION" level="DEBUG" additivity="false" >
+        <appender-ref ref="APPLICATION" />
+    </logger>
+
+    <root level="DEBUG">
+        <appender-ref ref="APPLICATION" />
+    </root>
+</configuration>

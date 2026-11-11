@@ -1,0 +1,36 @@
+<div
+  nz-dropdown
+  [nzDropdownMenu]="data && data.length > 0 ? menu: null"
+  nzTrigger="click"
+  class="flex items-center justify-between px-3 md:px-4 py-1 md:py-5 rounded-full bg-transparent border-[1px] lg:border-2 border-white h-[32px] desktop:gap-1 cursor-pointer lg:max-w-[244px] lg:w-[244px] max-w-[185px] min-w-[117px]"
+  [ngClass]="{'bg-white': displayTitle !== '' }"
+>
+  <div class="flex gap-1 lg:gap-2 items-center overflow-hidden">
+    <div class="flex-shrink-0">
+      <app-image [sx]="'w-4 h-4'" [src]="iconLeft"></app-image>
+    </div>
+    <p
+      nz-typography
+      class="text-12-20 md:text-16-24 font-medium one-line-text overflow-hidden"
+      [ngClass]="displayTitle==='' ? 'text-white' : 'text-black'"
+    >
+      {{ displayTitle === '' ? title : displayTitle }}
+    </p>
+  </div>
+  <div class="flex-shrink-0" [ngClass]="{'text-black': displayTitle !== ''}">
+    <app-image [sx]="' w-5 h-5'" [src]="iconRight || appIcons.icArrowBottomWhiteThin"/>
+  </div>
+</div>
+
+<nz-dropdown-menu #menu="nzDropdownMenu">
+  <div nz-menu nzSelectable class="p-2 w-[244px] rounded-[20px] flex flex-col">
+    <p
+      tabindex="0"
+      nz-checkbox
+      *ngFor="let item of data" class="p-2 text-14-24 font-medium m-0"
+      [(ngModel)]="item.check"
+      (ngModelChange)="onChoseItems(item)">
+      {{ item.title }}
+    </p>
+  </div>
+</nz-dropdown-menu>

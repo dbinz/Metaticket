@@ -1,0 +1,260 @@
+<app-layout [isDarkMode]="false" [isLoading]="isLoading">
+  <!-- Error state: shown when a slug resolution fails with a non-not-found error or times out.
+       The main detail content is gated on !error so the page is never partially rendered (Requirement 9.5). -->
+  <div *ngIf="error" class="flex flex-col">
+    <div class="bg-blue-163AEA pb-8">
+      <app-navbar />
+    </div>
+    <div class="flex flex-col items-center justify-center text-center gap-3 py-20 px-5">
+      <p class="text-20-24 font-semibold">Không thể tải chương trình</p>
+      <p class="text-16-24 opacity-80">Đã xảy ra lỗi khi tải thông tin chương trình. Vui lòng thử lại sau.</p>
+    </div>
+  </div>
+
+  <div class="flex flex-col" *ngIf="!error">
+    <div class="bg-blue-163AEA pb-8">
+      <app-navbar />
+    </div>
+
+    <div class="flex flex-col">
+      <div class="bg-blue-163AEA">
+        <div class="w-full laptop:w-3/4 mx-auto px-5 laptop:px-0">
+          <div class="pb-[41.67%] relative w-full z-1">
+            <app-image [src]="show?.detailImageUrl ?? ''"
+              [sx]="'object-cover laptop:rounded-[20px] mx-auto rounded-xl absolute left-0 right-0 w-full h-full'" />
+          </div>
+        </div>
+      </div>
+      <div class="bg-blue-163AEA text-white flex gap-4 flex-col">
+        <div class="flex flex-col gap-2 pt-6 w-full laptop:w-3/4 mx-auto desktop:pt-12 px-5 laptop:px-0">
+          <p class="text-20-24 tablet:text-32-40">{{ show?.showName }}</p>
+          <p class="text-16-24 opacity-80 hidden md:block">
+            <span *ngFor="let item of displaySessions; let isLast = last">
+              {{ item.city?.name }} - {{ sessionTimeLabel(item, false) }}
+              <span *ngIf="!isLast">|</span>
+            </span>
+          </p>
+          <p class="block md:hidden opacity-80" *ngFor="let item of displaySessions">
+            {{ item.city?.name }} - {{ sessionTimeLabel(item, false) }}
+          </p>
+        </div>
+        <hr class="opacity-65 hidden md:flex" />
+        <!-- flex-row-reverse only when booking CTA is visible; otherwise nav stays left/start -->
+        <div class="flex flex-col gap-7 w-full laptop:w-3/4 mx-auto px-5 laptop:px-0 z-1"
+          [ngClass]="!(show?.hideSessions ?? false) ? 'md:justify-between md:flex-row-reverse' : 'md:flex-row'">
+          <!-- hideSessions: hide the whole booking CTA group -->
+          <ng-container *ngIf="!(show?.hideSessions ?? false)">
+            <ng-container *ngIf="sessions.length > 1; else second">
+              <app-button [title]="'CHỌN SUẤT DIỄN'" (handlerOnPressed)="scrollIntoView('sessions')"></app-button>
+            </ng-container>
+            <ng-template #second>
+              <ng-container *ngIf="sessions.length === 1 && nearestSession?.isFree; else third">
+                <ng-container [ngTemplateOutlet]="isFree"
+                  [ngTemplateOutletContext]="{status: nearestSession?.status, id: nearestSession?.id, style: {'padding': ' 12px 48px !important'}}" />
+              </ng-container>
+            </ng-template>
+            <ng-template #third>
+              <ng-container *ngIf="sessions.length === 1 && nearestSession?.status === sessionStatus.Open; else four">
+                <app-button [title]="isCalendarSession(nearestSession) ? 'CHỌN NGÀY' : 'ĐẶT NGAY'"
+                  (handlerOnPressed)="handlerOnBookingTicket(nearestSession?.id || '')"></app-button>
+              </ng-container>
+            </ng-template>
+            <ng-template #four>
+              <ng-container [ngTemplateOutlet]="statusSession"
+                [ngTemplateOutletContext]="{status: nearestSession?.status, id: nearestSession?.id, calendar: isCalendarSession(nearestSession), style: {'padding': ' 12px 48px !important'}}" />
+            </ng-template>
+          </ng-container>
+
+          <div class="flex laptop:gap-3 mb-6">
+            <button class="laptop:px-9 px-6 py-3 border rounded-[30px] text-14-24">Chương trình ĐỘC QUYỀN</button>
+            <button *ngIf="show?.ticketDescription" (click)="scrollIntoView('ticket')"
+              class="laptop:px-9 px-6 py-3 text-14-24 opacity-80">
+              Hạng vé
+            </button>
+            <button *ngIf="show?.policy" (click)="scrollIntoView('policy')"
+              class="laptop:px-9 px-6 py-3 text-14-24 opacity-80">
+              Chính sách
+            </button>
+          </div>
+        </div>
+      </div>
+      <div id="sessions" *ngIf="!(show?.hideSessions ?? false)">
+        <div *ngIf="sessions.length"
+          class=" py-7 desktop:py-12 w-full laptop:w-3/4 mx-auto flex-col gap-3 hidden md:flex px-5 laptop:px-0">
+          <p class="text-20-24 uppercase font-semibold text-blue-163AEA">Suất diễn</p>
+          <div class="flex flex-col border rounded-3xl">
+            <div class="-m-1.5 overflow-x-auto">
+              <div class="p-1.5 min-w-full inline-block align-middle">
+                <div class="overflow-hidden">
+                  <table class="min-w-full divide-y divide-gray-200">
+                    <thead>
+                      <tr>
+                        <th scope="col" class="px-6 py-3 text-start border-r-2 bg-[#CDD7FA] rounded-tl-3xl">
+                          Suất diễn
+                        </th>
+                        <th scope="col" class="px-6 py-3 text-start border-r-2 bg-[#CDD7FA]">
+                          Địa điểm
+                        </th>
+                        <th scope="col" class="px-6 py-3 text-start border-r-2 bg-[#CDD7FA]">
+                          Thành phố
+                        </th>
+                        <th scope="col" class="px-6 py-3 text-start bg-[#CDD7FA] rounded-tr-3xl">
+                          Trạng thái
+                        </th>
+                      </tr>
+                    </thead>
+                    <tbody class="divide-y divide-gray-200">
+                      <tr *ngFor="let item of sessions">
+                        <td class="px-6 py-4 text-sm border-r-2">
+                          {{ item.sessionName }} | {{ isCalendarSession(item) ? sessionTimeLabel(item) : 'Bắt đầu từ ' +
+                          this.formatDate(item.startTime, true) }}
+                        </td>
+                        <td class="px-6 py-4 text-sm border-r-2">{{ item.venue }}</td>
+
+                        <td class="px-6 py-4 text-sm border-r-2">{{ item.city?.name }}</td>
+
+                        <td class="px-6 py-4 text-sm">
+                          <ng-container *ngIf="item?.isFree; else elseBlock">
+                            <ng-container [ngTemplateOutlet]="isFree"
+                              [ngTemplateOutletContext]="{status: item.status, id: item.id, style: {'padding-top': '5px !important', 'padding-bottom': '5px !important', width: 'auto !important'}}" />
+                          </ng-container>
+                          <ng-template #elseBlock>
+                            <ng-container [ngTemplateOutlet]="statusSession"
+                              [ngTemplateOutletContext]="{status: item.status, id: item.id, calendar: isCalendarSession(item), style: {'padding-top': '5px !important', 'padding-bottom': '5px !important', width: 'auto !important'}}" />
+                          </ng-template>
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div *ngIf="sessions.length" class="flex flex-col gap-5 p-5 md:hidden">
+          <div *ngFor="let item of sessions"
+            class="py-5 px-[70px] rounded-[30px] flex flex-col gap-4 justify-center border md:hidden">
+            <p *ngIf="item.sessionName" class="text-center text-lg font-bold break-words">{{ item.sessionName }}</p>
+            <p class="text-center text-[#626262] text-14-14">{{ sessionTimeLabel(item) }}</p>
+            <p class="text-center font-medium">{{ item.venue }}</p>
+            <div class="flex flex-col justify-center items-center mt-2 z-1">
+              <ng-container *ngIf="item?.isFree; else elseBlock">
+                <ng-container [ngTemplateOutlet]="isFree"
+                  [ngTemplateOutletContext]="{status: item.status, id: item.id, style: {'padding-top': '8px !important', 'padding-bottom': '8px !important', width: 'auto !important'}}" />
+              </ng-container>
+              <ng-template #elseBlock>
+                <ng-container [ngTemplateOutlet]="statusSession"
+                  [ngTemplateOutletContext]="{status: item.status, id: item.id, calendar: isCalendarSession(item), style: {'padding-top': '8px !important', 'padding-bottom': '8px !important', width: 'auto !important'}}" />
+              </ng-template>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="bg-grey-F4F4F4 mx-auto w-full">
+        <div
+          class="py-7 desktop:py-12 w-full laptop:w-3/4 mx-auto md:flex md:flex-row-reverse justify-between gap-10 px-5 laptop:px-0">
+          <div class="flex-col gap-3 md:gap-5 md:flex hidden">
+            <app-button *ngIf="uniqueSeatPlanId.length === 1" [title]="'Xem Chi tiết'" [color]="'gray-event'"
+              (handlerOnPressed)="onOpenModal()" />
+            <app-dropdown *ngIf="uniqueSeatPlanId.length > 1" [title]="'Xem Chi tiết'" [data]="listSessionSeatPlan"
+              (handlerOnSelected)="onSelectSession($event)" />
+            <app-button [title]="'Câu hỏi thường gặp'" [color]="'gray-event'" (handlerOnPressed)="onNavigateToFaq()" />
+          </div>
+          <div>
+            <p class="text-20-24 font-semibold uppercase mb-4 text-blue-163AEA">Thông tin chương trình</p>
+            <div class="break-words" [innerHTML]="formatDescription(show?.description || '')"></div>
+          </div>
+        </div>
+      </div>
+      <div id="ticket" *ngIf="show?.ticketDescription"
+        class="py-7 desktop:py-12 w-full laptop:w-3/4 mx-auto flex flex-col gap-4 px-5 laptop:px-0">
+        <p class="text-20-22 uppercase font-semibold text-blue-163AEA">
+          Hạng vé
+        </p>
+        <div class="break-words" [innerHTML]="formatDescription(show?.ticketDescription || '')"></div>
+      </div>
+      <div *ngIf="show?.policy" class="bg-grey-F4F4F4 mx-auto w-full">
+        <div id="policy" class="py-7 desktop:py-12 w-full laptop:w-3/4 mx-auto flex flex-col gap-4 px-5 laptop:px-0">
+          <p class="text-20-22 uppercase font-semibold text-blue-163AEA">
+            Chính sách
+          </p>
+          <div class="break-words" [innerHTML]="formatDescription(show?.policy || '')"></div>
+        </div>
+      </div>
+      <!-- Background alternates with the previous visible section (ticket = white, policy = grey) -->
+      <div *ngIf="show?.logoHostUrl" class="mx-auto w-full"
+        [ngClass]="{ 'bg-grey-F4F4F4': show?.ticketDescription && !show?.policy }">
+        <div class="py-7 desktop:py-12 w-full laptop:w-3/4 mx-auto flex flex-col gap-4 px-5 laptop:px-0">
+          <p class="text-20-24 uppercase font-semibold text-blue-163AEA">Đơn vị tổ chức</p>
+          <div class="flex gap-3">
+            <app-image [src]="show?.logoHostUrl ?? ''"
+              [sx]="'max-w-full max-h-[160px] laptop:max-h-[258px] object-scale-down'" />
+          </div>
+        </div>
+      </div>
+      <div>
+        <div class="py-7 desktop:py-12 w-full laptop:w-3/4 mx-auto md:hidden flex flex-col gap-5 px-5 laptop:px-0">
+          <app-button *ngIf="uniqueSeatPlanId.length === 1" [title]="'Xem Chi tiết'" [color]="'gray-event'"
+            (handlerOnPressed)="onOpenModal()" />
+          <app-dropdown *ngIf="uniqueSeatPlanId.length > 1" [title]="'Xem Chi tiết'" [data]="listSessionSeatPlan"
+            (handlerOnSelected)="onSelectSession($event)" />
+          <app-button [title]="'Câu hỏi thường gặp'" [color]="'gray-event'" (handlerOnPressed)="onNavigateToFaq()" />
+        </div>
+      </div>
+      <div class="py-7  desktop:py-12 w-full laptop:w-3/4 mx-auto px-5 laptop:px-0">
+        <grid-event-ticket [title]="'Tìm kiếm gần đây'" [data]="recentShows" textColor=""
+          [buttonColor]="'transparent-gray'" (handlerOnViewMore)="onViewMore()" class="w-full" />
+      </div>
+      <div class="py-7  desktop:py-12 w-full laptop:w-3/4 mx-auto px-5 laptop:px-0">
+        <grid-event-ticket [title]="'Sự kiện nổi bật'" [data]="highlightShows" textColor=""
+          [buttonColor]="'transparent-gray'" class="w-full" (handlerOnViewMore)="onViewMoreHighlight()"
+          [isLast]="isLastHighLight" />
+      </div>
+    </div>
+  </div>
+</app-layout>
+
+<ng-template #statusSession let-status='status' let-id='id' let-calendar='calendar' let-style='style'>
+  <ng-container [ngSwitch]="status">
+    <ng-container *ngSwitchCase="sessionStatus.OpeningWait">
+      <app-button [title]="sessionStatusName.OpeningWait" [color]="'gray'" opacity="opacity-90" [disabled]="true"
+        style="{{ style }}"></app-button>
+    </ng-container>
+    <ng-container *ngSwitchCase="sessionStatus.Open">
+      <app-button [title]="calendar ? 'Chọn ngày' : sessionStatusName.Open" [color]="'green'" (handlerOnPressed)="handlerOnBookingTicket(id)"
+        style="{{ style }}"></app-button>
+    </ng-container>
+    <ng-container *ngSwitchCase="sessionStatus.Paused">
+      <app-button [title]="sessionStatusName.Paused" [color]="'gray'" opacity="opacity-90" [disabled]="true"
+        style="{{ style }}"></app-button>
+    </ng-container>
+    <ng-container *ngSwitchCase="sessionStatus.Stopped">
+      <app-button [title]="sessionStatusName.Stopped" [color]="'gray'" opacity="opacity-90" [disabled]="true"
+        style="{{ style }}"></app-button>
+    </ng-container>
+    <ng-container *ngSwitchDefault></ng-container>
+  </ng-container>
+</ng-template>
+
+<ng-template #isFree let-status='status' let-id='id' let-style='style'>
+  <ng-container [ngSwitch]="status">
+    <ng-container *ngSwitchCase="sessionStatus.Stopped">
+      <app-button [title]="sessionStatusName.Stopped" [color]="'gray'" opacity="opacity-90" [disabled]="true"
+        style="{{ style }}"></app-button>
+    </ng-container>
+    <ng-container *ngSwitchDefault>
+      <app-button [title]="'Miễn phí'" [color]="'green'" [disabled]="true"></app-button>
+    </ng-container>
+  </ng-container>
+</ng-template>
+
+<!--modal-->
+<nz-modal [(nzVisible)]="modalVisible" [nzContent]="modalContent" [nzFooter]="null" [nzClosable]="false"
+  [nzWrapClassName]="
+    'seat-map-modal flex justify-center mx-5 [&>*:first-child]:m-0 [&>*:first-child]:w-full [&>*:first-child]:h-3/4 laptop:[&>*:first-child]:w-5/6 desktop:[&>*:first-child]:w-9/12'
+  " [nzBodyStyle]="{ padding: '0', height: '100%' }" (nzOnCancel)="onCloseModal()">
+  <ng-template #modalContent>
+    <app-seat-plan *ngIf="listSessionSeatPlan.length > 0" [isView]="true" [seatPlanId]="sessionSelected?.value ?? ''"
+      [type]="sessionSelected?.edType" [ledgendImageUrl]="sessionSelected?.legendImageUrl" />
+  </ng-template>
+</nz-modal>

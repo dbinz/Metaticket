@@ -1,0 +1,26 @@
+<nb-card [nbSpinner]="loading > 0">
+    <nb-card-header fullWidth>
+        <div class="inline-form-card w-100 news-list-header">
+            <button nbButton status="primary" type="button" (click)="openCreateOnWordpress()">
+                Thêm bài viết (WordPress)
+            </button>
+            <div class="news-filters">
+                <input
+                    nbInput
+                    fullWidth
+                    placeholder="Tìm theo tên..."
+                    [(ngModel)]="searchText"
+                    (keyup.enter)="onSearch()" />
+                <nb-select placeholder="Danh mục" [(selected)]="categoryFilter" (selectedChange)="onSearch()">
+                    <nb-option value="">Tất cả danh mục</nb-option>
+                    <nb-option *ngFor="let cat of categories" [value]="'' + cat.id">{{ cat.name }}</nb-option>
+                </nb-select>
+                <button nbButton status="info" type="button" (click)="onSearch()">Tìm kiếm</button>
+            </div>
+        </div>
+    </nb-card-header>
+    <nb-card-body>
+        <angular2-smart-table (custom)="onCustomButton($event)" [source]="source" [settings]="settings">
+        </angular2-smart-table>
+    </nb-card-body>
+</nb-card>

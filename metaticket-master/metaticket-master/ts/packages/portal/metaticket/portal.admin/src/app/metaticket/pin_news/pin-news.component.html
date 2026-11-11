@@ -1,0 +1,96 @@
+<nb-card [nbSpinner]="loading > 0">
+    <nb-card-header>
+        <div class="pin-head">
+            <div>
+                <div class="pin-title">{{ boardTitle }}</div>
+                <div class="pin-sub">
+                    Tối đa {{ maxSlots }} bài viết. Thêm / xóa / đổi thứ tự trên bảng, rồi bấm Xác nhận.
+                </div>
+            </div>
+            <div class="pin-actions">
+                <button nbButton status="basic" type="button" [disabled]="!canAdd" (click)="addSlot()">
+                    Thêm bài viết
+                </button>
+                <button nbButton status="info" type="button" (click)="refresh()">Làm mới danh sách ghim</button>
+                <button nbButton status="primary" type="button" [disabled]="!dirty" (click)="confirm()">Xác nhận</button>
+            </div>
+        </div>
+        <div class="pin-tabs">
+            <button
+                nbButton
+                size="small"
+                type="button"
+                [status]="tab === 'featured' ? 'primary' : 'basic'"
+                (click)="onTabChange('featured')"
+            >
+                Nổi bật
+            </button>
+            <button
+                nbButton
+                size="small"
+                type="button"
+                [status]="tab === 'category' ? 'primary' : 'basic'"
+                (click)="onTabChange('category')"
+            >
+                Theo thể loại
+            </button>
+            <nb-select
+                *ngIf="tab === 'category'"
+                class="pin-cat"
+                [selected]="categorySlug"
+                (selectedChange)="onCategoryChange($event)"
+                placeholder="Chọn thể loại"
+            >
+                <nb-option *ngFor="let cat of categories" [value]="cat.slug">{{ cat.name }}</nb-option>
+            </nb-select>
+        </div>
+    </nb-card-header>
+    <nb-card-body>
+        <table class="pin-table" *ngIf="rows.length > 0">
+            <thead>
+                <tr>
+                    <th>Ảnh</th>
+                    <th>Bài viết</th>
+                    <th>Trạng thái</th>
+                    <th>Thứ tự</th>
+                    <th>Thao tác</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr *ngFor="let row of rows">
+                    <td>
+                        <img
+                            *ngIf="imageOf(row.article)"
+                            class="thumb"
+                            [src]="imageOf(row.article)"
+                            [alt]="row.article?.title"
+                        />
+                        <span *ngIf="!row.article" class="muted">—</span>
+                    </td>
+                    <td>
+                        <div *ngIf="row.article">{{ row.article.title }}</div>
+                        <small *ngIf="row.article">{{ row.article.slug }}</small>
+                        <span *ngIf="!row.article" class="muted">Chưa chọn</span>
+                    </td>
+                    <td>{{ row.article?.status || '—' }}</td>
+                    <td>
+                        <nb-select [selected]="row.pinOrder" (selectedChange)="onOrderChange(row, $event)">
+                            <nb-option *ngFor="let n of orders" [value]="n">{{ n }}</nb-option>
+                        </nb-select>
+                    </td>
+                    <td>
+                        <div class="pin-row-actions">
+                            <button nbButton size="small" status="basic" type="button" (click)="replaceSlot(row)">
+                                Thay thế
+                            </button>
+                            <button nbButton size="small" status="danger" type="button" (click)="removeSlot(row)">
+                                Xóa
+                            </button>
+                        </div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+        <div *ngIf="rows.length === 0" class="muted">Chưa ghim bài viết nào. Bấm Thêm bài viết hoặc Làm mới.</div>
+    </nb-card-body>
+</nb-card>

@@ -1,0 +1,6 @@
+# SSL Configuration - Hardened
+ssl_certificate     /etc/letsencrypt/live/metaticket.vn-0002/chain.crt;
+ssl_certificate_key /etc/letsencrypt/live/metaticket.vn-0002/private.key;
+ssl_protocols       TLSv1.2 TLSv1.3; # Modern, secure protocols
+ssl_ciphers         EECDH+AESGCM:EDH+AESGCM; # Strong cipher suite
+ssl_prefer_server_ciphers off; # Recommended for modern ciphers

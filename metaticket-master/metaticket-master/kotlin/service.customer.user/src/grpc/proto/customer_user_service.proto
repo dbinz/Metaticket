@@ -1,0 +1,11 @@
+syntax = "proto3";
+
+package metaticket.customer.user.grpc;
+
+import "customer_user_message.proto";
+
+service CustomerUserService {
+  rpc GetCustomerUserById(GetCustomerUserByIdRequest) returns (CustomerUserProto);
+  rpc GetCustomerUserByPhone(GetCustomerUserByPhoneRequest) returns (CustomerUserProto);
+  rpc VerifyPassword(VerifyPasswordRequest) returns (CustomerUserProto);
+}

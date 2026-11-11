@@ -1,0 +1,68 @@
+<app-layout [isDarkMode]="false">
+  <div class="w-full flex flex-col">
+    <app-popup-error #popupError ></app-popup-error>
+    <div class="w-full flex flex-col px-5 pt-10 pb-20 bg-white items-center">
+      <div class="w-full max-w-[27rem]">
+        <p nz-typography class="text-2xl leading-120pct text-black font-medium text-center pb-3">Đăng ký tài khoản</p>
+        <form *ngIf="formGroup" class="w-full" nz-form [formGroup]="formGroup" nzLayout="vertical">
+          <div class="w-full flex flex-col space-y-6 mt-6 mb-8">
+            <app-form-input
+              [label]="'Số điện thoại'"
+              [placeholder]="'(+84)'"
+              [formControl]="formGroup.controls.phoneNumber"
+            />
+            <app-form-input
+              [label]="'Mật khẩu'"
+              [placeholder]="'Nhập mật khẩu của bạn'"
+              [type]="'password'"
+              [formControl]="formGroup.controls.password"
+            />
+            <app-form-input
+              [label]="'Nhập lại mật khẩu'"
+              [placeholder]="'Nhập mật khẩu của bạn'"
+              [type]="'password'"
+              [formControl]="formGroup.controls.confirmationPassword"
+            />
+          </div>
+          <div *ngIf="captchaSetting.enable" class="flex flex-col justify-center items-center w-full">
+            <re-captcha *ngIf="captchaSetting.captchaGateway === 'recaptcha'" #recaptchaRef
+                        [siteKey]="captchaSetting.siteKey" size="normal" theme="light"
+                        [lang]="'vi'"
+                        (resolved)="resolvedCaptcha($event)">
+            </re-captcha>
+            <ng-hcaptcha *ngIf="captchaSetting.captchaGateway === 'hcaptcha'" #hcaptchaRef
+                         [siteKey]="captchaSetting.siteKey"
+                         [languageCode]="'vi'"
+                         (verify)="resolvedCaptcha($event)"
+                         (expired)="onHcaptchaExpired($event)"
+                         (error)="onHcaptchaError($event)">
+            </ng-hcaptcha>
+          </div>
+          <div class="flex flex-row text-[12px] gap-1 pt-3 pb-3"
+               [class.text-red-D94D27]="formGroup.controls.phoneNumber.dirty && formGroup.controls.agreePolicy.value !== true"
+          >
+            <app-form-checkbox label="" [formControl]="formGroup.controls.agreePolicy"></app-form-checkbox>
+            <span>Tôi đồng ý với
+                <a class="text-blue-4867FC" [routerLink]="'/' + routeName.policyRegulation">Điều khoản dịch vụ</a>
+                và
+                <a class="text-blue-4867FC" [routerLink]="'/' + routeName.policyInformationSecurity">Chính sách bảo mật</a>
+                của META Ticket
+              </span>
+          </div>
+          <app-button
+            class="w-full"
+            [title]="'Tiếp tục'"
+            [fontSize]="'lg'"
+            [disabled]="formGroup.invalid || formGroup.controls.agreePolicy.value !== true"
+            [isLoading]="loading"
+            (handlerOnPressed)="submit()"
+          />
+        </form>
+        <div class="flex w-full items-center pt-2 justify-center">
+          <span class="">Đã có tài khoản?</span>
+          <a class="text-blue-4867FC pl-1" [routerLink]="'/' + routeName.login">Đăng nhập ngay</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</app-layout>

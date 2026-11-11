@@ -1,0 +1,120 @@
+:host {
+  display: block;
+}
+
+.search-hero {
+  isolation: isolate;
+  overflow-x: clip;
+}
+
+.search-tabs {
+  scrollbar-width: none;
+
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+.search-tab {
+  display: inline-flex;
+  align-items: center;
+  white-space: nowrap;
+  padding: 8px 18px;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  color: #9ca8d3;
+  font-size: 14px;
+  font-weight: 600;
+  text-decoration: none;
+
+  &:hover {
+    background: rgba(255, 255, 255, 0.05);
+    color: #fff;
+  }
+}
+
+.search-tab--active {
+  background: #f97316;
+  border-color: #f97316;
+  color: #0e1b3a;
+
+  &:hover {
+    background: #f97316;
+    color: #0e1b3a;
+  }
+}
+
+.pl-card-media {
+  overflow: hidden;
+  border-radius: 0.75rem;
+}
+
+.pl-chip {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  z-index: 2;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.02em;
+  padding: 5px 11px;
+  border-radius: 999px;
+  color: #fff;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.4);
+  pointer-events: none;
+}
+
+.pl-chip--open {
+  background: #f97316;
+  box-shadow: 0 2px 14px rgba(249, 115, 22, 0.5);
+}
+
+.pl-chip--waiting {
+  background: #2563eb;
+  box-shadow: 0 2px 14px rgba(37, 99, 235, 0.5);
+}
+
+.pl-chip--closed {
+  background: #838383;
+  box-shadow: 0 2px 14px rgba(131, 131, 131, 0.5);
+}
+
+.search-pager {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+  margin-top: 1.5rem;
+}
+
+.search-pager-num {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 36px;
+  height: 36px;
+  padding: 0 12px;
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  border-radius: 8px;
+  color: #9ca8d3;
+  text-decoration: none;
+  font-size: 14px;
+
+  &:hover {
+    background: rgba(255, 255, 255, 0.05);
+    color: #fff;
+  }
+}
+
+.search-pager-num.is-active {
+  background: #f97316;
+  border-color: #f97316;
+  color: #0e1b3a;
+  font-weight: 700;
+
+  &:hover {
+    color: #0e1b3a;
+    filter: brightness(0.95);
+  }
+}

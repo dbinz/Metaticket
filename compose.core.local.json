@@ -1,0 +1,658 @@
+{
+  "name": "metaticket-local",
+  "services": {
+    "core-net": {
+      "image": "alpine:3.21",
+      "command": [
+        "sleep",
+        "infinity"
+      ],
+      "ports": [
+        "127.0.0.1:8081:8081",
+        "127.0.0.1:4011:4011",
+        "127.0.0.1:4012:4012",
+        "127.0.0.1:4003:4003",
+        "127.0.0.1:4004:4004",
+        "127.0.0.1:4005:4005",
+        "127.0.0.1:4006:4006",
+        "127.0.0.1:4007:4007",
+        "127.0.0.1:4008:4008",
+        "127.0.0.1:4009:4009",
+        "127.0.0.1:4010:4010",
+        "127.0.0.1:4020:4020",
+        "127.0.0.1:4030:4030",
+        "127.0.0.1:4031:4031",
+        "127.0.0.1:4032:4032",
+        "127.0.0.1:4040:4040",
+        "127.0.0.1:4050:4050",
+        "127.0.0.1:4051:4051"
+      ]
+    },
+    "mongo": {
+      "image": "mongo:7.0",
+      "network_mode": "service:core-net",
+      "command": [
+        "mongod",
+        "--port",
+        "47017",
+        "--bind_ip",
+        "127.0.0.1",
+        "--replSet",
+        "localrs"
+      ],
+      "volumes": [
+        "core-mongo:/data/db"
+      ],
+      "healthcheck": {
+        "test": [
+          "CMD",
+          "mongosh",
+          "--port",
+          "47017",
+          "--quiet",
+          "--eval",
+          "db.adminCommand({ping:1}).ok"
+        ],
+        "interval": "5s",
+        "timeout": "5s",
+        "retries": 30
+      }
+    },
+    "kafka": {
+      "image": "apache/kafka:3.9.1",
+      "network_mode": "service:core-net",
+      "environment": {
+        "KAFKA_NODE_ID": "1",
+        "KAFKA_PROCESS_ROLES": "broker,controller",
+        "KAFKA_LISTENERS": "PLAINTEXT://127.0.0.1:49092,CONTROLLER://127.0.0.1:49093",
+        "KAFKA_ADVERTISED_LISTENERS": "PLAINTEXT://127.0.0.1:49092",
+        "KAFKA_CONTROLLER_LISTENER_NAMES": "CONTROLLER",
+        "KAFKA_LISTENER_SECURITY_PROTOCOL_MAP": "CONTROLLER:PLAINTEXT,PLAINTEXT:PLAINTEXT",
+        "KAFKA_CONTROLLER_QUORUM_VOTERS": "1@127.0.0.1:49093",
+        "KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR": "1",
+        "KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR": "1",
+        "KAFKA_TRANSACTION_STATE_LOG_MIN_ISR": "1",
+        "KAFKA_HEAP_OPTS": "-Xms128m -Xmx256m"
+      },
+      "volumes": [
+        "core-kafka:/tmp/kraft-combined-logs"
+      ]
+    },
+    "mongo-init": {
+      "image": "mongo:7.0",
+      "network_mode": "service:core-net",
+      "depends_on": {
+        "mongo": {
+          "condition": "service_healthy"
+        }
+      },
+      "entrypoint": [
+        "mongosh",
+        "--port",
+        "47017",
+        "--quiet",
+        "--eval",
+        "try { rs.status() } catch(e) { rs.initiate({_id:\"localrs\",members:[{_id:0,host:\"127.0.0.1:47017\"}]}) }; let ready=false; for(let i=0;i<60;i++){ if(db.hello().isWritablePrimary){ready=true;break}; sleep(1000) }; if(!ready) quit(1);"
+      ]
+    },
+    "redis-43790": {
+      "image": "redis:7.4-alpine",
+      "network_mode": "service:core-net",
+      "command": [
+        "redis-server",
+        "--port",
+        "43790",
+        "--bind",
+        "127.0.0.1",
+        "--cluster-enabled",
+        "yes",
+        "--cluster-config-file",
+        "nodes.conf",
+        "--cluster-announce-ip",
+        "127.0.0.1",
+        "--cluster-announce-port",
+        "43790",
+        "--cluster-announce-bus-port",
+        "53790",
+        "--appendonly",
+        "yes"
+      ],
+      "volumes": [
+        "core-redis-43790:/data"
+      ],
+      "healthcheck": {
+        "test": [
+          "CMD",
+          "redis-cli",
+          "-p",
+          "43790",
+          "ping"
+        ],
+        "interval": "5s",
+        "timeout": "3s",
+        "retries": 30
+      }
+    },
+    "redis-43791": {
+      "image": "redis:7.4-alpine",
+      "network_mode": "service:core-net",
+      "command": [
+        "redis-server",
+        "--port",
+        "43791",
+        "--bind",
+        "127.0.0.1",
+        "--cluster-enabled",
+        "yes",
+        "--cluster-config-file",
+        "nodes.conf",
+        "--cluster-announce-ip",
+        "127.0.0.1",
+        "--cluster-announce-port",
+        "43791",
+        "--cluster-announce-bus-port",
+        "53791",
+        "--appendonly",
+        "yes"
+      ],
+      "volumes": [
+        "core-redis-43791:/data"
+      ],
+      "healthcheck": {
+        "test": [
+          "CMD",
+          "redis-cli",
+          "-p",
+          "43791",
+          "ping"
+        ],
+        "interval": "5s",
+        "timeout": "3s",
+        "retries": 30
+      }
+    },
+    "redis-43792": {
+      "image": "redis:7.4-alpine",
+      "network_mode": "service:core-net",
+      "command": [
+        "redis-server",
+        "--port",
+        "43792",
+        "--bind",
+        "127.0.0.1",
+        "--cluster-enabled",
+        "yes",
+        "--cluster-config-file",
+        "nodes.conf",
+        "--cluster-announce-ip",
+        "127.0.0.1",
+        "--cluster-announce-port",
+        "43792",
+        "--cluster-announce-bus-port",
+        "53792",
+        "--appendonly",
+        "yes"
+      ],
+      "volumes": [
+        "core-redis-43792:/data"
+      ],
+      "healthcheck": {
+        "test": [
+          "CMD",
+          "redis-cli",
+          "-p",
+          "43792",
+          "ping"
+        ],
+        "interval": "5s",
+        "timeout": "3s",
+        "retries": 30
+      }
+    },
+    "redis-init": {
+      "image": "redis:7.4-alpine",
+      "network_mode": "service:core-net",
+      "depends_on": {
+        "redis-43790": {
+          "condition": "service_healthy"
+        },
+        "redis-43791": {
+          "condition": "service_healthy"
+        },
+        "redis-43792": {
+          "condition": "service_healthy"
+        }
+      },
+      "entrypoint": [
+        "sh",
+        "-c",
+        "if redis-cli -p 43790 cluster info | grep -q \"cluster_state:ok\"; then exit 0; fi; redis-cli --cluster create 127.0.0.1:43790 127.0.0.1:43791 127.0.0.1:43792 --cluster-replicas 0 --cluster-yes"
+      ]
+    },
+    "service.accessory": {
+      "image": "metaticket-core-local",
+      "network_mode": "service:core-net",
+      "environment": {
+        "SERVICE": "service.accessory",
+        "JAVA_TOOL_OPTIONS": "-Xms32m -Xmx192m -XX:ActiveProcessorCount=2 -Duser.timezone=Asia/Ho_Chi_Minh -Dlogback.configurationFile=conf/logback.xml"
+      },
+      "volumes": [
+        "./.local/core/service.accessory:/app/service.accessory/conf:ro"
+      ],
+      "depends_on": {
+        "mongo-init": {
+          "condition": "service_completed_successfully"
+        },
+        "redis-init": {
+          "condition": "service_completed_successfully"
+        },
+        "kafka": {
+          "condition": "service_started"
+        }
+      },
+      "mem_limit": "448m"
+    },
+    "service.admin": {
+      "image": "metaticket-core-local",
+      "network_mode": "service:core-net",
+      "environment": {
+        "SERVICE": "service.admin",
+        "JAVA_TOOL_OPTIONS": "-Xms32m -Xmx192m -XX:ActiveProcessorCount=2 -Duser.timezone=Asia/Ho_Chi_Minh -Dlogback.configurationFile=conf/logback.xml"
+      },
+      "volumes": [
+        "./.local/core/service.admin:/app/service.admin/conf:ro"
+      ],
+      "depends_on": {
+        "mongo-init": {
+          "condition": "service_completed_successfully"
+        },
+        "redis-init": {
+          "condition": "service_completed_successfully"
+        },
+        "kafka": {
+          "condition": "service_started"
+        }
+      },
+      "mem_limit": "448m"
+    },
+    "service.authentication": {
+      "image": "metaticket-core-local",
+      "network_mode": "service:core-net",
+      "environment": {
+        "SERVICE": "service.authentication",
+        "JAVA_TOOL_OPTIONS": "-Xms32m -Xmx192m -XX:ActiveProcessorCount=2 -Duser.timezone=Asia/Ho_Chi_Minh -Dlogback.configurationFile=conf/logback.xml"
+      },
+      "volumes": [
+        "./.local/core/service.authentication:/app/service.authentication/conf:ro"
+      ],
+      "depends_on": {
+        "mongo-init": {
+          "condition": "service_completed_successfully"
+        },
+        "redis-init": {
+          "condition": "service_completed_successfully"
+        },
+        "kafka": {
+          "condition": "service_started"
+        }
+      },
+      "mem_limit": "448m"
+    },
+    "service.authorization": {
+      "image": "metaticket-core-local",
+      "network_mode": "service:core-net",
+      "environment": {
+        "SERVICE": "service.authorization",
+        "JAVA_TOOL_OPTIONS": "-Xms32m -Xmx192m -XX:ActiveProcessorCount=2 -Duser.timezone=Asia/Ho_Chi_Minh -Dlogback.configurationFile=conf/logback.xml"
+      },
+      "volumes": [
+        "./.local/core/service.authorization:/app/service.authorization/conf:ro"
+      ],
+      "depends_on": {
+        "mongo-init": {
+          "condition": "service_completed_successfully"
+        },
+        "redis-init": {
+          "condition": "service_completed_successfully"
+        },
+        "kafka": {
+          "condition": "service_started"
+        }
+      },
+      "mem_limit": "448m"
+    },
+    "service.customer.auth": {
+      "image": "metaticket-core-local",
+      "network_mode": "service:core-net",
+      "environment": {
+        "SERVICE": "service.customer.auth",
+        "JAVA_TOOL_OPTIONS": "-Xms32m -Xmx192m -XX:ActiveProcessorCount=2 -Duser.timezone=Asia/Ho_Chi_Minh -Dlogback.configurationFile=conf/logback.xml"
+      },
+      "volumes": [
+        "./.local/core/service.customer.auth:/app/service.customer.auth/conf:ro"
+      ],
+      "depends_on": {
+        "mongo-init": {
+          "condition": "service_completed_successfully"
+        },
+        "redis-init": {
+          "condition": "service_completed_successfully"
+        },
+        "kafka": {
+          "condition": "service_started"
+        }
+      },
+      "mem_limit": "448m"
+    },
+    "service.customer.user": {
+      "image": "metaticket-core-local",
+      "network_mode": "service:core-net",
+      "environment": {
+        "SERVICE": "service.customer.user",
+        "JAVA_TOOL_OPTIONS": "-Xms32m -Xmx192m -XX:ActiveProcessorCount=2 -Duser.timezone=Asia/Ho_Chi_Minh -Dlogback.configurationFile=conf/logback.xml"
+      },
+      "volumes": [
+        "./.local/core/service.customer.user:/app/service.customer.user/conf:ro"
+      ],
+      "depends_on": {
+        "mongo-init": {
+          "condition": "service_completed_successfully"
+        },
+        "redis-init": {
+          "condition": "service_completed_successfully"
+        },
+        "kafka": {
+          "condition": "service_started"
+        }
+      },
+      "mem_limit": "448m"
+    },
+    "service.editor.policydesc": {
+      "image": "metaticket-core-local",
+      "network_mode": "service:core-net",
+      "environment": {
+        "SERVICE": "service.editor.policydesc",
+        "JAVA_TOOL_OPTIONS": "-Xms32m -Xmx192m -XX:ActiveProcessorCount=2 -Duser.timezone=Asia/Ho_Chi_Minh -Dlogback.configurationFile=conf/logback.xml"
+      },
+      "volumes": [
+        "./.local/core/service.editor.policydesc:/app/service.editor.policydesc/conf:ro"
+      ],
+      "depends_on": {
+        "mongo-init": {
+          "condition": "service_completed_successfully"
+        },
+        "redis-init": {
+          "condition": "service_completed_successfully"
+        },
+        "kafka": {
+          "condition": "service_started"
+        }
+      },
+      "mem_limit": "448m"
+    },
+    "service.editor.seatplanner": {
+      "image": "metaticket-core-local",
+      "network_mode": "service:core-net",
+      "environment": {
+        "SERVICE": "service.editor.seatplanner",
+        "JAVA_TOOL_OPTIONS": "-Xms32m -Xmx192m -XX:ActiveProcessorCount=2 -Duser.timezone=Asia/Ho_Chi_Minh -Dlogback.configurationFile=conf/logback.xml"
+      },
+      "volumes": [
+        "./.local/core/service.editor.seatplanner:/app/service.editor.seatplanner/conf:ro"
+      ],
+      "depends_on": {
+        "mongo-init": {
+          "condition": "service_completed_successfully"
+        },
+        "redis-init": {
+          "condition": "service_completed_successfully"
+        },
+        "kafka": {
+          "condition": "service_started"
+        }
+      },
+      "mem_limit": "448m"
+    },
+    "service.jobrunr": {
+      "image": "metaticket-core-local",
+      "network_mode": "service:core-net",
+      "environment": {
+        "SERVICE": "service.jobrunr",
+        "JAVA_TOOL_OPTIONS": "-Xms32m -Xmx192m -XX:ActiveProcessorCount=2 -Duser.timezone=Asia/Ho_Chi_Minh -Dlogback.configurationFile=conf/logback.xml"
+      },
+      "volumes": [
+        "./.local/core/service.jobrunr:/app/service.jobrunr/conf:ro"
+      ],
+      "depends_on": {
+        "mongo-init": {
+          "condition": "service_completed_successfully"
+        },
+        "redis-init": {
+          "condition": "service_completed_successfully"
+        },
+        "kafka": {
+          "condition": "service_started"
+        }
+      },
+      "mem_limit": "448m"
+    },
+    "service.notification": {
+      "image": "metaticket-core-local",
+      "network_mode": "service:core-net",
+      "environment": {
+        "SERVICE": "service.notification",
+        "JAVA_TOOL_OPTIONS": "-Xms32m -Xmx192m -XX:ActiveProcessorCount=2 -Duser.timezone=Asia/Ho_Chi_Minh -Dlogback.configurationFile=conf/logback.xml -Dsimplejavamail.smtp.host=127.0.0.1 -Dsimplejavamail.smtp.port=1025"
+      },
+      "volumes": [
+        "./.local/core/service.notification:/app/service.notification/conf:ro"
+      ],
+      "depends_on": {
+        "mongo-init": {
+          "condition": "service_completed_successfully"
+        },
+        "redis-init": {
+          "condition": "service_completed_successfully"
+        },
+        "kafka": {
+          "condition": "service_started"
+        }
+      },
+      "mem_limit": "448m",
+      "entrypoint": [
+        "/bin/sh",
+        "-c",
+        "cd /app/service.notification && exec java -cp \"conf:lib/*\" metaticket.notification.Launcher -config=conf/application.conf"
+      ]
+    },
+    "service.order": {
+      "image": "metaticket-core-local",
+      "network_mode": "service:core-net",
+      "environment": {
+        "SERVICE": "service.order",
+        "JAVA_TOOL_OPTIONS": "-Xms32m -Xmx192m -XX:ActiveProcessorCount=2 -Duser.timezone=Asia/Ho_Chi_Minh -Dlogback.configurationFile=conf/logback.xml"
+      },
+      "volumes": [
+        "./.local/core/service.order:/app/service.order/conf:ro"
+      ],
+      "depends_on": {
+        "mongo-init": {
+          "condition": "service_completed_successfully"
+        },
+        "redis-init": {
+          "condition": "service_completed_successfully"
+        },
+        "kafka": {
+          "condition": "service_started"
+        }
+      },
+      "mem_limit": "448m"
+    },
+    "service.order.datacollector": {
+      "image": "metaticket-core-local",
+      "network_mode": "service:core-net",
+      "environment": {
+        "SERVICE": "service.order.datacollector",
+        "JAVA_TOOL_OPTIONS": "-Xms32m -Xmx192m -XX:ActiveProcessorCount=2 -Duser.timezone=Asia/Ho_Chi_Minh -Dlogback.configurationFile=conf/logback.xml"
+      },
+      "volumes": [
+        "./.local/core/service.order.datacollector:/app/service.order.datacollector/conf:ro"
+      ],
+      "depends_on": {
+        "mongo-init": {
+          "condition": "service_completed_successfully"
+        },
+        "redis-init": {
+          "condition": "service_completed_successfully"
+        },
+        "kafka": {
+          "condition": "service_started"
+        }
+      },
+      "mem_limit": "448m"
+    },
+    "service.payment": {
+      "image": "metaticket-core-local",
+      "network_mode": "service:core-net",
+      "environment": {
+        "SERVICE": "service.payment",
+        "JAVA_TOOL_OPTIONS": "-Xms32m -Xmx192m -XX:ActiveProcessorCount=2 -Duser.timezone=Asia/Ho_Chi_Minh -Dlogback.configurationFile=conf/logback.xml"
+      },
+      "volumes": [
+        "./.local/core/service.payment:/app/service.payment/conf:ro"
+      ],
+      "depends_on": {
+        "mongo-init": {
+          "condition": "service_completed_successfully"
+        },
+        "redis-init": {
+          "condition": "service_completed_successfully"
+        },
+        "kafka": {
+          "condition": "service_started"
+        }
+      },
+      "mem_limit": "448m"
+    },
+    "service.qrcode": {
+      "image": "metaticket-core-local",
+      "network_mode": "service:core-net",
+      "environment": {
+        "SERVICE": "service.qrcode",
+        "JAVA_TOOL_OPTIONS": "-Xms32m -Xmx192m -XX:ActiveProcessorCount=2 -Duser.timezone=Asia/Ho_Chi_Minh -Dlogback.configurationFile=conf/logback.xml"
+      },
+      "volumes": [
+        "./.local/core/service.qrcode:/app/service.qrcode/conf:ro"
+      ],
+      "depends_on": {
+        "mongo-init": {
+          "condition": "service_completed_successfully"
+        },
+        "redis-init": {
+          "condition": "service_completed_successfully"
+        },
+        "kafka": {
+          "condition": "service_started"
+        }
+      },
+      "mem_limit": "448m"
+    },
+    "service.show": {
+      "image": "metaticket-core-local",
+      "build": {
+        "context": "./metaticket-master/metaticket-master/kotlin",
+        "dockerfile": "Dockerfile.local"
+      },
+      "network_mode": "service:core-net",
+      "environment": {
+        "SERVICE": "service.show",
+        "JAVA_TOOL_OPTIONS": "-Xms32m -Xmx192m -XX:ActiveProcessorCount=2 -Duser.timezone=Asia/Ho_Chi_Minh -Dlogback.configurationFile=conf/logback.xml"
+      },
+      "volumes": [
+        "./.local/core/service.show:/app/service.show/conf:ro"
+      ],
+      "depends_on": {
+        "mongo-init": {
+          "condition": "service_completed_successfully"
+        },
+        "redis-init": {
+          "condition": "service_completed_successfully"
+        },
+        "kafka": {
+          "condition": "service_started"
+        }
+      },
+      "mem_limit": "448m"
+    },
+    "service.ticket": {
+      "image": "metaticket-core-local",
+      "network_mode": "service:core-net",
+      "environment": {
+        "SERVICE": "service.ticket",
+        "JAVA_TOOL_OPTIONS": "-Xms32m -Xmx192m -XX:ActiveProcessorCount=2 -Duser.timezone=Asia/Ho_Chi_Minh -Dlogback.configurationFile=conf/logback.xml"
+      },
+      "volumes": [
+        "./.local/core/service.ticket:/app/service.ticket/conf:ro"
+      ],
+      "depends_on": {
+        "mongo-init": {
+          "condition": "service_completed_successfully"
+        },
+        "redis-init": {
+          "condition": "service_completed_successfully"
+        },
+        "kafka": {
+          "condition": "service_started"
+        }
+      },
+      "mem_limit": "448m"
+    },
+    "service.ticketslots": {
+      "image": "metaticket-core-local",
+      "network_mode": "service:core-net",
+      "environment": {
+        "SERVICE": "service.ticketslots",
+        "JAVA_TOOL_OPTIONS": "-Xms32m -Xmx192m -XX:ActiveProcessorCount=2 -Duser.timezone=Asia/Ho_Chi_Minh -Dlogback.configurationFile=conf/logback.xml"
+      },
+      "volumes": [
+        "./.local/core/service.ticketslots:/app/service.ticketslots/conf:ro"
+      ],
+      "depends_on": {
+        "mongo-init": {
+          "condition": "service_completed_successfully"
+        },
+        "redis-init": {
+          "condition": "service_completed_successfully"
+        },
+        "kafka": {
+          "condition": "service_started"
+        }
+      },
+      "mem_limit": "448m"
+    },
+    "gateway": {
+      "image": "nginx:1.28-alpine",
+      "network_mode": "service:core-net",
+      "volumes": [
+        "./.local/core/nginx.conf:/etc/nginx/nginx.conf:ro"
+      ],
+      "depends_on": {
+        "service.show": {
+          "condition": "service_started"
+        },
+        "service.customer.auth": {
+          "condition": "service_started"
+        },
+        "search": {
+          "condition": "service_started"
+        }
+      }
+    }
+  },
+  "volumes": {
+    "core-mongo": {},
+    "core-kafka": {},
+    "core-redis-43790": {},
+    "core-redis-43791": {},
+    "core-redis-43792": {}
+  }
+}

@@ -1,0 +1,87 @@
+<div
+  *ngIf="data.length > 0"
+  class="w-full flex items-center justify-center"
+  [class.featured-events]="featured"
+>
+  <div class="w-full flex flex-col items-center space-y-8 laptop:space-y-9">
+    <p
+      nz-typography
+      class="text-32-40 {{ textColor }} font-medium text-stroke-2 leading-120pct laptop:self-start"
+      *ngIf="title.length > 0"
+    >
+      {{ title }}
+    </p>
+    <div class="w-full grid grid-cols-2 gap-x-3 gap-y-8 laptop:grid-cols-3 laptop:gap-9">
+      <ng-container *ngFor="let item of data; trackBy: trackByShowId">
+        <div
+          *ngIf="isHighlightCardVisible(item)"
+          class="event-card flex flex-col items-start z-1 gap-3"
+        >
+          <button
+            (click)="onViewDetail(item)"
+            class="event-cover pb-[56.25%] relative w-full"
+            [attr.aria-label]="item.showName"
+          >
+            <app-image
+              [src]="item.thumbnailUrl"
+              [sx]="'w-full rounded-xl absolute left-0 right-0 h-full'"
+            />
+            <span
+              *ngIf="item.eventCategory"
+              class="absolute top-2 right-2 z-10 max-w-[75%] truncate rounded-md bg-blue-4867FC px-2 py-1 text-10-12 tablet:text-12-14 laptop:text-14-16 font-medium text-white shadow-[0_2px_10px_rgba(0,0,0,0.55),0_0_1px_rgba(0,0,0,0.35)]"
+            >
+              {{ item.eventCategory }}
+            </span>
+          </button>
+          <div class="event-copy flex flex-col gap-1">
+            <p
+              nz-typography
+              class="md:text-14-24 text-12-24 font-medium text-blue-9CA8D3"
+            >
+              {{
+                ongoingLabel(item) ||
+                  (item.startTime ? formatDate(item.startTime) : (item.sessions | nearestSessionDate))
+              }}
+            </p>
+            <!-- <div class="gap-3 flex flex-col"> -->
+            <p
+              nz-typography
+              class="text-14-16 md:text-18-22 font-medium text-stroke-2 {{ textColor }}"
+            >
+              {{ item.showName }}
+            </p>
+            <p
+              nz-typography
+              *ngIf="item.minPrice"
+              class="md:text-14-24 text-12-24 font-semibold text-yellow-FED80B"
+            >
+              {{ item.minPrice | minPriceLabel }}
+            </p>
+            <button
+              *ngIf="featured"
+              class="event-discover"
+              (click)="onViewDetail(item)"
+              [attr.aria-label]="'Khám phá ' + item.showName"
+            >
+              Khám phá sự kiện <span aria-hidden="true">↗</span>
+            </button>
+          </div>
+          <!--            <p nz-typography *ngIf="item.price !== undefined" class="text-base leading-120pct font-medium text-white">-->
+          <!--              {{item.price | formatPrice}}-->
+          <!--            </p>-->
+          <!-- </div> -->
+        </div>
+      </ng-container>
+    </div>
+    <div class="w-[155px]">
+      <app-button
+        class="z-10"
+        *ngIf="!isLast"
+        [title]="'Xem thêm'"
+        [color]="buttonColor"
+        [fontSize]="'sm'"
+        (handlerOnPressed)="onViewMore()"
+      />
+    </div>
+  </div>
+</div>

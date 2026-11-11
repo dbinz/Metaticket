@@ -1,0 +1,4 @@
+server {
+    listen $QRCODE_BACKEND_CONNECT_PORT;
+    proxy_pass $METATICKET_LOCAL:$QRCODE_BACKEND_LISTEN_PORT;
+}

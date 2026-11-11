@@ -1,0 +1,81 @@
+<nb-card
+    [status]="!enabledControl.value ? 'basic' : 'info'"
+    [accent]="
+        formGroup.dirty && formGroup.invalid
+            ? 'danger'
+            : formGroup.valid
+              ? editMode
+                  ? 'success'
+                  : !enabledControl.value
+                    ? 'basic'
+                    : 'info'
+              : 'basic'
+    "
+    [nbSpinner]="loading > 0">
+    <nb-card-header class="d-flex">
+        <span class="font-weight-bold mr-auto"
+            >OnePay Account: {{ codeControl.value }} {{ enabledControl.value ? 'Enabled' : 'Disabled' }}</span
+        >
+        <nb-icon *ngIf="!editMode" icon="edit-2-outline" (click)="editMode = true" class="mr-3 pointer"></nb-icon>
+        <nb-icon icon="trash-2-outline" (click)="remove()" class="pointer"></nb-icon>
+    </nb-card-header>
+
+    <nb-card-body>
+        <div class="inline-form-card w-100">
+            <form class="form-inline" [formGroup]="formGroup">
+                <div class="w-100">
+                    <label class="pr-3">Code:</label>
+                    <code>{{ codeControl.value }}</code>
+                </div>
+                <div class="w-100">
+                    <label class="pr-3">Return Url:</label>
+                    <code>{{ returnUrlControl.value }}</code>
+                </div>
+                <div class="w-100">
+                    <label class="pr-3">IPN Url: </label>
+                    <code>{{ ipnUrlControl.value }}</code>
+                </div>
+                <hr />
+                <div [class.error]="descriptionControl.dirty && descriptionControl.invalid" class="w-100">
+                    <label>Mô tả (*)</label>
+                    <textarea
+                        required
+                        fullWidth
+                        nbInput
+                        type="text"
+                        [readOnly]="!editMode"
+                        [status]="descriptionControl.dirty && descriptionControl.invalid ? 'danger' : 'basic'"
+                        [formControl]="descriptionControl"></textarea>
+                </div>
+                <div [class.error]="nameControl.dirty && nameControl.invalid">
+                    <label>Name (*)</label>
+                    <input
+                        required
+                        fullWidth
+                        nbInput
+                        type="text"
+                        [readOnly]="!editMode"
+                        [status]="nameControl.dirty && nameControl.invalid ? 'danger' : 'basic'"
+                        [formControl]="nameControl" />
+                </div>
+                <div [class.error]="baseUrlControl.dirty && baseUrlControl.invalid">
+                    <label>Merchant Base Url (*)</label>
+                    <input
+                        required
+                        fullWidth
+                        nbInput
+                        type="text"
+                        [readOnly]="!editMode"
+                        [status]="baseUrlControl.dirty && baseUrlControl.invalid ? 'danger' : 'basic'"
+                        [formControl]="baseUrlControl" />
+                </div>
+            </form>
+        </div>
+    </nb-card-body>
+
+    <nb-card-footer>
+        <button class="mr-2" nbButton [disabled]="!editMode" (click)="update()" status="success">Cập nhật</button>
+        <button nbButton *ngIf="!enabledControl.value" (click)="enable()" status="info">Enable</button>
+        <button nbButton *ngIf="enabledControl.value" (click)="disable()" status="danger">Disable</button>
+    </nb-card-footer>
+</nb-card>

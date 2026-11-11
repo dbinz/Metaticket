@@ -1,0 +1,7 @@
+export interface GetTicketByTimeRequest {
+  showId: string;
+  sessionId: string;
+  startTime: number;
+  /** "YYYY-MM-DD"; required by the backend for CALENDAR sessions, omitted otherwise. */
+  date?: string;
+}

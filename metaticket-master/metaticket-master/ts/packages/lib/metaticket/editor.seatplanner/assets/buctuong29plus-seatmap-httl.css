@@ -1,0 +1,97 @@
+.c-path { z-index: 1; opacity: 0.3; stroke: red; stroke-width: 4; fill: none; cursor: pointer; pointer-events: stroke; } 
+.c-point { z-index: 2; opacity:0.3; stroke: red; fill: blue; cursor: pointer; }
+
+text {
+    text-anchor: middle;
+    dominant-baseline: central;
+    font-size: 30px;
+    font-weight: bold;
+    font-family: montserrat;
+    text-rendering: optimizeSpeed;
+    fill: white;
+}
+
+.sz-g text {
+    --zone-label-color: white;
+    cursor: pointer;
+    pointer-events: all;
+
+    fill : var(--zone-label-color)
+}
+
+.sz-g tspan {
+    pointer-events: none;
+}
+
+.sz-g .white-text {
+    --zone-label-color: white !important;
+}
+
+.sz-g .no-border {
+    --zone-outline-color: rgb(200, 200, 200, 0.0)
+}
+
+.sz-g .small-note {
+    font-size: 15px !important;
+    font-weight: normal;
+}
+
+.sz-g path {
+    --zone-outline-stroke-width: 2;
+
+    fill: var(--zone-color);
+    stroke: var(--zone-outline-color);
+    stroke-width: var(--zone-outline-stroke-width);
+
+    cursor: pointer;
+}
+
+.sz-default {
+    --zone-color: violet;
+    --zone-outline-color: blue;
+
+    fill-opacity: 0.3;
+}
+
+.sz-svip {
+    --zone-color: #D33835;
+    --zone-outline-color: rgb(200, 200, 200, 0.9);
+}
+
+.sz-vip {
+    --zone-color: #4496E0;
+    --zone-outline-color: rgb(200, 200, 200, 0.9);
+}
+
+.sz-standing {
+    --zone-color: 	#D90F75;
+    --zone-outline-stroke-width: 0 !important;
+    --zone-outline-color: rgb(200, 200, 200, 0.0);
+}
+
+.sz-g.disable {
+    --zone-color: gray !important;
+    --zone-outline-color: black !important;
+    cursor: default !important;
+}
+
+.sz-g.disable > text {
+    --zone-label-color: #AAA !important;
+}
+
+.sz-g.highlight {
+    --zone-color: rgb(255, 255, 255) !important;
+    --zone-outline-color: rgb(100, 100, 0) !important;
+    fill-opacity: 1;
+    stroke-opacity: 1;
+    cursor: default !important;
+}
+
+.sz-g.highlight > text {
+    --zone-label-color: black !important;
+}
+
+.sz-standing.sz-g.highlight path {
+    --zone-outline-stroke-width: 0 !important;
+}
+

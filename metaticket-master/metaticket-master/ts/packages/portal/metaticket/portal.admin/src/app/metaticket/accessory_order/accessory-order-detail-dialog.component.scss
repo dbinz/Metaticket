@@ -1,0 +1,134 @@
+.order-detail-card {
+    margin: 0;
+    width: min(720px, 92vw);
+    max-height: 90vh;
+    display: flex;
+    flex-direction: column;
+}
+
+.order-detail-card nb-card-body {
+    overflow: auto;
+}
+
+.header-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+}
+
+.order-code {
+    margin-left: 10px;
+    font-weight: 600;
+    color: #3366ff;
+}
+
+.section {
+    margin-bottom: 20px;
+}
+
+.section-title {
+    margin: 0 0 10px;
+    font-size: 13px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.02em;
+    color: #8f9bb3;
+}
+
+.grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px 16px;
+}
+
+.field {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    min-width: 0;
+}
+
+.field.full {
+    grid-column: 1 / -1;
+}
+
+.label {
+    font-size: 12px;
+    color: #8f9bb3;
+}
+
+.value {
+    font-size: 14px;
+    font-weight: 600;
+    word-break: break-word;
+}
+
+.mono {
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    font-size: 12px;
+    font-weight: 500;
+}
+
+.plain {
+    margin: 0;
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.plain.muted,
+.muted {
+    color: #8f9bb3;
+    font-weight: 500;
+}
+
+.lines-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+}
+
+.lines-table th,
+.lines-table td {
+    padding: 8px 6px;
+    border-bottom: 1px solid #edf1f7;
+    text-align: left;
+    vertical-align: top;
+}
+
+.lines-table th {
+    color: #8f9bb3;
+    font-weight: 600;
+    font-size: 12px;
+}
+
+.lines-table .num {
+    text-align: right;
+    white-space: nowrap;
+}
+
+.variant {
+    margin-top: 2px;
+    font-size: 12px;
+    color: #8f9bb3;
+    font-weight: 500;
+}
+
+.totals {
+    border-top: 1px solid #edf1f7;
+    padding-top: 12px;
+}
+
+.total-row {
+    display: flex;
+    justify-content: space-between;
+    gap: 16px;
+    margin-bottom: 6px;
+    font-size: 14px;
+}
+
+.total-row.grand {
+    margin-top: 8px;
+    font-size: 16px;
+    font-weight: 700;
+}

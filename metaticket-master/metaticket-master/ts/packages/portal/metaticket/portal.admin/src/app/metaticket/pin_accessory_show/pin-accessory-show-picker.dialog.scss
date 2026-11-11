@@ -1,0 +1,47 @@
+.picker {
+    margin: 0;
+    width: min(800px, 92vw);
+    min-width: 0;
+    max-height: 90vh;
+    display: flex;
+    flex-direction: column;
+}
+
+.picker nb-card-body {
+    min-height: 0;
+    overflow: auto;
+}
+
+.picker-filters {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    margin-bottom: 12px;
+}
+
+.picker-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.picker-table th,
+.picker-table td {
+    padding: 8px;
+    text-align: left;
+    vertical-align: middle;
+    border-bottom: 1px solid #edf1f7;
+}
+
+.thumb {
+    width: 48px;
+    height: 48px;
+    object-fit: cover;
+    border-radius: 4px;
+}
+
+.pager {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    margin-top: 12px;
+}

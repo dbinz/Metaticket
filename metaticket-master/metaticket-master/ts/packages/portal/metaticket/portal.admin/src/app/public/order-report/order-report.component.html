@@ -1,0 +1,90 @@
+<nb-card [nbSpinner]="loading > 0">
+    <nb-card-header>
+        <div class="pb-3">THỐNG KÊ</div>
+    </nb-card-header>
+
+    <nb-card-body>
+        <ng-container *ngIf="dataSource" class="pt-3">
+            <div class="d-flex text-center" style="gap: 1%; width: 97%">
+                <nb-card class="col-3">
+                    <nb-card-header>
+                        <div>Số lượng sự kiện đang bán</div>
+                        <div class="font-weight-bold">{{ summary.totalOpenShow }}</div>
+                    </nb-card-header>
+                </nb-card>
+                <nb-card class="col-3">
+                    <nb-card-header>
+                        <div>Số lượng vé đã bán</div>
+                        <div class="font-weight-bold">{{ summary.totalTicket }}</div>
+                        <div class="font-italic small">trong thời gian chọn</div>
+                    </nb-card-header>
+                </nb-card>
+                <nb-card class="col-3">
+                    <nb-card-header>
+                        <div>Doanh số</div>
+                        <div class="font-weight-bold">{{ summary.totalPrice.toLocaleString('vn-VN') }}</div>
+                        <div class="font-italic small">trong thời gian chọn</div>
+                    </nb-card-header>
+                </nb-card>
+                <nb-card class="col-3">
+                    <nb-card-header>
+                        <div>Doanh Thu</div>
+                        <div class="font-weight-bold">{{ summary.totalRevenue.toLocaleString('vn-VN') }}</div>
+                        <div class="font-italic small">trong thời gian chọn</div>
+                    </nb-card-header>
+                </nb-card>
+            </div>
+
+            <table [nbTreeGrid]="dataSource" [nbSort]="dataSource" equalColumnsWidth>
+                <tr
+                    nbTreeGridHeaderRow
+                    *nbTreeGridHeaderRowDef="allColumns"
+                    [style.background-color]="'cadetblue'"></tr>
+                <tr
+                    nbTreeGridRow
+                    *nbTreeGridRowDef="let row; columns: allColumns"
+                    [clickToToggle]="false"
+                    [style.background-color]="
+                        row.data['level'] === 1 ? 'lightgray' : row.data['level'] === 2 ? 'aliceblue' : ''
+                    "></tr>
+
+                <ng-container [nbTreeGridColumnDef]="shortColumn">
+                    <th nbTreeGridHeaderCell *nbTreeGridHeaderCellDef nbSortHeader>
+                        {{ headers[0] }}
+                        <span *nbSortHeaderIcon="let asc = isAscending; let desc = isDescending">
+                            <nb-icon *ngIf="asc" icon="chevron-down-outline" aria-label="sorted ascending"></nb-icon>
+                            <nb-icon *ngIf="desc" icon="chevron-up-outline" aria-label="sorted descending"></nb-icon>
+                        </span>
+                    </th>
+
+                    <td nbTreeGridCell *nbTreeGridCellDef="let row">
+                        <nb-tree-grid-row-toggle
+                            *ngIf="[1, 2].includes(row.data['level'])"
+                            [textContent]="row.data.show"
+                            style="color: blue; cursor: pointer; border-left: none; border-right: none">
+                        </nb-tree-grid-row-toggle>
+                    </td>
+                </ng-container>
+
+                <ng-container *ngFor="let column of defaultColumns; let idx = index" [nbTreeGridColumnDef]="column">
+                    <th nbTreeGridHeaderCell *nbTreeGridHeaderCellDef>{{ headers[idx + 1] }}</th>
+                    <td nbTreeGridCell *nbTreeGridCellDef="let row">
+                        <ng-template [ngIf]="column === 'download' && row.data[column]" [ngIfElse]="elseCol">
+                            <nb-icon
+                                [style.cursor]="'pointer'"
+                                class="text-center"
+                                icon="download-outline"
+                                (click)="loadAndExportReport(row.data)"></nb-icon>
+                        </ng-template>
+                        <ng-template #elseCol>
+                            {{ row.data[column] }}
+                        </ng-template>
+                    </td>
+                </ng-container>
+            </table>
+        </ng-container>
+        <ng-container *ngIf="!dataSource">
+            <div>Không có dữ liệu</div>
+        </ng-container>
+    </nb-card-body>
+</nb-card>

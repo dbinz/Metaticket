@@ -1,0 +1,25 @@
+<div class="w-full pt-4 pb-11 flex justify-center items-center laptop:pt-1 laptop:pb-20 desktop:mb-2.5">
+  <div class="grid grid-cols-3 gap-y-8 px-6 gap-x-8 laptop:flex laptop:flex-wrap laptop:justify-center laptop:gap-8 laptop:max-w-5xl">
+    <ng-container *ngFor="let item of listEventCategory; let i = index">
+      <button class="flex flex-col space-y-6 items-center z-1" (click)="navigateToEventCategory(item)" (mouseover)="animateImage(i)" (mouseout)="animateImage(i)" (focus)="animateImage(i)" (blur)="animateImage(i)">
+        <div class="flex justify-center items-center">
+          <app-image [@scaleEffect]="item.animation" sx="tablet:w-20 tablet:h-20 w-16 h-16" [src]="getIcon(item.id)"/>
+        </div>
+        <p nz-typography [@scaleEffect]="item.animation" class="text-sm leading-5 text-white text-center break-keep">
+          {{item.name}}
+        </p>
+      </button>
+    </ng-container>
+  </div>
+</div>
+
+<ng-template #menu let-item="item">
+  <div class="w-20 flex flex-col space-y-3 items-center z-1">
+    <div class="flex justify-center items-center w-20 h-20">
+      <app-image [src]="item.icon"/>
+    </div>
+    <p nz-typography class="text-sm leading-5 text-white text-center">
+      {{item.title}}
+    </p>
+  </div>
+</ng-template>

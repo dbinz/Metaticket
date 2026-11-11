@@ -1,0 +1,16 @@
+<!-- Chỉ còn một thẻ button duy nhất, áp dụng class động -->
+<button
+  #nativeButton
+  nz-button
+  nzType="default"
+  [ngClass]="getButtonClasses()"
+  [class.orange-outline]="color === 'transparent-orange'"
+  [style]="style"
+  [disabled]="disabled || isLoading"
+  (click)="onClick()"
+>
+  <p *ngIf="!isLoading" nz-typography [ngClass]="getTextClasses()">
+    {{ title }}
+  </p>
+  <span *ngIf="isLoading" nz-icon nzType="loading" nzTheme="outline" [ngClass]="getIconClasses()"></span>
+</button>

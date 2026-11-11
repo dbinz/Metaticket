@@ -1,0 +1,4 @@
+server {
+    listen $PAYMENT_BACKEND_CONNECT_PORT;
+    proxy_pass $METATICKET_LOCAL:$PAYMENT_BACKEND_LISTEN_PORT;
+}

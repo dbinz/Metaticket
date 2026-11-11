@@ -1,0 +1,21 @@
+FROM gradle:8.1.1-jdk17 AS builder
+WORKDIR /src
+COPY . .
+RUN --mount=type=cache,target=/home/gradle/.gradle \
+    gradle --no-daemon --max-workers=2 -Pkotlin.jvm.target.validation.mode=warning \
+    -Dorg.gradle.jvmargs="-Xmx1536m -XX:ActiveProcessorCount=2" \
+    -Pkotlin.compiler.execution.strategy=in-process \
+    installDist -x :service.news:installDist && \
+    mkdir -p /out && for d in service.*/build/install/*; do \
+    if [ -d "$d/bin" ]; then cp -a "$d" /out/; fi; done
+RUN \
+    for d in service.notification/plugin.*/build/install/*; do \
+    if [ -d "$d/lib" ]; then name=$(basename "$d"); kind=mail_template; \
+    case "$name" in plugin.zns*) kind=zns_template;; esac; \
+    mkdir -p "/out/service.notification/plugin/$kind"; \
+    cp -a "$d" "/out/service.notification/plugin/$kind/"; fi; done
+FROM eclipse-temurin:21-jre
+WORKDIR /app
+COPY --from=builder /out/ /app/
+ENV JAVA_TOOL_OPTIONS="-Xms32m -Xmx192m -XX:ActiveProcessorCount=2 -Duser.timezone=Asia/Ho_Chi_Minh"
+ENTRYPOINT ["/bin/sh", "-c", "cd /app/$SERVICE && exec bin/$SERVICE -config=conf/application.conf"]

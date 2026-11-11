@@ -1,0 +1,42 @@
+:host {
+
+  .image-grid {
+    width: 66% !important;
+  }
+
+  @media (min-width: 1600px) {
+    .image-grid {
+      width: 60% !important;
+    }
+  }
+
+  @media (min-width: 1750px) {
+    .image-grid {
+      width: 60% !important;
+    }
+  }
+
+  @media (min-width: 1900px) {
+    .image-grid {
+      width: 60% !important;
+    }
+  }
+
+  @media (min-width: 2200px) {
+    .image-grid {
+      width: 55% !important;
+    }
+  }
+
+  @media (min-width: 2560px) {
+    .image-grid {
+      width: 50% !important;
+    }
+  }
+
+  @media (min-width: 4000px) {
+    .image-grid {
+      width: 40% !important;
+    }
+  }
+}

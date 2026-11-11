@@ -1,0 +1,65 @@
+<nb-card [nbSpinner]="loading > 0">
+    <nb-card-header fullWidth>
+        <div class="inline-form-card w-100">
+            <form class="form-inline">
+                <label>Sự kiện</label>
+                <input
+                    #autoInputShow
+                    (input)="onInputShowChange(autoInputShow.value)"
+                    (click)="onInputShowChange('')"
+                    [nbAutocomplete]="autoCompleteShow"
+                    class="w-100"
+                    nbInput
+                    placeholder="Nhập sự kiện"
+                    type="text" />
+
+                <nb-autocomplete #autoCompleteShow (selectedChange)="onSelectionShowChange($event)">
+                    <nb-option *ngFor="let show of filteredShowList$ | async" [value]="show?.id">
+                        {{ show.showName }}
+                    </nb-option>
+                </nb-autocomplete>
+
+                <label>Session</label>
+                <input
+                    #autoInputSession
+                    (input)="onInputSessionChange(autoInputSession.value)"
+                    (click)="onInputSessionChange('')"
+                    [nbAutocomplete]="autoCompleteSession"
+                    [readOnly]="!sessionList || sessionList.length < 2"
+                    class="w-100"
+                    nbInput
+                    placeholder="Nhập Session"
+                    type="text" />
+
+                <nb-autocomplete #autoCompleteSession (selectedChange)="onSelectionSessionChange($event)">
+                    <nb-option *ngFor="let session of filteredSessionList$ | async" [value]="session.id">
+                        {{ getSessionName(session) }}
+                    </nb-option>
+                </nb-autocomplete>
+            </form>
+        </div>
+    </nb-card-header>
+
+    <nb-card-body>
+        <angular2-smart-table
+            [settings]="settings"
+            [source]="source"
+            (rowSelect)="onRowSelect($event)"
+            (userRowSelect)="onRowSelect($event)"></angular2-smart-table>
+    </nb-card-body>
+    <nb-card-footer>
+        <div class="inline-form-card w-100flex d-flex">
+            <button
+                class="mr-2"
+                nbButton
+                status="primary"
+                [disabled]="selectedRows.length === 0"
+                (click)="openTicketSlots()">
+                Mở Slot Vé
+            </button>
+            <button nbButton status="primary" [disabled]="selectedRows.length === 0" (click)="closeTicketSlots()">
+                Đóng Slot Vé
+            </button>
+        </div>
+    </nb-card-footer>
+</nb-card>

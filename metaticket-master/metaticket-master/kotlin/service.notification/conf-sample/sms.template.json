@@ -1,0 +1,6 @@
+[
+    { "8225": "Mã xác thực của bạn là <otp>. META Ticket xin gửi bạn mã xác thực để đặt lại mật khẩu của bạn. Mã xác thực có hiệu lực trong 5 phút. Vui lòng không chia sẻ mã xác thực với bất kỳ ai." },
+    { "8226": "Mã xác thực của bạn là <otp>. META Ticket xin gửi bạn mã xác thực để đăng ký tài khoản. Mã xác thực có hiệu lực trong 5 phút. Vui lòng không chia sẻ mã xác thực với bất kỳ ai." },
+    { "9470": "Quý khách <ten_nguoi_gui> (Mã KH: <ma_kh_gui>) đã sử dụng dịch vụ gửi vé của META Ticket để chuyển vé đến bạn. Bạn <ten_nguoi_nhan_ve> vừa nhận được vé có mã <ma_ve> tham dự sự kiện <su_kien> từ <ten_nguoi_gui>.Vui lòng truy cập https://metaticket.com.vn để kiểm tra thông tin vé." },
+    { "11039": "Mã xác thực của bạn là <otp>. META Ticket xin gửi bạn mã xác thực để tặng vé <ma_ve> của sự kiện <su_kien>. Mã xác thực có hiệu lực trong 5 phút. Vui lòng không chia sẻ mã xác thực với bất kỳ ai." }
+]

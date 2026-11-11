@@ -1,0 +1,36 @@
+syntax = "proto3";
+
+package metaticket.payment.grpc;
+
+message GetPaymentByIdsRequest {
+  repeated string paymentIds = 1;
+}
+
+message PaymentResponse {
+  string id = 1;
+  optional string paymentNo = 2;
+  optional int64 payTime = 3;
+  optional string paymentType = 4;
+  string status = 5;
+  int64 amount = 6;
+  string pgAccountCode = 7;
+  string pgAccountName = 8;
+  string gateway = 9;
+}
+
+message GetPaymentByIdsResponse {
+  repeated PaymentResponse payments = 1;
+}
+
+message GetPaymentByIdRequest {
+  string payment_id = 1;
+}
+
+message CreatePaymentRequest {
+  string order_id = 1;
+  string order_code = 2;
+  int64 amount = 3;
+  repeated string payment_methods = 4;
+  optional string pg_account_code = 5;
+  optional string order_type = 6;   // additive: "TICKET" (default) | "ACCESSORY"; absent/empty resolves to TICKET
+}

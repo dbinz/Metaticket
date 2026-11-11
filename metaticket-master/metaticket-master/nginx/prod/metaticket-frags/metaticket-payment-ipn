@@ -1,0 +1,21 @@
+# Specific IPN routes take precedence over general /api/payment
+location = /api/payment/ipn/result/vnpay { # Use exact match for higher precedence
+    allow 113.160.92.202;
+    deny all;
+    proxy_pass http://payment_service/payment/ipn/result/vnpay;
+    proxy_set_header Host $host;
+    proxy_set_header X-Real-IP $remote_addr;
+    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for; # Added for consistency
+}
+location /api/payment/ipn/result { # General IPN, matched if exact vnpay doesn't
+    proxy_pass http://payment_service/payment/ipn/result;
+    proxy_set_header Host $host;
+    proxy_set_header X-Real-IP $remote_addr;
+    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for; # Added for consistency
+}
+location /api/payment/return/result { # General return result
+    proxy_pass http://payment_service/payment/return/result;
+    proxy_set_header Host $host;
+    proxy_set_header X-Real-IP $remote_addr;
+    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for; # Added for consistency
+}

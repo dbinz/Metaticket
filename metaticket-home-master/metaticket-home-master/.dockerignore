@@ -1,0 +1,32 @@
+# Node modules (always rebuilt in container)
+node_modules
+npm-debug.log
+yarn-debug.log
+yarn-error.log
+pnpm-debug.log
+
+# Build output — không ignore `dist` để Dockerfile.staging.local
+# có thể COPY dist đã build trên host (tránh OOM khi build trong Docker Desktop).
+# Dockerfile.staging (full) vẫn RUN yarn build nên dist trong context không ảnh hưởng kết quả.
+build
+.next
+out
+
+# Environment files
+.env
+.env.* 
+
+# OS + Editor folders
+.DS_Store
+Thumbs.db
+.idea
+.vscode
+*.swp
+
+# Git
+.git
+.gitignore
+
+# Docker files you might not want in context
+Dockerfile.dev
+docker-compose.*

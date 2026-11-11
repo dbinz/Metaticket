@@ -1,0 +1,1 @@
+<circle id="chair" cx=0 cy=0 r=8 fill="var(--seat-color)" stroke="var(--seat-outline-color)"/>

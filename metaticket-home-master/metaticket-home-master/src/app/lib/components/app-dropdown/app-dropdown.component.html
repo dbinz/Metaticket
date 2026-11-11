@@ -1,0 +1,32 @@
+<div
+  nz-dropdown
+  [nzDropdownMenu]="data && data.length > 0 ? menu: null"
+  nzTrigger="click"
+  class="flex items-center justify-center text-center hover:cursor-pointer w-full z-1 px-16 {{ py }} h-auto {{borderRadius}} bg-grey-F4F4F4 border border-gray-C9C9C9 {{
+      disabled || isLoading ? 'opacity-60' : ''
+    }}"
+>
+  <p
+    nz-typography
+    class="text-base md:text-lg leading-6 font-medium text-center"
+  >
+    {{ title }}
+  </p>
+</div>
+
+<nz-dropdown-menu #menu="nzDropdownMenu">
+  <div *ngIf="isLoading" class="w-40 h-40 bg-white p-2 rounded-2xl flex flex-col items-center justify-center space-y-2">
+    <span nz-icon nzType="loading" nzTheme="outline" class="text-2xl text-black"></span>
+    <p nz-typography class="text-sm leading-6 text-black font-medium">Loading ...</p>
+  </div>
+  <ul *ngIf="!isLoading" nz-menu nzSelectable class="p-2 rounded-2xl">
+    <button
+      nz-menu-item
+      class="w-full text-sm leading-6 text-black font-medium p-2"
+      *ngFor="let item of data"
+      (click)="onSelected(item)"
+    >
+      {{ item.title }}
+    </button>
+  </ul>
+</nz-dropdown-menu>

@@ -1,0 +1,412 @@
+<nb-card [nbSpinner]="loading > 0">
+    <nb-card-header fullWidth>
+        <div class="d-flex align-items-center justify-content-between flex-wrap">
+            <div>
+                <strong>{{ pageTitle }}</strong>
+                <span class="hint ml-2" *ngIf="show">
+                    Show: {{ show.code }} — {{ show.name }}
+                </span>
+            </div>
+            <div class="d-flex" style="gap: 8px">
+                <button nbButton type="button" status="basic" (click)="goBack()">Quay lại</button>
+                <button nbButton type="button" status="primary" (click)="onSubmit()">
+                    {{ isEdit ? 'Lưu thông tin' : 'Lưu' }}
+                </button>
+            </div>
+        </div>
+    </nb-card-header>
+    <nb-card-body>
+        <form [formGroup]="form" (ngSubmit)="onSubmit()">
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label>SKU *</label>
+                    <input nbInput fullWidth formControlName="sku" placeholder="VD: TF-TSHIRT" />
+                </div>
+                <div class="col-md-6 mb-3">
+                    <label>Tên sản phẩm *</label>
+                    <input nbInput fullWidth formControlName="name" />
+                </div>
+                <div class="col-12 mb-3">
+                    <label>Mô tả</label>
+                    <textarea nbInput fullWidth rows="3" formControlName="description"></textarea>
+                </div>
+                <div [ngClass]="{ 'col-md-12': hasVariants, 'col-md-6': !hasVariants }" class="mb-3">
+                    <label>Ảnh chính (URL) *</label>
+                    <input nbInput fullWidth formControlName="imageUrl" placeholder="Banner" />
+                </div>
+                <div class="col-md-6 mb-3" *ngIf="!hasVariants">
+                    <label>Gallery (mỗi URL một dòng)</label>
+                    <textarea nbInput fullWidth rows="3" formControlName="imageUrlsText"></textarea>
+                </div>
+                <div class="col-md-4 mb-3">
+                    <label>Giá (VND) *</label>
+                    <input nbInput fullWidth type="number" formControlName="price" />
+                </div>
+                <div class="col-md-4 mb-3">
+                    <label>Tiền tệ</label>
+                    <input nbInput fullWidth formControlName="currency" />
+                </div>
+                <div class="col-md-4 mb-3">
+                    <label>Trạng thái</label>
+                    <nb-select fullWidth formControlName="active">
+                        <nb-option [value]="true">Active</nb-option>
+                        <nb-option [value]="false">Inactive</nb-option>
+                    </nb-select>
+                </div>
+                <div class="col-md-4 mb-3">
+                    <label>Mua tối thiểu / 1 đơn</label>
+                    <input nbInput fullWidth type="number" formControlName="minOrderQty" min="1" placeholder="Trống = không giới hạn" />
+                </div>
+                <div class="col-md-4 mb-3">
+                    <label>Mua tối đa / 1 đơn</label>
+                    <input nbInput fullWidth type="number" formControlName="maxOrderQty" min="1" placeholder="Trống = không giới hạn" />
+                </div>
+                <div class="col-md-4 mb-3">
+                    <label>Mua tối đa / user</label>
+                    <input nbInput fullWidth type="number" formControlName="maxPerUserQty" min="1" placeholder="Trống = không giới hạn" />
+                    <span class="hint">Tổng Paid + đơn đang giữ chỗ (mọi biến thể của sản phẩm).</span>
+                </div>
+                <div class="col-12 mb-2">
+                    <nb-checkbox
+                        formControlName="hasVariants"
+                        (checkedChange)="onHasVariantsChange($event)"
+                    >
+                        Có biến thể (tối đa 2 thuộc tính)
+                    </nb-checkbox>
+                </div>
+
+                <!-- Create: set initial stock on the catalog create payload -->
+                <div class="col-md-4 mb-3" *ngIf="!hasVariants && !isEdit">
+                    <label>Tồn kho ban đầu *</label>
+                    <input nbInput fullWidth type="number" formControlName="stock" min="0" />
+                    <span class="hint">Số nguyên ≥ 0. Điều chỉnh sau này dùng ±delta (không ghi đè). </span>
+                </div>
+
+                <!-- Edit single-SKU: live sellable + delta adjust (never overwrite via Lưu) -->
+                <div class="col-12 mb-3 stock-adjust-panel" *ngIf="!hasVariants && isEdit">
+                    <div class="d-flex align-items-center flex-wrap" style="gap: 8px">
+                        <strong>Tồn bán được:</strong>
+                        <span class="stock-live">{{ formatStock(product?.stock ?? 0) }}</span>
+                        <button nbButton type="button" size="tiny" status="basic" (click)="refreshStock()">
+                            Làm mới
+                        </button>
+                    </div>
+                    <p class="hint mt-1 mb-2">
+                        Số này đã trừ đơn đang giữ hàng. Chỉ điều chỉnh bằng ±delta (an toàn với checkout).
+                    </p>
+                    <div class="d-flex align-items-center flex-wrap" style="gap: 8px" *ngIf="product?.stock !== -1">
+                        <label class="mb-0">± Delta</label>
+                        <input
+                            class="plain-input delta-input"
+                            type="number"
+                            [(ngModel)]="singleSkuDeltaDraft"
+                            [ngModelOptions]="{ standalone: true }"
+                            placeholder="vd: 10 hoặc -3"
+                        />
+                        <button nbButton type="button" size="small" status="info" (click)="applyStockDelta()">
+                            Áp dụng
+                        </button>
+                    </div>
+                    <div class="d-flex align-items-center flex-wrap" style="gap: 8px" *ngIf="product?.stock === -1">
+                        <span class="hint">Đang không giới hạn — đặt số hữu hạn:</span>
+                        <input
+                            class="plain-input delta-input"
+                            type="number"
+                            #leaveUnlimited
+                            placeholder="vd: 50"
+                        />
+                        <button
+                            nbButton
+                            type="button"
+                            size="small"
+                            status="info"
+                            (click)="setStockAbsolute(undefined, +leaveUnlimited.value)"
+                        >
+                            Đặt số
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div *ngIf="hasVariants" class="variants-block">
+                <strong class="d-block mb-2">
+                    Biến thể
+                    <span class="hint" *ngIf="variantRows.length">· {{ variantRows.length }} dòng</span>
+                    <button
+                        *ngIf="isEdit"
+                        nbButton
+                        type="button"
+                        size="tiny"
+                        status="basic"
+                        class="ml-2"
+                        (click)="refreshStock()"
+                    >
+                        Làm mới tồn
+                    </button>
+                </strong>
+
+                <div class="row mb-3" *ngIf="!isEdit">
+                    <div class="col-md-6 mb-2">
+                        <label>Tên thuộc tính 1</label>
+                        <input
+                            nbInput
+                            fullWidth
+                            formControlName="attr1Name"
+                            placeholder="VD: Size, Chất liệu..."
+                        />
+                    </div>
+                    <div class="col-md-6 mb-2">
+                        <label>Tên thuộc tính 2 (tuỳ chọn)</label>
+                        <input
+                            nbInput
+                            fullWidth
+                            formControlName="attr2Name"
+                            placeholder="VD: Màu, Phiên bản..."
+                        />
+                    </div>
+                    <div class="col-md-6 mb-2">
+                        <label>{{ attr1Label }} — giá trị (ngăn cách , hoặc ; — Enter để tạo)</label>
+                        <input
+                            nbInput
+                            fullWidth
+                            [(ngModel)]="attr1ValuesText"
+                            [ngModelOptions]="{ standalone: true }"
+                            (keydown.enter)="onVariantListEnter($event)"
+                            placeholder="S, M, L, XL"
+                        />
+                    </div>
+                    <div class="col-md-6 mb-2">
+                        <label>{{ attr2Label }} — giá trị (tuỳ chọn)</label>
+                        <input
+                            nbInput
+                            fullWidth
+                            [(ngModel)]="attr2ValuesText"
+                            [ngModelOptions]="{ standalone: true }"
+                            (keydown.enter)="onVariantListEnter($event)"
+                            placeholder="Đen, Trắng"
+                        />
+                    </div>
+                    <div class="col-12">
+                        <span class="hint">
+                            Tối đa 2 thuộc tính. Enter / “Tạo biến thể” sinh tổ hợp giá trị. Tồn ban đầu ≥ 0 mỗi dòng. Tối
+                            đa 200 dòng.
+                        </span>
+                        <button
+                            nbButton
+                            type="button"
+                            size="small"
+                            status="primary"
+                            class="ml-2"
+                            (click)="regenerateVariantsFromLists()"
+                        >
+                            Tạo biến thể
+                        </button>
+                    </div>
+                </div>
+
+                <div class="row mb-3" *ngIf="isEdit">
+                    <div class="col-md-6 mb-2">
+                        <label>Tên thuộc tính 1</label>
+                        <input
+                            nbInput
+                            fullWidth
+                            formControlName="attr1Name"
+                            placeholder="VD: Size"
+                        />
+                    </div>
+                    <div class="col-md-6 mb-2">
+                        <label>Tên thuộc tính 2</label>
+                        <input
+                            nbInput
+                            fullWidth
+                            formControlName="attr2Name"
+                            placeholder="VD: Màu"
+                        />
+                    </div>
+                    <div class="col-md-6 mb-2">
+                        <label>{{ attr1Label }} hiện có</label>
+                        <div class="locked-chips">
+                            <span class="chip" *ngFor="let s of lockedAttr1">{{ s }}</span>
+                            <span class="hint" *ngIf="!lockedAttr1.length">Chưa có giá trị</span>
+                        </div>
+                        <label class="mt-2">Thêm {{ attr1Label }} mới</label>
+                        <input
+                            nbInput
+                            fullWidth
+                            [(ngModel)]="attr1ValuesText"
+                            [ngModelOptions]="{ standalone: true }"
+                            (keydown.enter)="onVariantListEnter($event)"
+                            placeholder="vd: XL, XXL"
+                        />
+                    </div>
+                    <div class="col-md-6 mb-2">
+                        <label>{{ attr2Label }} hiện có</label>
+                        <div class="locked-chips">
+                            <span class="chip" *ngFor="let c of lockedAttr2">{{ c }}</span>
+                            <span class="hint" *ngIf="!lockedAttr2.length">Chưa có giá trị</span>
+                        </div>
+                        <label class="mt-2">Thêm {{ attr2Label }} mới</label>
+                        <input
+                            nbInput
+                            fullWidth
+                            [(ngModel)]="attr2ValuesText"
+                            [ngModelOptions]="{ standalone: true }"
+                            (keydown.enter)="onVariantListEnter($event)"
+                            placeholder="vd: Đỏ, Xanh"
+                        />
+                    </div>
+                    <div class="col-12">
+                        <span class="hint">
+                            Giá trị thuộc tính hiện có chỉ xem — không sửa/xóa. Đổi tên thuộc tính được. Ô trống chỉ nhập
+                            giá trị mới. Enter / “Thêm biến thể” tạo tổ hợp còn thiếu.
+                        </span>
+                        <button
+                            nbButton
+                            type="button"
+                            size="small"
+                            status="primary"
+                            class="ml-2"
+                            (click)="addVariantsFromLists()"
+                        >
+                            Thêm biến thể
+                        </button>
+                    </div>
+                </div>
+
+                <div class="row mb-2" *ngIf="isEdit">
+                    <div class="col-12">
+                        <span class="hint">
+                            Không xóa biến thể đã có. Lưu thông tin cập nhật label/active + đẩy biến thể mới.
+                            Tồn dòng đã lưu chỉ chỉnh bằng ±delta.
+                        </span>
+                    </div>
+                </div>
+
+                <div class="variant-table-wrap" *ngIf="variantRows.length">
+                    <table class="variant-table">
+                        <thead>
+                            <tr>
+                                <th>Key</th>
+                                <th>{{ attr1Label }}</th>
+                                <th>{{ attr2Label }}</th>
+                                <th>Label *</th>
+                                <th>Ảnh URL *</th>
+                                <th *ngIf="!isEdit">Tồn *</th>
+                                <th *ngIf="isEdit">Tồn bán được</th>
+                                <th *ngIf="isEdit">± Delta</th>
+                                <th>Active</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr *ngFor="let v of variantRows; trackBy: trackVariant">
+                                <td class="muted">
+                                    {{ v.key }}
+                                    <span class="hint" *ngIf="v.isNew">· mới</span>
+                                </td>
+                                <td class="muted">{{ v.attr1 || '—' }}</td>
+                                <td class="muted">{{ v.attr2 || '—' }}</td>
+                                <td>
+                                    <input
+                                        class="plain-input"
+                                        type="text"
+                                        [(ngModel)]="v.label"
+                                        [ngModelOptions]="{ standalone: true }"
+                                        name="vl-{{ v.key }}"
+                                    />
+                                </td>
+                                <td>
+                                    <input
+                                        class="plain-input"
+                                        type="url"
+                                        [(ngModel)]="v.imageUrl"
+                                        [ngModelOptions]="{ standalone: true }"
+                                        name="vi-{{ v.key }}"
+                                        placeholder="https://..."
+                                    />
+                                </td>
+                                <td class="stock-cell" *ngIf="!isEdit">
+                                    <input
+                                        class="plain-input"
+                                        type="number"
+                                        [(ngModel)]="v.stock"
+                                        [ngModelOptions]="{ standalone: true }"
+                                        name="vs-{{ v.key }}"
+                                        min="0"
+                                    />
+                                </td>
+                                <td class="stock-live-cell" *ngIf="isEdit">
+                                    <ng-container *ngIf="!v.isNew">
+                                        {{ formatStock(v.stock) }}
+                                        <ng-container *ngIf="v.stock === -1">
+                                            <input
+                                                class="plain-input delta-input ml-1"
+                                                type="number"
+                                                #absVal
+                                                placeholder="set"
+                                            />
+                                            <button
+                                                nbButton
+                                                type="button"
+                                                size="tiny"
+                                                status="info"
+                                                (click)="setStockAbsolute(v.key, +absVal.value)"
+                                            >
+                                                Đặt
+                                            </button>
+                                        </ng-container>
+                                    </ng-container>
+                                    <ng-container *ngIf="v.isNew">
+                                        <input
+                                            class="plain-input"
+                                            type="number"
+                                            [(ngModel)]="v.stock"
+                                            [ngModelOptions]="{ standalone: true }"
+                                            name="vs-new-{{ v.key }}"
+                                            min="0"
+                                            title="Tồn ban đầu (lưu cùng catalog)"
+                                        />
+                                    </ng-container>
+                                </td>
+                                <td class="delta-cell" *ngIf="isEdit">
+                                    <ng-container *ngIf="!v.isNew && v.stock !== -1">
+                                        <input
+                                            class="plain-input delta-input"
+                                            type="number"
+                                            [(ngModel)]="v.deltaDraft"
+                                            [ngModelOptions]="{ standalone: true }"
+                                            name="vd-{{ v.key }}"
+                                            placeholder="±"
+                                        />
+                                        <button
+                                            nbButton
+                                            type="button"
+                                            size="tiny"
+                                            status="info"
+                                            (click)="applyStockDelta(v.key)"
+                                        >
+                                            Áp dụng
+                                        </button>
+                                    </ng-container>
+                                    <span class="hint" *ngIf="!v.isNew && v.stock === -1">—</span>
+                                    <span class="hint" *ngIf="v.isNew">sau khi Lưu</span>
+                                </td>
+                                <td class="active-cell">
+                                    <input
+                                        type="checkbox"
+                                        [(ngModel)]="v.active"
+                                        [ngModelOptions]="{ standalone: true }"
+                                        name="va-{{ v.key }}"
+                                    />
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <p class="hint mt-2" *ngIf="variantRows.length === 0 && !isEdit">
+                    Chưa có biến thể — nhập giá trị thuộc tính rồi Enter (hoặc bấm “Tạo biến thể”).
+                </p>
+            </div>
+        </form>
+    </nb-card-body>
+</nb-card>

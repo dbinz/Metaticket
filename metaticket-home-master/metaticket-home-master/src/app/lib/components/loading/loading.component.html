@@ -1,0 +1,10 @@
+<nz-spin
+  [nzSpinning]="isSpinning"
+  [nzIndicator]="indicatorTemplate"
+>
+  <ng-content></ng-content>
+</nz-spin>
+
+<ng-template #indicatorTemplate>
+  <span nz-icon nzType="loading" nzTheme="outline" class="{{fontSize}}"></span>
+</ng-template>

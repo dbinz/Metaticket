@@ -1,0 +1,124 @@
+.calendar-dialog {
+    width: 640px;
+    max-width: calc(100vw - 2rem);
+}
+
+.calendar-dialog--wide {
+    width: 960px;
+}
+
+nb-card-body {
+    max-height: 70vh;
+    overflow: auto;
+}
+
+.form-row {
+    margin-bottom: 1rem;
+}
+
+label {
+    display: block;
+    font-weight: 600;
+    margin-bottom: 0.25rem;
+}
+
+.two-col {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.75rem;
+}
+
+.hint {
+    display: block;
+    margin-top: 0.25rem;
+    color: #8f9bb3;
+    font-size: 0.8rem;
+}
+
+.weekday-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+}
+
+.chip-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.35rem;
+    margin-top: 0.5rem;
+}
+
+.chip {
+    padding: 0.1rem 0.25rem 0.1rem 0.5rem;
+    border-radius: 0.75rem;
+    background: #edf1f7;
+    font-size: 0.8rem;
+}
+
+.chip-remove {
+    border: none;
+    background: transparent;
+    cursor: pointer;
+}
+
+.matrix-wrap {
+    overflow-x: auto;
+}
+
+.matrix {
+    border-collapse: collapse;
+    font-size: 0.85rem;
+
+    th,
+    td {
+        padding: 0.35rem;
+        border: 1px solid #edf1f7;
+        vertical-align: top;
+        text-align: left;
+    }
+
+    td input {
+        display: block;
+        width: 6.5rem;
+        max-width: 6.5rem;
+        margin-bottom: 0.25rem;
+    }
+}
+
+.matrix-actions th {
+    font-weight: normal;
+}
+
+.matrix-name {
+    min-width: 9rem;
+}
+
+.matrix-row--off td {
+    opacity: 0.5;
+}
+
+.preview-box,
+.confirm-box {
+    padding: 0.75rem;
+    border-radius: 0.25rem;
+    background: #f7f9fc;
+}
+
+.confirm-box {
+    margin-top: 0.75rem;
+    background: #fff2f2;
+    color: #b00020;
+}
+
+.skip-list {
+    max-height: 40vh;
+    overflow: auto;
+    padding-left: 1.25rem;
+    font-size: 0.85rem;
+}
+
+.dialog-footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: 0.5rem;
+}

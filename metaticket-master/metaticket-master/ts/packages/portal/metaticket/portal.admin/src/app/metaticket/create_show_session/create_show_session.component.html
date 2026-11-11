@@ -1,0 +1,394 @@
+<nb-card [nbSpinner]="loading > 0">
+    <nb-card-header fullWidth>
+        <div class="inline-form-card w-100">
+            <a [routerLink]="['/portal/shows']">
+                <label>Danh sách show</label>
+            </a>
+            >
+            <label>Danh sách session</label>
+        </div>
+        <div class="w-100 flex-column d-flex">
+            <img class="w-100" src="{{ show?.bannerImageUrl }}" alt="show_image" />
+            <h2 class="mt-1">{{ show?.showName }}</h2>
+            <p class="mt-1" style="white-space: pre-line">{{ show?.description }}</p>
+            <label *ngIf="show?.website" class="mt-1">Link sự kiện: {{ show?.website }}</label>
+        </div>
+    </nb-card-header>
+</nb-card>
+<nb-card [nbSpinner]="loading > 0">
+    <nb-card-body>
+        <div class="align-items-center">
+            <button class="mb-3" nbButton status="primary" (click)="onButtonCreateSessionPressed()">
+                Tạo suất diễn | thời gian
+            </button>
+        </div>
+        <div *ngIf="showSessionDraft || showSession" class="inline-form-card w-100 mt-3">
+            <button
+                nbButton
+                size="small"
+                [status]="step === 'sessions' ? 'info' : 'basic'"
+                (click)="onStepPressed('sessions')">
+                Danh sách session
+            </button>
+            >
+            <button
+                nbButton
+                size="small"
+                [status]="step === 'basic-info' ? 'info' : 'basic'"
+                (click)="onStepPressed('basic-info')">
+                Thông tin cơ bản
+            </button>
+            >
+            <button
+                nbButton
+                size="small"
+                [status]="step === 'update-seat-plan' ? 'info' : 'basic'"
+                (click)="onStepPressed('update-seat-plan')">
+                Cài đặt vé
+            </button>
+            >
+            <button
+                nbButton
+                size="small"
+                [status]="step === 'update-payment' ? 'info' : 'basic'"
+                (click)="onStepPressed('update-payment')">
+                Thanh toán
+            </button>
+            >
+            <button
+                nbButton
+                size="small"
+                [status]="step === 'update-order-custom-fields' ? 'info' : 'basic'"
+                (click)="onStepPressed('update-order-custom-fields')">
+                Order custom fields
+            </button>
+            >
+            <button
+                nbButton
+                size="small"
+                [status]="step === 'update-promotions' ? 'info' : 'basic'"
+                (click)="onStepPressed('update-promotions')">
+                Khuyến mãi
+            </button>
+            >
+            <button
+                nbButton
+                size="small"
+                [status]="step === 'email-template' ? 'info' : 'basic'"
+                (click)="onStepPressed('email-template')">
+                Email template
+            </button>
+
+            <label *ngIf="!showSession">></label>
+            <button
+                nbButton
+                *ngIf="!showSession"
+                [status]="step === 'summary' ? 'info' : 'basic'"
+                (click)="onStepPressed('summary')">
+                Hoàn thành
+            </button>
+        </div>
+        <nb-card class="w-100" [hidden]="!openEditShowCard || step !== 'basic-info'">
+            <nb-card-body>
+                <form class="form-inline mt-3" [formGroup]="editSessionForm" (ngSubmit)="onSubmit()">
+                    <div>
+                        <label [ngClass]="{ error: sessionName.invalid }">Tên suất diễn (*)</label>
+                        <input
+                            status="{{ sessionName.invalid ? 'danger' : 'basic' }}"
+                            [formControl]="sessionName"
+                            required
+                            fullWidth
+                            nbInput
+                            type="text" />
+                    </div>
+                    <div>
+                        <label [ngClass]="{ error: code.invalid }">Mã suất diễn</label>
+                        <input
+                            status="{{ code.invalid ? 'danger' : 'basic' }}"
+                            [formControl]="code"
+                            required
+                            fullWidth
+                            nbInput
+                            type="text" />
+                    </div>
+                    <div>
+                        <label [ngClass]="{ error: slug.invalid }"
+                            >Đường dẫn (slug)
+                            <span class="slug-badge" [ngClass]="'slug-badge--' + slugState">{{ slugStateLabel }}</span>
+                        </label>
+                        <input
+                            status="{{ slug.invalid ? 'danger' : 'basic' }}"
+                            [formControl]="slug"
+                            fullWidth
+                            nbInput
+                            type="text"
+                            placeholder="vd: suat-dien-toi-21h" />
+                        <span class="error" *ngIf="slug.errors?.slugFormat === 'empty'">
+                            Slug rỗng sau khi chuẩn hoá. Hãy nhập chữ thường hoặc số.
+                        </span>
+                        <span class="error" *ngIf="slug.errors?.slugFormat === 'too-long'">
+                            Slug vượt quá {{ maxSlugLength }} ký tự.
+                        </span>
+                        <span class="error" *ngIf="slug.errors?.slugFormat === 'format'">
+                            Slug chỉ gồm chữ thường, số và dấu gạch ngang; không bắt đầu/kết thúc bằng dấu gạch ngang và
+                            không có dấu gạch ngang liên tiếp.
+                        </span>
+                        <span class="error" *ngIf="slug.errors?.slugDuplicate">
+                            Slug này đã được dùng cho một suất diễn khác trong show.
+                        </span>
+                    </div>
+                    <div class="d-flex flex-column">
+                        <label>Thành phố (*)</label>
+                        <input
+                            #autoInputCity
+                            (input)="onInputCityChange(autoInputCity.value)"
+                            (click)="onInputCityChange('')"
+                            [nbAutocomplete]="autoCompleteCity"
+                            fullWidth
+                            [status]="city.invalid ? 'danger' : 'basic'"
+                            [formControl]="city"
+                            required
+                            nbInput
+                            placeholder="Nhập tên thành phố"
+                            type="text" />
+
+                        <nb-autocomplete #autoCompleteCity (selectedChange)="onSelectionCityChange($event)">
+                            <nb-option *ngFor="let city of filteredCityList$ | async" [value]="city.id">
+                                {{ city.name }}
+                            </nb-option>
+                        </nb-autocomplete>
+                    </div>
+                    <div>
+                        <label [ngClass]="{ error: address.invalid }">Địa chỉ (*)</label>
+                        <input
+                            status="{{ address.invalid ? 'danger' : 'basic' }}"
+                            [formControl]="address"
+                            required
+                            fullWidth
+                            nbInput
+                            type="text" />
+                    </div>
+                    <div>
+                        <label>Loại suất</label>
+                        <nb-radio-group [formControl]="sessionType" class="session-type-radio">
+                            <nb-radio value="SINGLE">Suất thường</nb-radio>
+                            <nb-radio value="CALENDAR">Vé theo lịch</nb-radio>
+                        </nb-radio-group>
+                        <span class="hint" *ngIf="sessionType.disabled">
+                            Chỉ đổi được loại suất khi suất chưa gửi duyệt (trạng thái Created/Rejected).
+                        </span>
+                        <span class="hint" *ngIf="isCalendar && !sessionType.disabled">
+                            Một suất bán vé cho từng ngày tham quan; giá và số lượng theo ngày cấu hình ở màn Lịch bán
+                            vé.
+                        </span>
+                    </div>
+                    <div *ngIf="!isCalendar">
+                        <label>Thời gian bắt đầu (*)</label>
+
+                        <input
+                            status="basic"
+                            [formControl]="startTime"
+                            fullWidth
+                            nbInput
+                            [nbDatepicker]="startTimePicker" />
+                        <nb-date-timepicker #startTimePicker></nb-date-timepicker>
+                    </div>
+                    <div *ngIf="!isCalendar">
+                        <label>Thời gian kết thúc (*)</label>
+                        <input
+                            status="basic"
+                            [formControl]="endTime"
+                            fullWidth
+                            nbInput
+                            [nbDatepicker]="endTimePicker" />
+                        <nb-date-timepicker #endTimePicker></nb-date-timepicker>
+                    </div>
+                    <ng-container *ngIf="isCalendar">
+                        <div>
+                            <label>Khoảng ngày bán vé (*)</label>
+                            <input
+                                nbInput
+                                fullWidth
+                                placeholder="Ngày đầu – ngày cuối"
+                                [formControl]="calendarRange"
+                                [nbDatepicker]="calendarRangePicker" />
+                            <nb-rangepicker #calendarRangePicker></nb-rangepicker>
+                        </div>
+                        <div>
+                            <label>Bán trước tối đa (ngày) (*)</label>
+                            <input
+                                nbInput
+                                fullWidth
+                                type="number"
+                                min="1"
+                                [max]="maxBookingWindowDays"
+                                [formControl]="bookingWindowDays" />
+                        </div>
+                        <div>
+                            <label>Giờ mở cửa (*)</label>
+                            <input nbInput fullWidth type="time" [formControl]="openTime" />
+                        </div>
+                        <div>
+                            <label>Giờ đóng cửa (*)</label>
+                            <input nbInput fullWidth type="time" [formControl]="closeTime" />
+                        </div>
+                        <div>
+                            <nb-checkbox [formControl]="allowSameDaySale">Cho bán vé trong ngày</nb-checkbox>
+                            <div *ngIf="allowSameDaySale.value" class="mt-2">
+                                <label>Ngừng bán trước giờ đóng cửa (phút)</label>
+                                <input nbInput fullWidth type="number" min="0" [formControl]="sameDayCutoffMinutes" />
+                            </div>
+                        </div>
+                    </ng-container>
+                    <div>
+                        <nb-checkbox [ngClass]="{ error: requireDelivery.invalid }" [formControl]="requireDelivery"
+                            >Có nhập địa chỉ nhận vé</nb-checkbox
+                        >
+                    </div>
+                    <div>
+                        <nb-checkbox [ngClass]="{ error: isFree.invalid }" [formControl]="isFree">Miễn phí</nb-checkbox>
+                    </div>
+                    <div>
+                        <nb-checkbox [ngClass]="{ error: showInHome.invalid }" [formControl]="showInHome"
+                            >Hiện ở trang chủ</nb-checkbox
+                        >
+                    </div>
+                    <div>
+                        <nb-checkbox [ngClass]="{ error: manageTicket.invalid }" [formControl]="manageTicket"
+                            >Quản lý vé</nb-checkbox
+                        >
+                        <span class="hint" *ngIf="isCalendar">Vé theo lịch luôn bật quản lý vé.</span>
+                    </div>
+                    <div *ngIf="manageTicket.value">
+                        <nb-checkbox
+                            [disabled]="!manageTicket.value"
+                            [ngClass]="{ error: qrcodeEmail.invalid }"
+                            [formControl]="qrcodeEmail"
+                            >Gửi kèm qrcode trong email</nb-checkbox
+                        >
+                    </div>
+                    <div>
+                        <label>Order Note</label>
+                        <textarea status="basic" [formControl]="orderNote" fullWidth nbInput type="text"></textarea>
+                    </div>
+                    <div>
+                        <label>Ảnh ledgend <sub>(< 3M)</sub></label>
+                        <input
+                            fullWidth
+                            nbInput
+                            type="file"
+                            value=""
+                            (change)="onLedgendImagePicked($event)"
+                            class="input-thumbnail"
+                            [style.background-image]="url(ledgendImageUrl)" />
+                    </div>
+                    <div>
+                        <label>Ảnh Sự kiện 1x1 <sub>(< 3M)</sub></label>
+                        <input
+                            fullWidth
+                            nbInput
+                            type="file"
+                            value=""
+                            (change)="onEventSquareImagePicked($event)"
+                            class="input-thumbnail"
+                            [style.background-image]="url(eventSquareImageUrl)" />
+                    </div>
+                    <div>
+                        <label>Ảnh Tên Sự kiện <sub>(< 3M)</sub></label>
+                        <input
+                            fullWidth
+                            nbInput
+                            type="file"
+                            value=""
+                            (change)="onEventNameImagePicked($event)"
+                            class="input-thumbnail"
+                            [style.background-image]="url(eventNameImageUrl)" />
+                    </div>
+                </form>
+            </nb-card-body>
+            <nb-card-footer>
+                <div>
+                    <button nbButton type="button" (click)="onSubmit()" status="info">
+                        {{ !showSession ? 'Lưu nháp' : 'Cập nhật' }}
+                    </button>
+                    <button
+                        *ngIf="showSessionDraft"
+                        status="success"
+                        (click)="gotoNextStep()"
+                        nbButton
+                        type="button"
+                        class="ml-2">
+                        Bước tiếp theo
+                    </button>
+                </div>
+            </nb-card-footer>
+        </nb-card>
+        <div *ngIf="step === 'sessions' || (!showSession && !showSessionDraft)">
+            <ng-container class="mt-4" *ngIf="(sessions$ | async) && show?.id">
+                <show_session-table [sessions]="sessions$" [showId]="show.id" (actionEmitter)="onActionPressed($event)">
+                </show_session-table>
+            </ng-container>
+            <div *ngIf="showSessionsDraft?.length > 0" class="mt-4">
+                <label>Danh sách bản nháp</label>
+                <ng-template ngFor let-item [ngForOf]="showSessionsDraft" let-index>
+                    <div class="w-100 flex-row align-items-center mt-3 font-weight-bold">
+                        {{ item.sessionName || (item.code || show.showName || show.code) + ' - ' + item.address }}
+                        <button class="ml-3" nbButton (click)="onButtonUpdateSessionDraftPressed(item)">
+                            Chỉnh sửa
+                        </button>
+                        <button class="ml-2" nbButton status="danger" (click)="onButtonDeleteSessionDraftPressed(item)">
+                            Xóa
+                        </button>
+                    </div>
+                </ng-template>
+            </div>
+        </div>
+        <div *ngIf="step === 'update-payment' && (showSessionDraft || showSession)">
+            <update-show-session-payment
+                [showSessionDraft]="showSessionDraft"
+                [showSession]="showSession"
+                [showId]="show?.id"
+                (updateSessionDraftSucceed)="updateSessionsDraft($event)"
+                (updateSessionSucceed)="updateSession($event)"
+                (gotoNextStep)="gotoNextStep()" />
+        </div>
+        <div *ngIf="step === 'update-promotions' && (showSessionDraft || showSession)">
+            <update-show-session-promotion
+                [showSessionDraft]="showSessionDraft"
+                (updateSucceed)="updateSessionsDraft($event)"
+                (gotoNextStep)="gotoNextStep()"
+                [showId]="show?.id"
+                [showSession]="showSession" />
+        </div>
+        <div *ngIf="step === 'update-seat-plan' && (showSessionDraft || showSession)">
+            <update-show-session-seat-plan
+                [showSessionDraft]="showSessionDraft"
+                [showSession]="showSession"
+                [showId]="show?.id"
+                (updateSessionDraftSucceed)="updateSessionsDraft($event)"
+                (updateSessionSucceed)="updateSession($event)"
+                (gotoNextStep)="gotoNextStep()" />
+        </div>
+        <div *ngIf="step === 'update-order-custom-fields' && (showSessionDraft || showSession)">
+            <update-order-custom-fields
+                [showSessionDraft]="showSessionDraft"
+                [showSession]="showSession"
+                [showId]="show?.id"
+                (gotoNextStep)="gotoNextStep()" />
+        </div>
+        <div *ngIf="step === 'email-template' && (showSessionDraft || showSession)">
+            <update-show-session-email-template
+                [showSessionDraft]="showSessionDraft"
+                [showSession]="showSession"
+                [showId]="show?.id"
+                (updateSessionDraftSucceed)="updateSessionsDraft($event)"
+                (updateSessionSucceed)="updateSession($event)"
+                (gotoNextStep)="gotoNextStep()" />
+        </div>
+        <div *ngIf="step === 'summary' && showSessionDraft">
+            <summary-create-show-session
+                [showSessionDraft]="showSessionDraft"
+                (updateSucceed)="createSessionSuccess()" />
+        </div>
+    </nb-card-body>
+</nb-card>

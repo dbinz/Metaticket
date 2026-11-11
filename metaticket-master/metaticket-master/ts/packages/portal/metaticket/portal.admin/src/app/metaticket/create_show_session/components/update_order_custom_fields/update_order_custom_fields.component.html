@@ -1,0 +1,98 @@
+<nb-card [nbSpinner]="loading > 0">
+    <nb-card-body>
+        <div class="align-items-center">
+            <nb-select
+                class="w-100 flex-grow-1"
+                placeholder="Chọn loại custom field"
+                (selectedChange)="onCustomFieldTypeItemChange($event)">
+                <nb-option [value]="CustomFieldType.String">Kiểu chuỗi ký tự</nb-option>
+                <nb-option [value]="CustomFieldType.Number">Kiểu số</nb-option>
+                <nb-option [value]="CustomFieldType.Date">Kiểu ngày</nb-option>
+                <nb-option [value]="CustomFieldType.List">Kiểu danh sách</nb-option>
+                <nb-option [value]="CustomFieldType.Boolean">Kiểu có / không</nb-option>
+            </nb-select>
+            <button class="ml-3" nbButton (click)="onBtnCreateCustomFieldPressed()">Thêm</button>
+        </div>
+        <div class="w-100 mt-2">
+            <form class="form-inline" [formGroup]="customFieldsForm">
+                <ng-container formArrayName="customFields" class="w-100">
+                    <ng-container *ngFor="let customFieldForm of getCustomFields(); let index = index">
+                        <nb-card class="mt-2 w-100">
+                            <nb-card-body>
+                                <div class="row mb-4">
+                                    <label
+                                        class="font-weight-bold"
+                                        *ngIf="customFieldForm.get('type').value === CustomFieldType.String"
+                                        >Kiểu chuỗi ký tự</label
+                                    >
+                                    <label
+                                        class="font-weight-bold"
+                                        *ngIf="customFieldForm.get('type').value === CustomFieldType.Number"
+                                        >Kiểu số</label
+                                    >
+                                    <label
+                                        class="font-weight-bold"
+                                        *ngIf="customFieldForm.get('type').value === CustomFieldType.Date"
+                                        >Kiểu ngày</label
+                                    >
+                                    <label
+                                        class="font-weight-bold"
+                                        *ngIf="customFieldForm.get('type').value === CustomFieldType.List"
+                                        >Kiểu danh sách</label
+                                    >
+                                    <label
+                                        class="font-weight-bold"
+                                        *ngIf="customFieldForm.get('type').value === CustomFieldType.Boolean"
+                                        >Kiểu có / không</label
+                                    >
+                                    <nb-icon class="ml-2" icon="trash-outline" (click)="removeItem(index)" />
+                                </div>
+                                <string-order-custom-field
+                                    *ngIf="customFieldForm.get('type').value === CustomFieldType.String"
+                                    [index]="index"
+                                    [formGroup]="customFieldForm"
+                                    formGroupName="{{ index }}" />
+                                <number-order-custom-field
+                                    *ngIf="customFieldForm.get('type').value === CustomFieldType.Number"
+                                    [index]="index"
+                                    [formGroup]="customFieldForm"
+                                    formGroupName="{{ index }}" />
+                                <date-order-custom-field
+                                    *ngIf="customFieldForm.get('type').value === CustomFieldType.Date"
+                                    [index]="index"
+                                    [formGroup]="customFieldForm"
+                                    formGroupName="{{ index }}" />
+                                <list-order-custom-field
+                                    *ngIf="customFieldForm.get('type').value === CustomFieldType.List"
+                                    [index]="index"
+                                    [formGroup]="customFieldForm"
+                                    formGroupName="{{ index }}" />
+                                <boolean-order-custom-field
+                                    *ngIf="customFieldForm.get('type').value === CustomFieldType.Boolean"
+                                    [index]="index"
+                                    [formGroup]="customFieldForm"
+                                    formGroupName="{{ index }}" />
+                            </nb-card-body>
+                        </nb-card>
+                    </ng-container>
+                </ng-container>
+            </form>
+        </div>
+    </nb-card-body>
+    <nb-card-footer>
+        <div>
+            <button nbButton type="button" (click)="onSubmit()" status="info">
+                {{ !showSession ? 'Lưu nháp' : 'Cập nhật' }}
+            </button>
+            <button
+                *ngIf="showSessionDraft"
+                status="success"
+                (click)="gotoNextStep.emit()"
+                nbButton
+                type="button"
+                class="ml-2">
+                Bước tiếp theo
+            </button>
+        </div>
+    </nb-card-footer>
+</nb-card>

@@ -1,0 +1,66 @@
+/* You can add global styles to this file, and also import other style files */
+
+
+@use "@viclass/editorui.loader/style";
+@use "@viclass/themes/common";
+@use "@viclass/themes/form";
+@use "@viclass/themes/button";
+@use "assets/font.scss";
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+
+.board-viewport {
+    position: relative;
+    background: linear-gradient(-90deg, rgba(0, 0, 0, .05) 1px, transparent 1px),
+        linear-gradient(rgba(0, 0, 0, .05) 1px, transparent 1px),
+        linear-gradient(-90deg, rgba(0, 0, 0, .08) 1px, transparent 1px),
+        linear-gradient(rgba(0, 0, 0, .08) 1px, transparent 1px),
+        #fff;
+    background-size: 20px 20px, 20px 20px, 100px 100px, 100px 100px;
+    z-index: 1;
+}
+
+/* hide scrollbar for seatplan */ 
+.vi-wrapping-unbounded-svg-layer {
+    scrollbar-width: none;
+    overflow: hidden;
+}
+
+.vi-wrapping-unbounded-svg-layer::-webkit-scrollbar {
+    width: 0;
+    display: none;
+}
+
+.viewport-container {
+    overflow: hidden;
+    &.show {
+        display: block;
+    }
+
+    &.hide {
+        display: none;
+    }
+
+    editor-ui-group {
+        height: fit-content;
+        max-height: 100%;
+        width: fit-content;
+        max-width: 100%;
+        overflow: auto;
+        scrollbar-width: none;
+        z-index: 2;
+    }
+
+    editor-ui-group::-webkit-scrollbar {
+        display: none;
+    }
+
+}
+
+body {
+
+    font-family: 'Montserrat';
+}

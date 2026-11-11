@@ -1,0 +1,238 @@
+<app-layout>
+  <app-navbar />
+
+  <!-- Hero -->
+  <div class="search-hero w-full relative bg-blue-163AEA">
+    <div class="w-full flex flex-col items-center px-5 laptop:px-0 pt-8 pb-8 laptop:pt-12 laptop:pb-10">
+      <div class="laptop:w-3/4 w-full flex flex-col gap-4">
+        <h1 class="text-2xl laptop:text-32-40 text-white font-medium text-stroke-2 leading-120pct m-0">
+          Kết quả tìm kiếm cho &quot;{{ key }}&quot;
+        </h1>
+        <p class="text-14-24 text-blue-9CA8D3 m-0">
+          {{ eventsGroup.total + productsGroup.total + newsGroup.total }} kết quả
+        </p>
+        <div class="w-full laptop:max-w-[520px]">
+          <nz-input-group class="w-full rounded-full px-4 py-2 bg-white">
+            <input
+              nz-input
+              class="border-0 p-0 text-sm font-medium bg-transparent focus:border-0 focus:shadow-none"
+              [(ngModel)]="searchBoxValue"
+              (keydown.enter)="onSubmitSearchBox()"
+              placeholder="Bạn đang tìm kiếm gì?"
+            />
+          </nz-input-group>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Content -->
+  <div class="w-full bg-blue-072591 flex flex-col items-center pt-8 pb-16 px-5 laptop:px-0">
+    <div class="laptop:w-3/4 w-full flex flex-col gap-8">
+      <!-- Tabs -->
+      <nav class="search-tabs flex gap-2 overflow-x-auto" aria-label="Loại kết quả">
+        <a
+          class="search-tab"
+          [class.search-tab--active]="tab === 'all'"
+          [routerLink]="['/', routeName.search]"
+          [queryParams]="tabAndPageQuery('all', 1)"
+        >
+          Tất cả ({{ eventsGroup.total + productsGroup.total + newsGroup.total }})
+        </a>
+        <a
+          class="search-tab"
+          [class.search-tab--active]="tab === 'event'"
+          [routerLink]="['/', routeName.search]"
+          [queryParams]="tabAndPageQuery('event', 1)"
+        >
+          Sự kiện ({{ eventsGroup.total }})
+        </a>
+        <a
+          class="search-tab"
+          [class.search-tab--active]="tab === 'product'"
+          [routerLink]="['/', routeName.search]"
+          [queryParams]="tabAndPageQuery('product', 1)"
+        >
+          Sản phẩm ({{ productsGroup.total }})
+        </a>
+        <a
+          class="search-tab"
+          [class.search-tab--active]="tab === 'news'"
+          [routerLink]="['/', routeName.search]"
+          [queryParams]="tabAndPageQuery('news', 1)"
+        >
+          Tin tức ({{ newsGroup.total }})
+        </a>
+      </nav>
+
+      <!-- Empty across all 3 groups -->
+      <div *ngIf="hasNoResultAtAll" class="flex flex-col items-center gap-4 py-16 text-center">
+        <p class="text-base text-white opacity-80">Không tìm thấy kết quả nào cho &quot;{{ key }}&quot;.</p>
+        <div class="flex gap-4 text-sm">
+          <a class="text-blue-9CA8D3 underline" [routerLink]="['/', routeName.event]">Xem sự kiện</a>
+          <a class="text-blue-9CA8D3 underline" [routerLink]="['/', routeName.product]">Xem sản phẩm</a>
+          <a class="text-blue-9CA8D3 underline" [routerLink]="['/', routeName.news]">Xem tin tức</a>
+        </div>
+      </div>
+
+      <ng-container *ngIf="!hasNoResultAtAll">
+        <!-- TAB: Tất cả -->
+        <ng-container *ngIf="tab === 'all'">
+          <section *ngIf="eventsGroup.loading || eventsGroup.items.length" class="flex flex-col gap-4">
+            <div class="flex items-center justify-between">
+              <p class="text-18-22 laptop:text-2xl text-white font-medium m-0">Sự kiện ({{ eventsGroup.total }})</p>
+              <a
+                *ngIf="eventsGroup.total > eventsGroup.items.length"
+                class="text-blue-9CA8D3 text-sm shrink-0"
+                [routerLink]="['/', routeName.search]"
+                [queryParams]="tabAndPageQuery('event', 1)"
+              >
+                Xem tất cả →
+              </a>
+            </div>
+            <div *ngIf="eventsGroup.loading" class="grid grid-cols-2 laptop:grid-cols-3 gap-4 laptop:gap-9" aria-hidden="true">
+              <div *ngFor="let s of [1, 2, 3]" class="animate-pulse aspect-video rounded-xl bg-white/10"></div>
+            </div>
+            <grid-event-ticket *ngIf="!eventsGroup.loading" [data]="eventsGroup.items" [isLast]="true" />
+          </section>
+
+          <section *ngIf="productsGroup.loading || productsGroup.items.length" class="flex flex-col gap-4">
+            <div class="flex items-center justify-between">
+              <p class="text-18-22 laptop:text-2xl text-white font-medium m-0">Sản phẩm ({{ productsGroup.total }})</p>
+              <a
+                *ngIf="productsGroup.total > productsGroup.items.length"
+                class="text-blue-9CA8D3 text-sm shrink-0"
+                [routerLink]="['/', routeName.search]"
+                [queryParams]="tabAndPageQuery('product', 1)"
+              >
+                Xem tất cả →
+              </a>
+            </div>
+            <div *ngIf="productsGroup.loading" class="grid grid-cols-2 laptop:grid-cols-3 gap-4 laptop:gap-9" aria-hidden="true">
+              <div *ngFor="let s of [1, 2, 3]" class="animate-pulse aspect-video rounded-xl bg-white/10"></div>
+            </div>
+            <div *ngIf="!productsGroup.loading" class="grid grid-cols-2 gap-x-3 gap-y-8 laptop:grid-cols-3 laptop:gap-9">
+              <div *ngFor="let show of productsGroup.items; trackBy: trackById" class="flex flex-col items-start gap-3">
+                <a class="pl-card-media pb-[56.25%] relative w-full block" [routerLink]="productDetailPath(show)">
+                  <app-image [src]="productImage(show)" [sx]="'w-full rounded-xl absolute left-0 right-0 h-full object-cover'" />
+                  <span *ngIf="productStatusLabel(show)" class="pl-chip" [ngClass]="productStatusChipClass(show)">
+                    {{ productStatusLabel(show) }}
+                  </span>
+                </a>
+                <a class="flex flex-col gap-1" [routerLink]="productDetailPath(show)">
+                  <p class="line-clamp-2 text-14-16 md:text-18-22 font-medium text-stroke-2 text-white m-0">{{ show.name }}</p>
+                </a>
+              </div>
+            </div>
+          </section>
+
+          <section *ngIf="newsGroup.loading || newsGroup.items.length" class="flex flex-col gap-4">
+            <div class="flex items-center justify-between">
+              <p class="text-18-22 laptop:text-2xl text-white font-medium m-0">Tin tức ({{ newsGroup.total }})</p>
+              <a
+                *ngIf="newsGroup.total > newsGroup.items.length"
+                class="text-blue-9CA8D3 text-sm shrink-0"
+                [routerLink]="['/', routeName.search]"
+                [queryParams]="tabAndPageQuery('news', 1)"
+              >
+                Xem tất cả →
+              </a>
+            </div>
+            <div *ngIf="newsGroup.loading" class="grid grid-cols-1 tablet:grid-cols-2 laptop:grid-cols-3 gap-4" aria-hidden="true">
+              <div *ngFor="let s of [1, 2, 3]" class="animate-pulse aspect-video rounded-xl bg-white/10"></div>
+            </div>
+            <div *ngIf="!newsGroup.loading" class="grid grid-cols-1 tablet:grid-cols-2 laptop:grid-cols-3 gap-4">
+              <app-news-card *ngFor="let item of newsGroup.items; trackBy: trackById" [newsItem]="item" />
+            </div>
+          </section>
+        </ng-container>
+
+        <!-- TAB: Sự kiện -->
+        <ng-container *ngIf="tab === 'event'">
+          <div *ngIf="eventsGroup.loading" class="grid grid-cols-2 laptop:grid-cols-3 gap-4 laptop:gap-9" aria-hidden="true">
+            <div *ngFor="let s of [1, 2, 3, 4, 5, 6]" class="animate-pulse aspect-video rounded-xl bg-white/10"></div>
+          </div>
+          <p *ngIf="!eventsGroup.loading && !eventsGroup.items.length" class="text-base text-white opacity-80">
+            Không tìm thấy sự kiện nào cho &quot;{{ key }}&quot;.
+          </p>
+          <grid-event-ticket *ngIf="!eventsGroup.loading && eventsGroup.items.length" [data]="eventsGroup.items" [isLast]="true" />
+          <nav *ngIf="!eventsGroup.loading && eventsGroup.total > eventPageSize" class="search-pager" aria-label="Phân trang sự kiện">
+            <a
+              *ngFor="let p of pageList(eventsGroup.total, eventPageSize)"
+              class="search-pager-num"
+              [class.is-active]="p === page"
+              [routerLink]="['/', routeName.search]"
+              [queryParams]="tabAndPageQuery('event', p)"
+            >
+              {{ p }}
+            </a>
+          </nav>
+        </ng-container>
+
+        <!-- TAB: Sản phẩm -->
+        <ng-container *ngIf="tab === 'product'">
+          <div *ngIf="productsGroup.loading" class="grid grid-cols-2 laptop:grid-cols-3 gap-4 laptop:gap-9" aria-hidden="true">
+            <div *ngFor="let s of [1, 2, 3, 4, 5, 6]" class="animate-pulse aspect-video rounded-xl bg-white/10"></div>
+          </div>
+          <p *ngIf="!productsGroup.loading && !productsGroup.items.length" class="text-base text-white opacity-80">
+            Không tìm thấy sản phẩm nào cho &quot;{{ key }}&quot;.
+          </p>
+          <div
+            *ngIf="!productsGroup.loading && productsGroup.items.length"
+            class="grid grid-cols-2 gap-x-3 gap-y-8 laptop:grid-cols-3 laptop:gap-9"
+          >
+            <div *ngFor="let show of productsGroup.items; trackBy: trackById" class="flex flex-col items-start gap-3">
+              <a class="pl-card-media pb-[56.25%] relative w-full block" [routerLink]="productDetailPath(show)">
+                <app-image [src]="productImage(show)" [sx]="'w-full rounded-xl absolute left-0 right-0 h-full object-cover'" />
+                <span *ngIf="productStatusLabel(show)" class="pl-chip" [ngClass]="productStatusChipClass(show)">
+                  {{ productStatusLabel(show) }}
+                </span>
+              </a>
+              <a class="flex flex-col gap-1" [routerLink]="productDetailPath(show)">
+                <p class="line-clamp-2 text-14-16 md:text-18-22 font-medium text-stroke-2 text-white m-0">{{ show.name }}</p>
+                <p *ngIf="show.description" class="line-clamp-2 md:text-14-24 text-12-24 text-blue-9CA8D3 m-0">
+                  {{ show.description }}
+                </p>
+              </a>
+            </div>
+          </div>
+          <nav *ngIf="!productsGroup.loading && productsGroup.total > productPageSize" class="search-pager" aria-label="Phân trang sản phẩm">
+            <a
+              *ngFor="let p of pageList(productsGroup.total, productPageSize)"
+              class="search-pager-num"
+              [class.is-active]="p === page"
+              [routerLink]="['/', routeName.search]"
+              [queryParams]="tabAndPageQuery('product', p)"
+            >
+              {{ p }}
+            </a>
+          </nav>
+        </ng-container>
+
+        <!-- TAB: Tin tức -->
+        <ng-container *ngIf="tab === 'news'">
+          <div *ngIf="newsGroup.loading" class="grid grid-cols-1 tablet:grid-cols-2 laptop:grid-cols-3 gap-4" aria-hidden="true">
+            <div *ngFor="let s of [1, 2, 3, 4, 5, 6]" class="animate-pulse aspect-video rounded-xl bg-white/10"></div>
+          </div>
+          <p *ngIf="!newsGroup.loading && !newsGroup.items.length" class="text-base text-white opacity-80">
+            Không tìm thấy tin tức nào cho &quot;{{ key }}&quot;.
+          </p>
+          <div *ngIf="!newsGroup.loading && newsGroup.items.length" class="grid grid-cols-1 tablet:grid-cols-2 laptop:grid-cols-3 gap-4">
+            <app-news-card *ngFor="let item of newsGroup.items; trackBy: trackById" [newsItem]="item" />
+          </div>
+          <nav *ngIf="!newsGroup.loading && newsGroup.total > newsPageSize" class="search-pager" aria-label="Phân trang tin tức">
+            <a
+              *ngFor="let p of pageList(newsGroup.total, newsPageSize)"
+              class="search-pager-num"
+              [class.is-active]="p === page"
+              [routerLink]="['/', routeName.search]"
+              [queryParams]="tabAndPageQuery('news', p)"
+            >
+              {{ p }}
+            </a>
+          </nav>
+        </ng-container>
+      </ng-container>
+    </div>
+  </div>
+</app-layout>

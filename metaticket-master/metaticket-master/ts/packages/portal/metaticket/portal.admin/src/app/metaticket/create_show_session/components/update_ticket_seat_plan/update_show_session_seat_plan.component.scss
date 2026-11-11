@@ -1,0 +1,44 @@
+.seat-plan-form {
+    padding: 0 1.5rem 1.5rem 1.5rem;
+}
+
+.seat-plan-form .row {
+    display: flex;
+    flex-wrap: wrap;
+    margin: 0 -0.75rem;
+}
+
+.seat-plan-form .col-12,
+.seat-plan-form .col-md-6 {
+    padding: 0 0.75rem;
+    box-sizing: border-box;
+    width: 100%;
+}
+
+@media (min-width: 768px) {
+    .seat-plan-form .col-md-6 {
+        width: 50%;
+    }
+}
+
+nb-card.inline-form-card nb-card-body {
+    padding-bottom: 0;
+}
+
+label {
+    display: inline-block;
+    margin-bottom: 0.5rem;
+}
+
+.error {
+    color: red;
+}
+
+.seat-plan-form textarea {
+    min-height: 8rem;
+    font-family: monospace;
+}
+.calendar-hint {
+    margin: 1.75rem 0 0;
+    color: #8f9bb3;
+}

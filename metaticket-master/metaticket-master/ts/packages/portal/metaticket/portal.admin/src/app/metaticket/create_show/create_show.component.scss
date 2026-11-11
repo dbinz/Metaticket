@@ -1,0 +1,62 @@
+.form-inline [fullWidth] {
+    flex: 1;
+}
+
+.form-inline > * {
+    padding: 0 1.5rem 1.5rem 1.5rem;
+    width: 50%;
+}
+
+nb-card.inline-form-card nb-card-body {
+    padding-bottom: 0;
+}
+
+label {
+    display: inline-block;
+    margin-bottom: 0.5rem;
+}
+
+.label-disabled {
+    color: #a5a5a5;
+}
+
+.error {
+    color: red;
+}
+
+.input-thumbnail {
+    background-size: contain;
+    background-position-x: right;
+    background-repeat: no-repeat;
+}
+
+input[type='file'] {
+    color: transparent;
+}
+
+// Slug provenance badge shown next to the slug label: auto / manual / editing.
+.slug-badge {
+    display: inline-block;
+    margin-left: 0.5rem;
+    padding: 0.1rem 0.5rem;
+    border-radius: 0.75rem;
+    font-size: 0.7rem;
+    font-weight: 600;
+    line-height: 1.2;
+    vertical-align: middle;
+}
+
+.slug-badge--auto {
+    background-color: #edf1f7;
+    color: #8f9bb3;
+}
+
+.slug-badge--manual {
+    background-color: #e6fbf2;
+    color: #00b383;
+}
+
+.slug-badge--editing {
+    background-color: #eef3ff;
+    color: #3366ff;
+}

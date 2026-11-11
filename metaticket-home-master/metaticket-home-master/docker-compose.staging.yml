@@ -1,0 +1,21 @@
+version: '3.8'
+services:
+  staging_metaticket:
+    image: staging_metaticket
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        TARGET_ENV: "build:staging"
+    container_name: staging_metaticket
+    mem_limit: 512m
+    memswap_limit: 512m
+    volumes:
+      - /staging/metaticket/service/homepage/logs:/var/log/nginx
+    ports:
+      - "44200:80"
+    restart: unless-stopped
+networks:
+  default:
+    external: true
+    name: staging_metaticket

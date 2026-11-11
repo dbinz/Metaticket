@@ -1,0 +1,24 @@
+.news-list-header {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.news-hint {
+    flex: 1 1 200px;
+    font-size: 0.85rem;
+    opacity: 0.75;
+}
+
+.news-filters {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    min-width: 320px;
+}
+
+.news-filters nb-select {
+    min-width: 180px;
+}
